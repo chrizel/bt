@@ -175,16 +175,17 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 	direction = EAST;
     }
 
-    /*** Animation calculations ***/
-    if (SDL_GetTicks() >= destTicks) {
-	/* Do animation */
-	if(going)
+    if (going) {
+	/*** Animation calculations ***/
+	if (SDL_GetTicks() >= destTicks) {
+	    /* Do animation */
 	    [self switchTick];
-	else
-	    [self setTick:1];
 
-	/* Calculate next tick time */
-	destTicks = SDL_GetTicks() + 100;
+	    /* Calculate next tick time */
+	    destTicks = SDL_GetTicks() + 100;
+	}
+    } else {
+	tick = 1;
     }
 }
 
