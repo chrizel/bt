@@ -33,6 +33,7 @@
 #include "filter.h"
 #include "map.h"
 #include "bmpl.h"
+#include "game.h"
 
 SDL_Surface *screen;
 SDL_Surface *minilogo;
@@ -45,10 +46,8 @@ int *editor_pg;
 int editor_pg_y;
 int editor_pg_x;
 
-struct _player player;
+static Game *bt;
 
-
-static void init_sdl(void);
 static void keydown();
 static void quit();
 
@@ -68,7 +67,7 @@ int main(int argc, char *argv[])
 
     puts(GPL_TEXT);
 
-    init_sdl();
+    bt = new Game("Bermuda Triangle");
 
     #ifdef USE_8BIT
     init_colors();
@@ -99,8 +98,7 @@ int main(int argc, char *argv[])
     /* create map... */
     map = new Map("main.map");
 
-    /* start main loop */
-    sdl_event_loop();
+    bt->run();
 
     CON_Destroy(btConsole);
 
@@ -123,37 +121,6 @@ void bt_exit()
     /* TODO: cleanup all surfaces, etc. */
     printf("Bye :)\n");
     exit(0);
-}
-
-static void init_sdl(void)
-{
-    /* Initialize SDL */
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-        error("Couldn't initialize SDL: %s", SDL_GetError());
-
-    /* Initialize SDL_TIMER */
-    if (SDL_InitSubSystem(SDL_INIT_TIMER) < 0)
-        error("Couldn't initialize SDL: %s", SDL_GetError());
-
-    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
-      error("Couldn't initialize support of joystick in SDL: %s", 
-	    SDL_GetError());
-
-    /* Clean up on exit */
-    atexit(SDL_Quit);
-
-    /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE);
-
-    if (!screen)
-        error("Couldn't set VideoMode: %s", SDL_GetError());
-
-    if ((screen->flags & SDL_HWSURFACE))
-        printf("> Using hardware surface\n");
-    else
-        printf("> Using software surface\n");
-
-    SDL_WM_SetCaption( "Bermuda Triangle", NULL);
 }
 
 /*

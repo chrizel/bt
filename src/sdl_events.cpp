@@ -24,6 +24,7 @@
 #include "sdl_events.h"
 #include "filter.h"
 #include "map.h"
+#include "game.h"
 
 t_evl *evl_sdl;
 SDL_Event *sdl_ev;
@@ -31,6 +32,8 @@ SDL_Event *sdl_ev;
 SDL_Rect update_rects[MAX_RECTS];
 int ur_count;
 int whole_redraw;
+
+Map *tmp_map;
 
 SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
@@ -131,11 +134,11 @@ void sdl_event_loop(void)
 	}
 	*/
 
-        map->idle();
+        tmp_map->idle();
         evl_call(evl_sdl, EV_SDL_IDLE);
 
         //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-        map->draw(screen);
+        tmp_map->draw(screen);
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */

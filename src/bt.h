@@ -31,18 +31,8 @@
 #define USE_16BIT
 #endif
 
-struct _player {
-    SDL_Surface *sfc;
-    SDL_Rect pos;
-    SDL_Rect cur_shape;
-    int blink;
-};
-extern struct _player player;
-
 extern SDL_Surface *screen;
 extern SDL_Surface *minilogo;
-
-extern Map *map;
 
 extern int editor_mode;
 extern int editor_pen;

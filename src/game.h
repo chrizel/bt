@@ -15,45 +15,34 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef SDL_EVENTS_H
-#define SDL_EVENTS_H
+#ifndef GAME_H
+#define GAME_H 
 
 #include <SDL.h>
-#include "event.h"
-#include "map.h"
 
-extern t_evl *evl_sdl;
-extern SDL_Event *sdl_ev;
+class Map;
 
-/* event hooks */
-enum {
-    EV_SDL_IDLE,
-    EV_SDL_PAINT,
-    EV_SDL_KEYDOWN,
-    EV_SDL_KEYUP,
-    EV_SDL_JOYBUTTONDOWN,
-    EV_SDL_JOYBUTTONUP,
-    EV_SDL_JOYAXIS,
-
-    EV_SDL_LAST, /* has to be the last! */
+struct Player {
+    SDL_Surface *sfc;
+    SDL_Rect pos;
+    SDL_Rect cur_shape;
+    int blink;
 };
 
-void init_sdl_events(void);
-void sdl_event_loop(void);
+extern struct Player player;
 
-#define MAX_RECTS 2048
-extern SDL_Rect update_rects[MAX_RECTS];
-extern int ur_count;
-extern int whole_redraw;
+class Game
+{
+private:
+    char *title;
+    Map *map;
 
-extern Map *tmp_map;
+    void init();
 
-#define PUSH_UR(rect) \
-	if (!whole_redraw && ur_count < MAX_RECTS) { \
-	    update_rects[ur_count++] = rect; \
-	} else { \
-	    whole_redraw = 1; \
-	}
+public:
+    Game(char *title);
 
+    void run();
+};
 
 #endif

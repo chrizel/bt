@@ -197,9 +197,9 @@ void Map::fill(int id)
 {
     int x, y;
 
-    for (y = 0; y < map->height; y++)
-        for (x = 0; x < map->width; x++)
-            map->data[y * map->width + x] = id;
+    for (y = 0; y < this->height; y++)
+        for (x = 0; x < this->width; x++)
+            this->data[y * this->width + x] = id;
 }
 
 void Map::put(int id, int xt, int yt)
