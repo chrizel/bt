@@ -28,7 +28,7 @@ void init_console()
     conRect.x = 10;
     conRect.y = 0;
     conRect.w = 780;
-    conRect.h = 295;
+    conRect.h = 195;
 
     /* init console */
     btConsole = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);

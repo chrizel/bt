@@ -6,6 +6,7 @@
 
 int n_colors;
 SDL_Color colors[256];
+SDL_Color orig_colors[256];
 
 void init_colors();
 

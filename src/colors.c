@@ -9,9 +9,20 @@ void init_colors()
 {
     /* Load GIMP palette */
     load_gimp_palette("data/palette2.gpl");
+    clone_colors();
 
     /* Set palette */
     SDL_SetColors(screen, colors, 0, n_colors);
+}
+
+void clone_colors()
+{
+    int i;
+    for (i = 0; i < n_colors; i++) {
+        orig_colors[i].r = colors[i].r;
+        orig_colors[i].g = colors[i].g;
+        orig_colors[i].b = colors[i].b;
+    }
 }
 
 static int load_gimp_palette(char *file)
