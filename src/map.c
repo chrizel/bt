@@ -53,40 +53,41 @@ void init_map()
     //read_map("main.map");
 
     //write_map("main.map");
-    //read_map("main.map");
+    read_map("main.map");
 
     SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
 
-static void swap(unsigned char *c1, unsigned char *c2)
-{
-    unsigned char tmp;
-
-    tmp = *c1;
-    *c1 = *c2;
-    *c2 = tmp;
-}
-
 static void write_int(FILE *fp, unsigned int num)
 {
+    /*
     int i;
 
     utile.as_int = num;
 
-    /* write int as 4 chars */
+    // write int as 4 chars 
     for (i = 0; i < 4; i++) {
         printf("%.2x ", utile.as_char[i]);
         fputc(utile.as_char[i], fp);
     }
 
     printf(" = %u\n", utile.as_int);
+    */
+
+    SDL_RWops *area;
+    area = SDL_RWFromFP(fp, 0);
+    SDL_WriteLE32(area, num);
+    SDL_FreeRW(area);
+
+    //printf("write> %u\n", num);
 }
 
 static unsigned int read_int(FILE *fp)
 {
+    /*
     int i;
 
-    /* put tile data into union */
+    // put tile data into union
     for (i = 0; i < 4; i++)
         utile.as_char[i] = (unsigned char) fgetc(fp);
 
@@ -94,11 +95,23 @@ static unsigned int read_int(FILE *fp)
     swap(&utile.as_char[0], &utile.as_char[3]);
 
     printf("%.2x%.2x %.2x%.2x = %u\n", utile.as_char[0], utile.as_char[1], utile.as_char[2], utile.as_char[3], utile.as_int);
+    */
+    int num;
+
+    SDL_RWops *area;
+    area = SDL_RWFromFP(fp, 0);
+    num = SDL_ReadLE32(area);
+    SDL_FreeRW(area);
+
+    //printf("read> %u\n", num);
+
+    return num;
 }
 
 void write_map(char *filename)
 {
     int anim, tick, x, y, i;
+    SDL_RWops *area;
     FILE *fp;
 
     if (!cur_map)
@@ -167,6 +180,7 @@ void read_map(char *filename)
 {
     int anim, tick, x, y, i, version;
     int width, height, anim_count, anim_ticks;
+    SDL_RWops *area;
     FILE *fp;
 
     printf("read map...");
@@ -193,7 +207,8 @@ void read_map(char *filename)
             fscanf(fp, "%u.", &cur_map->anims[anim * cur_map->anim_count + tick]);
         }
     }
-    fseek(fp, 1, SEEK_CUR); /* jump over \n */
+    if (anim)
+        fseek(fp, 1, SEEK_CUR); /* jump over \n */
 
     printf("\n");
 
@@ -206,7 +221,6 @@ void read_map(char *filename)
     }
 
     fclose(fp);
-    exit(0);
     printf("ok (cur_map->data[0] = %u)\n", cur_map->data[0]);
 }
 
