@@ -56,6 +56,17 @@ static PyObject* bt_save_map(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+static PyObject* bt_perform(PyObject *self, PyObject *args)
+{
+    char *sname;
+    SEL mySel;
+    if (!PyArg_ParseTuple(args, "s", &sname))
+        return NULL;
+    mySel = sel_get_any_uid(sname);
+    [bt perform:mySel];
+    return Py_None;
+}
+
 static PyMethodDef btMethods[] = {
     {"exit", bt_exit, METH_NOARGS,
      "Exits Bermuda Triangle."},
@@ -65,6 +76,8 @@ static PyMethodDef btMethods[] = {
      "Opens a new map."},
     {"save_map", bt_save_map, METH_VARARGS,
      "Saves the current map to a file."},
+    {"perform", bt_perform, METH_VARARGS,
+     "Performs ObjectiveC message."},
     {NULL, NULL, 0, NULL}
 };
 
