@@ -26,45 +26,22 @@
 #include "colors.h"
 #include "alloc.h"
 
-#define TILE_SIZE 20
-#define XTILES 40 /* tiles per row */
-#define YTILES 30 /* tiles per col */
+#include "error.h"
 
-static SDL_Surface *stocks;
-static SDL_Surface *wallpaper;
-static int xoffset = 0, yoffset = 0;
-static int anim_ticker = 0;
-static int file_version = 1;
-static int switch_palette = 0;
-static map_data *cur_map = NULL;
-static union _utile {
-    unsigned int as_int;
-    unsigned char as_char[4];
-} utile;
+#define SET_STOCK_ID(map, xt, yt, id) \
+    map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = id;
 
-static void map_draw();
-static void on_idle();
-static SDL_Surface *get_tile(SDL_Surface *src, int x, int y);
-static Uint32 switch_anim_ticker(Uint32 interval, void *param);
+/* global static variables */
+static SDL_Rect srcrect;
 
-static void write_int(FILE *fp, unsigned int num);
-static unsigned int read_int(FILE *fp);
+/* helper functions */
+static t_map *map_new_internal(Uint32 width, Uint32 height, 
+			       Uint32 anim_count, Uint32 anim_ticks);
+static Uint32 map_anim_timer(Uint32 interval, void *param);
+static void write_int(FILE *fp, Uint32 num);
+static Uint32 read_int(FILE *fp);
 
-static void set_stock_id(int xt, int yt, int id);
-
-void init_map()
-{
-    stocks = bmpl_get("map.stock2");
-
-    evl_reg(evl_sdl, EV_SDL_PAINT, map_draw);
-    evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
-
-    read_map("main.map");
-
-    SDL_AddTimer(1000, switch_anim_ticker, NULL);
-}
-
-static void write_int(FILE *fp, unsigned int num)
+static void write_int(FILE *fp, Uint32 num)
 {
     SDL_RWops *area;
     area = SDL_RWFromFP(fp, 0);
@@ -72,7 +49,7 @@ static void write_int(FILE *fp, unsigned int num)
     SDL_FreeRW(area);
 }
 
-static unsigned int read_int(FILE *fp)
+static Uint32 read_int(FILE *fp)
 {
     int num;
 
@@ -84,83 +61,116 @@ static unsigned int read_int(FILE *fp)
     return num;
 }
 
-void write_map(char *filename)
+static Uint32 map_anim_timer(Uint32 interval, void *param)
+{
+    t_map *map;
+    map = (t_map *)param;
+
+    map->anim_ticker++;
+    if (map->anim_ticker == map->anim_ticks)
+	map->anim_ticker = 0;
+
+    /* TODO */
+    map->switch_palette = 1;
+
+    return interval;
+}
+
+static t_map *map_new_internal(Uint32 width, Uint32 height, 
+			       Uint32 anim_count, Uint32 anim_ticks)
+{
+    t_map *map;
+
+    /* first of all: create space for our map structure */
+    map = MALLOC(t_map);
+
+    /* load stocks surface */
+    map->stocks = bmpl_get("map.stock_default");
+
+    /* allocate anims and raw data arrays */
+    map->anims = MALLOC_ARRAY(int, anim_count * anim_ticks);
+    map->data  = MALLOC_ARRAY(int, width * height);
+
+    /* set data attributes */
+    map->width      = width;
+    map->height     = height;
+    map->anim_count = anim_count;
+    map->anim_ticks = anim_ticks;
+
+    /* set other attributes */
+    map->xoffset        = 0;
+    map->yoffset        = 0;
+    map->anim_ticker    = 0;
+    map->version        = 1;
+    map->switch_palette = 0;
+
+    /* Add SDL_Time, so we can make tile animations... 
+     * map as parameter... :)
+     */
+    SDL_AddTimer(100, map_anim_timer, (void *)map);
+
+    return map;
+}
+
+t_map *map_new(char *file)
+{
+    t_map *map;
+    map = map_open(file);
+    return map;
+}
+
+t_map *map_new_empty(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks)
+{
+    t_map *map;
+
+    map = map_new_internal(width, height, anim_count, anim_ticks);
+    map_fill(map, 0);
+
+    return map;
+}
+
+void map_free(t_map *map)
+{
+    /* TODO */
+}
+
+void map_save(t_map *map, char *file)
 {
     int anim, tick, x, y, i;
-    SDL_RWops *area;
     FILE *fp;
 
-    if (!cur_map)
-        return;
+    fp = fopen(file, "w");
 
-    printf("write map...");
-    fp = fopen(filename, "w");
-    
     /* write header... */
-    fprintf(fp, "MAP:%u,%u,%u,%u,%u\n", file_version, cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
+    fprintf(fp, "MAP:%u,%u,%u,%u,%u\n", 
+	    map->version, map->width, map->height, 
+	    map->anim_count, map->anim_ticks);
 
     /* write anim data */
-    for (anim = 0; anim < cur_map->anim_count; anim++) {
-        for (tick = 0; tick < cur_map->anim_ticks; tick++) {
-            fprintf(fp, "%u.", cur_map->anims[anim * cur_map->anim_count + tick]);
-        }
-    }
+    for (anim = 0; anim < map->anim_count; anim++)
+        for (tick = 0; tick < map->anim_ticks; tick++)
+            fprintf(fp, "%u.", map->anims[anim * map->anim_count + tick]);
+
     fputc('\n', fp);
 
     /* write map data */
-    for (y = 0; y < cur_map->height; y++) {
-        for (x = 0; x < cur_map->width; x++) {
-            /* put tile data into union */
-            write_int(fp, cur_map->data[cur_map->width * y + x]);
-        }
-    }
+    for (y = 0; y < map->height; y++)
+        for (x = 0; x < map->width; x++)
+            write_int(fp, map->data[map->width * y + x]);
 
     fclose(fp);
     printf("ok\n");
 }
 
-void fill_map(int id)
-{
-    int x, y;
-
-    for (y = 0; y < cur_map->height; y++) {
-        for (x = 0; x < cur_map->width; x++) {
-            cur_map->data[y * cur_map->width + x] = id;
-        }
-    }
-}
-
-void map_new(unsigned int width, unsigned int height, unsigned int anim_count, unsigned int anim_ticks)
-{
-    printf("create new map structure (%u,%u,%u,%u)...", width, height, anim_count, anim_ticks);
-
-    //TODO: cleanup old map!!
-
-    /* check if cur_map is null */
-    if (cur_map == NULL)
-        cur_map = MALLOC(map_data);
-
-    /* reserve space for our map */
-    cur_map->anims = MALLOC_ARRAY(int, anim_count * anim_ticks);
-    cur_map->data = MALLOC_ARRAY(int, width * height);
-
-    /* set attributes */
-    cur_map->width = width;
-    cur_map->height = height;
-    cur_map->anim_count = anim_count;
-    cur_map->anim_ticks = anim_ticks;
-}
-
-
-void read_map(char *filename)
+t_map *map_open(char *file)
 {
     int anim, tick, x, y, i, version;
     int width, height, anim_count, anim_ticks;
-    SDL_RWops *area;
     FILE *fp;
+    t_map *map;
 
     printf("read map...");
-    fp = fopen(filename, "r");
+    fp = fopen(file, "r");
 
     /* check if file is available... */
     if (!fp) {
@@ -172,177 +182,118 @@ void read_map(char *filename)
     fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &version, &width, &height, &anim_count, &anim_ticks);
 
     /* check version */
+    /* TODO
     if (version != file_version)
         error("Wrong map version or wrong format.");
+    */
 
-    map_new(width, height, anim_count, anim_ticks);
+    /* create map in space */
+    map = map_new_internal(width, height, anim_count, anim_ticks);
 
     /* read anim data */
-    for (anim = 0; anim < cur_map->anim_count; anim++) {
-        for (tick = 0; tick < cur_map->anim_ticks; tick++) {
-            fscanf(fp, "%u.", &cur_map->anims[anim * cur_map->anim_count + tick]);
-        }
-    }
+    for (anim = 0; anim < map->anim_count; anim++)
+        for (tick = 0; tick < map->anim_ticks; tick++)
+            fscanf(fp, "%u.", 
+		   &map->anims[anim * map->anim_count + tick]);
+
     if (anim)
         fseek(fp, 1, SEEK_CUR); /* jump over \n */
 
-    printf("\n");
-
     /* read map data */
-    for (y = 0; y < cur_map->height; y++) {
-        for (x = 0; x < cur_map->width; x++) {
-            /* write tile data into our struct */
-            cur_map->data[cur_map->width * y + x] = read_int(fp);
-        }
-    }
+    for (y = 0; y < map->height; y++)
+        for (x = 0; x < map->width; x++)
+            map->data[map->width * y + x] = read_int(fp);
 
     fclose(fp);
-    printf("ok (cur_map->data[0] = %u)\n", cur_map->data[0]);
+    printf("ok (cur_map->data[0] = %u)\n", map->data[0]);
+
+    return map;
 }
 
-static Uint32 switch_anim_ticker(Uint32 interval, void *param)
+void map_fill(t_map *map, int id)
 {
-    /*
-    anim_ticker = !anim_ticker;
-    return interval;
-    */
-    switch_palette = 1;
+    int x, y;
 
-
-    return interval;
+    for (y = 0; y < map->height; y++)
+        for (x = 0; x < map->width; x++)
+            map->data[y * map->width + x] = id;
 }
 
-void set_color(SDL_Color *c1, SDL_Color *c2)
+void map_put(t_map *map, int id, int xt, int yt)
 {
-    c1->r = c2->r;
-    c1->g = c2->g;
-    c1->b = c2->b;
+    int x, y;
+
+    if (id) {
+        SET_STOCK_ID(map, xt, yt, editor_pen);
+    } else {
+        if (editor_pg)
+            for (y = 0; y < editor_pg_y; y++)
+                for (x = 0; x < editor_pg_x; x++)
+                    SET_STOCK_ID(map, xt + x, yt + y, 
+				 editor_pg[editor_pg_x * y + x]);
+    }
 }
 
-void draw_color(SDL_Color *c)
-{
-    //printf("%.2x%.2x%.2x ", c->r, c->g, c->b);
-}
-
-static void map_draw()
+void map_draw(t_map *map, SDL_Surface *sfc)
 {
     int x, y, x2, y2, id;
-    SDL_Rect srcrect, rect;
+    SDL_Rect rect;
 
-    if (switch_palette) {
-        int i;
-        SDL_Color tmp;
-        SDL_Color colors[6];
-        
-        tmp = screen->format->palette->colors[250];
-        for (i = 0; i < 5; i++) {
-            colors[i] = screen->format->palette->colors[251 + i];
-            draw_color(&colors[i]);
-        }
-        colors[5] = tmp;
-        draw_color(&colors[5]);
-        //printf("\n");
-
-        /*
-        //colors[0] = screen->format->palette->colors[255];
-        set_color(&colors[0], &screen->format->palette->colors[255]);
-        for (i = 249; i < 255; i++)
-            //colors[i] = screen->format->palette->colors[i+1];
-            set_color(&colors[i], &screen->format->palette->colors[i+1]);
-        set_color(&colors[255], &colors[0]);
-
-        // ok, now we shift our color palette range
-        //SDL_SetColors(screen, screen->format->palette->colors, 249, 255);
-        */
-        SDL_SetPalette(screen, SDL_LOGPAL, colors, 250, 6);
-
-        //printf("change palette\n");
-        switch_palette = 0;
-    }
+    if (!map)
+	return;
 
     // TODO: We could do that already in init_map, if srcrect would be global!?
     srcrect.w = TILE_SIZE;
     srcrect.h = TILE_SIZE;
 
-    if (cur_map == NULL)
-        return;
-
-    /* consider offsets */
-    if (xoffset < 0)
-        xoffset = cur_map->width - (cur_map->width % abs(xoffset));
-
-    if (yoffset < 0)
-        yoffset = cur_map->height - (cur_map->height % abs(yoffset));
-
     /* draw testmap */
     for (y = 0; y < YTILES; y++) {
-        //printf("y: %u...\n", y);
         rect.y = TILE_SIZE * y;
+	y2 = y + map->yoffset;
+
         for (x = 0; x < XTILES; x++) {
             rect.x = TILE_SIZE * x;
+	    x2 = x + map->xoffset;
 
-            //printf("%u\n", yoffset);
+            id = map->data[y2 * map->width + x2];
 
-            if ((y + yoffset) >= cur_map->height)
-                y2 = y + (yoffset - cur_map->height);
-            else
-                y2 = y + yoffset;
-
-            if ((x + xoffset) >= cur_map->width)
-                x2 = x + (xoffset - cur_map->width);
-            else
-                x2 = x + xoffset;
-
-            //printf("data from: %u...", y2 * cur_map->width + x2);
-            id = cur_map->data[y2 * cur_map->width + x2];
-            if (id & MF_ANIM) {
+            if (id & MF_ANIM)
                 /* it's an animation, so we read the current animation tile */
-                id = cur_map->anims[(id & MF_ID) + anim_ticker];
-            } 
+                id = map->anims[(id & MF_ID) + map->anim_ticker];
 
             // calculate source rect
             srcrect.x = (id % XTILES) * TILE_SIZE;
             srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
 
-            SDL_BlitSurface(stocks, &srcrect, screen, &rect);
-            //printf("ok\n");
+            SDL_BlitSurface(map->stocks, &srcrect, screen, &rect);
         }
     }
-    //printf("ok\n");
 }
 
-static void on_idle()
+void map_idle(t_map *map)
 {
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
     if (CON_isVisible(btConsole))
         return;
 
-    if (cur_map) {
-        if ( keystate[SDLK_UP]) {
-            if (yoffset > 0) {
-                // map up...
-                yoffset--;
-            }
-        } else if (keystate[SDLK_DOWN]) {
-            if ((yoffset + YTILES) < (cur_map->height - 1)) {
-                // map down...
-                yoffset++;
-            }
-        }
-
-        if (keystate[SDLK_LEFT]) {
-            // map left...
-            if (xoffset > 0)
-                xoffset--;
-        } else if (keystate[SDLK_RIGHT]) {
-            // map right...
-            if ((xoffset + XTILES) < (cur_map->width - 1))
-                xoffset++;
-        }
+    if ( keystate[SDLK_UP]) {
+	if (map->yoffset > 0)
+	    map->yoffset--; // map up...
+    } else if (keystate[SDLK_DOWN]) {
+	if ((map->yoffset + YTILES) < (map->height - 1))
+	    map->yoffset++; // map down...
     }
 
-    if (cur_map && editor_mode) {
+    if (keystate[SDLK_LEFT]) {
+	if (map->xoffset > 0)
+	    map->xoffset--;	// map left...
+    } else if (keystate[SDLK_RIGHT]) {
+	if ((map->xoffset + XTILES) < (map->width - 1))
+	    map->xoffset++;	// map right...
+    }
+
+    if (editor_mode) {
         int x, y, xt, yt;
         Uint8 mousestate = SDL_GetMouseState(&x, &y);
 
@@ -350,35 +301,8 @@ static void on_idle()
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
         if (mousestate & SDL_BUTTON(1))
-            map_put(1, xt, yt);
+            map_put(map, 1, xt, yt);
         else if (mousestate & SDL_BUTTON(3))
-            map_put(0, xt, yt);
+            map_put(map, 0, xt, yt);
     }
-}
-
-void map_put(int id, int xt, int yt)
-{
-    if (id) {
-        set_stock_id(xt, yt, editor_pen);
-    } else {
-        if (editor_pg) {
-            int x, y;
-            for (y = 0; y < editor_pg_y; y++) {
-                for (x = 0; x < editor_pg_x; x++) {
-                    set_stock_id(xt + x, yt + y, 
-                            editor_pg[editor_pg_x * y + x]);
-                }
-            }
-        }
-    }
-}
-
-static void set_stock_id(int xt, int yt, int id)
-{
-    /* consider offset */
-    xt += xoffset;
-    yt += yoffset;
-
-    //printf("%u/%u (%u, %u)\n", xt, yt, xoffset, yoffset);
-    cur_map->data[yt * cur_map->width + xt] = id;
 }

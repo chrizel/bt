@@ -20,6 +20,7 @@
 
 #include "console.h"
 #include "sdl_events.h"
+#include "map.h"
 
 #define FPS 30
 
@@ -29,6 +30,8 @@ struct _player {
 } player;
 
 SDL_Surface *screen;
+
+t_map *cur_map;
 
 int editor_mode;
 int editor_pen;

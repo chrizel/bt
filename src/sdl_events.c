@@ -23,6 +23,7 @@
 #include "event.h"
 #include "sdl_events.h"
 #include "filter.h"
+#include "map.h"
 
 void init_sdl_events(void)
 {
@@ -74,8 +75,11 @@ void sdl_event_loop(void)
             }
         }
 
+	map_idle(cur_map);
         evl_call(evl_sdl, EV_SDL_IDLE);
-        SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+
+        //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+	map_draw(cur_map, screen);
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */

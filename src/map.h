@@ -24,25 +24,55 @@ enum {
     MF_ANIM = 1 << 17,
 };
 
-typedef struct _map_data {
+/* static map information */
+#define TILE_SIZE 20
+#define XTILES 40 /* tiles per row on screen */
+#define YTILES 30 /* tiles per col on screen */
+
+/*
+ * Map structure
+ * Create a map with map_new(...)
+ * Free it with map_free(...)
+ */
+typedef struct {
+
+    /*
+     * ATTRIBUTES
+     */
+    SDL_Surface *stocks;
+    Uint32 xoffset;
+    Uint32 yoffset;
+    Uint32 anim_ticker;
+    Uint32 version;
+    Uint32 switch_palette;
+
     /* head data */
-    unsigned int width;
-    unsigned int height;
-    unsigned int anim_count;
-    unsigned int anim_ticks;
+    Uint32 width;
+    Uint32 height;
+    Uint32 anim_count;
+    Uint32 anim_ticks;
 
     /* animation data */
-    unsigned int *anims;
+    Uint32 *anims;
 
     /* map data itself */
-    unsigned int *data; 
-} map_data;
+    Uint32 *data; 
+} t_map;
 
-void init_map();
-void write_map(char *filename);
-void read_map(char *filename);
-void fill_map(int id);
-void map_put(int id, int xt, int yt);
-void map_new(unsigned int width, unsigned int height, unsigned int anim_count, unsigned int anim_ticks);
+/*
+ * FUNCTIONS
+ */
+t_map *map_new(char *file);
+t_map *map_new_empty(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks);
+void map_free(t_map *map);
+
+void map_save(t_map *map, char *file);
+t_map *map_open(char *file);
+
+void map_fill(t_map *map, int id);
+void map_put(t_map *map, int id, int xt, int yt);
+
+void map_draw(t_map *map, SDL_Surface *sfc);
+void map_idle(t_map *map);
 
 #endif

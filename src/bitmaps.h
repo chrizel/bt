@@ -21,6 +21,7 @@
 #include "bmpl.h"
 
 t_bmpl_item bmpl_list[] = {
+    {"map.stock_default", "data/tiles/stock1.bmp", NULL, 0},
     {"map.stock1", "data/tiles/empty_stock.bmp", NULL, 0},
     {"map.stock2", "data/tiles/stock1.bmp", NULL, 0},
     {"font.bg.test", "data/Speak/test3.bmp", NULL, BL_COLORKEY},

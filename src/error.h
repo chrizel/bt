@@ -18,6 +18,8 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#define INFO(text) puts(text "\n");
+
 void warning(char *text, ...);
 void error(char *text, ...);
 
