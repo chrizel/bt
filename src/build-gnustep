@@ -1,0 +1,9 @@
+#! /bin/bash
+
+mkdir "Bermuda Triangle.app"
+cp bt "Bermuda Triangle.app"
+cp -r data "Bermuda Triangle.app"
+cp *.py "Bermuda Triangle.app"
+cp *.map "Bermuda Triangle.app"
+cp gnustep-script "Bermuda Triangle.app/Bermuda Triangle"
+chmod a+x "Bermuda Triangle.app/Bermuda Triangle"

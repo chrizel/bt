@@ -1,0 +1,11 @@
+Bermuda Triangle has a special support for GNUstep. You can build an app file
+by typing:
+  cd src
+  make gnustep
+
+Now there is a directory called "Bermuda Triangle.app" in src. You can
+copy it to ~/GNUstep/Applications/ to start Bermuda Triangle by typing:
+  openapp "Bermuda Triangle"
+
+Have a lot of fun with GNUstep,
+Simon

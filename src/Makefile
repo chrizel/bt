@@ -13,10 +13,17 @@ all: $(BIN)
 $(BIN): $(OBJ)
 	$(CC) -o $(BIN) $(LIBS) $(OBJ)
 
+gnustep: $(BIN)
+	./build-gnustep
+
 %.o: %.m $(HDR) 
 	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
 
 clean:
-	@rm $(BIN) $(OBJ)
+	@echo If there come errors you can ignore this...
+	@rm -r $(BIN) $(OBJ) "Bermuda Triangle.app" 2> /dev/null
+
+.PHONY: all clean gnu_step
+
 
 # vim: sw=4 noet ts=4:
