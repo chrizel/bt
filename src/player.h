@@ -19,13 +19,13 @@
 #define PLAYER_H
 
 class Player {
- private:
+private:
     SDL_Surface *my_sfc;
     SDL_Rect pos;
     SDL_Rect cur_shape;
     bool blink;
 
- public:
+public:
     Player();
     virtual ~Player();
 

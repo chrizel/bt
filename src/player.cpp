@@ -39,7 +39,7 @@ SDL_Rect wider_rect(SDL_Rect *rect, int border)
 
 Player::Player()
 {
-  blink = false;
+    blink = false;
     my_sfc = bmpl_get("player.player1");
 
     pos.w = 80;
@@ -60,22 +60,22 @@ Player::~Player()
 
 void Player::onDraw(SDL_Surface *sfc)
 {
-  if (blink)
-    cur_shape.x = 80;
-  else
-    cur_shape.x = 0;
+    if (blink)
+	cur_shape.x = 80;
+    else
+	cur_shape.x = 0;
 
-  SDL_BlitSurface(my_sfc, &cur_shape, sfc, &pos);
-  PUSH_UR(wider_rect(&pos, 10));
+    SDL_BlitSurface(my_sfc, &cur_shape, sfc, &pos);
+    PUSH_UR(wider_rect(&pos, 10));
 }
 
 bool Player::switchBlink()
 {
-  blink = !blink;
-  return blink;
+    blink = !blink;
+    return blink;
 }
 
 bool Player::getBlink()
 {
-  return blink;
+    return blink;
 }

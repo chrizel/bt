@@ -92,7 +92,7 @@ void Game::eventLoop()
 
 void Game::printGPL()
 {
-  std::cout << GPL_TEXT;
+    std::cout << GPL_TEXT;
 }
 
 void Game::print(char *text)
