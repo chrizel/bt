@@ -23,7 +23,7 @@
 #include "map.h"
 
 #define FPS 30
-#define BPP 8
+#define BPP 16
 
 #if(BPP == 8)
 #define USE_8BIT

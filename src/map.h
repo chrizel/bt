@@ -52,6 +52,8 @@ private:
     /* map data itself */
     Uint32 *data;
 
+    SDL_Rect srcrect;
+
     void create(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks);
 
 public:

@@ -32,7 +32,6 @@
     map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = id;
 
 /* global static variables */
-static SDL_Rect srcrect;
 
 /* helper functions */
 static Uint32 map_anim_timer(Uint32 interval, void *param);
@@ -102,6 +101,7 @@ void Map::create(Uint32 width, Uint32 height,
      * map as parameter... :)
      */
     SDL_AddTimer(100, map_anim_timer, (void *)this);
+    srcrect.w = srcrect.h = TILE_SIZE;
 }
 
 Map::Map(char *file)
@@ -191,6 +191,7 @@ void Map::open(char *file)
 
     fclose(fp);
     printf("ok (cur_map->data[0] = %u)\n", this->data[0]);
+    srcrect.w = srcrect.h = TILE_SIZE;
 }
 
 void Map::fill(int id)
@@ -224,7 +225,8 @@ void Map::draw(SDL_Surface *sfc)
     SDL_Rect rect;
 
     // TODO: We could do that already in init_map, if srcrect would be global!?
-    srcrect.w = srcrect.h = rect.w = rect.h = TILE_SIZE;
+    //srcrect.w = srcrect.h = rect.w = rect.h = TILE_SIZE;
+    rect.w = rect.h = TILE_SIZE;
 
     anim_switched = this->prev_ticker != this->anim_ticker;
 
