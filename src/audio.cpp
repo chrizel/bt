@@ -7,7 +7,7 @@
 
 +new
 {
-    return [[return super] init];
+    return [[super new] init];
 }
 
 -init
