@@ -61,7 +61,33 @@ int Audio::AddMusic(char *filename)
 
 int Audio::AddChunk(char *filename)
 {
-    // TODO
+    Mix_Chunk *chunk;
+    int index = -1;
+    int i;
+
+    // Searching for a free place
+    for (i = 0; i < size_chunk; i++) {
+	if (music_list[i] == NULL) {
+	    index = i;
+	    break;
+	}
+    }
+
+    // If no place was found... a new will created...
+    if (index == -1) {
+	Mix_Chunk **new_list = new Mix_Chunk*[size_chunk + CHUNK_SIZE];
+	for (i = 0; i < size_chunk; i++)
+	    new_list[i] = chunk_list[i];
+	size_chunk += CHUNK_SIZE;
+	index = size_chunk;
+    }
+
+    // Load and add to list
+    chunk = Mix_LoadWAV(filename);
+    chunk_list[index] = chunk;
+
+    // Return chunk id
+    return index;
 }
 
 void Audio::PlayMusic(int id)
@@ -80,5 +106,5 @@ void Audio::StopMusic()
 
 void Audio::PlayChunk(int id)
 {
-
+    Mix_PlayChannel(-1, chunk_list[id], 0);
 }
