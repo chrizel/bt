@@ -21,7 +21,7 @@
 #ifndef BMPL_H
 #define BMPL_H
 
-#include <glSDL.h>
+#include "glSDL.h"
 #include <SDL_image.h>
 
 enum {

@@ -24,7 +24,7 @@ myMusic and myChunk tells the class which music or chunk should be played.
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <glSDL.h>
+#include "glSDL.h"
 #include <SDL_mixer.h>
 
 // Array size of music_list and chunk_list

@@ -18,7 +18,7 @@
 #ifndef JOYSTICK_H
 #define JOYSTICK_H
 
-#include <glSDL.h>
+#include "glSDL.h"
 #include <stdlib.h>
 
 extern SDL_Joystick **joysticks;
