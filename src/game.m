@@ -70,13 +70,13 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     player = [Player newWithSfcName:"player.player1" position:&ppos];
 
     printf("make audio...\n");
-    audio = [Audio new];
+    //audio = [Audio new];
 
     printf("addMusic...\n");
-    music = [audio addMusic:"data/penguinplanet.ogg"];
+    //music = [audio addMusic:"data/penguinplanet.ogg"];
 
     printf("addChunk...\n");
-    chunk = [audio addChunk:"data/sound.wav"];
+    //chunk = [audio addChunk:"data/sound.wav"];
 
     //printf("play music...\n");
     //[audio playMusic:music];
@@ -90,7 +90,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     [player free];
     [console free];
     [map free];
-    [audio free];
+    //[audio free];
     [python free];
 
     [super free];
@@ -182,7 +182,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 			//std::cout << "Bye :)" << std::endl;
 			exit(0);
 		    } else if (sdl_ev->key.keysym.sym == SDLK_s) {
-			[audio playChunk:chunk];
+			//[audio playChunk:chunk];
 		    }
                     break;
                 case SDL_KEYUP:

@@ -1,0 +1,26 @@
+Bermuda Triangle
+****************
+
+Technology release 0.0.1
+
+Requirements:
+- Linux with glib-2.3 are testet
+- gcc with Objective C compiler
+- SDL (http://www.libsdl.org)
+- SDL_image
+- SDL_mixer
+- Python 2.3
+
+Installation:
+$ cd src
+$ make
+No system installation yet ;-)
+
+Running:
+$ ./bt
+
+What can i do?
+You can move the player with the cursor keys. Move the map with the numpad keys. There are still bugs, but hey - it's a T E C H N O L O G Y release. ;-)
+
+Christian Zeller <chrizel@gmx.net>
+2004/04/16
