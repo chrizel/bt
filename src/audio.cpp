@@ -1,17 +1,16 @@
 #include <iostream>
+#include <objc/Object.h>
 #include "audio.h"
+#include "alloc.h"
 
-Audio::Audio()
+@implementation Audio
+
++new
 {
-    init();
+    return [[return super] init];
 }
 
-Audio::~Audio()
-{
-    free();
-}
-
-void Audio::init()
+-init
 {
 #ifndef DISABLE_AUDIO
     int i;
@@ -21,8 +20,8 @@ void Audio::init()
     Mix_AllocateChannels(MIXER_CHANNELS);
 
     // Reseve memory for arrays and set to NULL
-    music_list = new Mix_Music*[MUSIC_SIZE];
-    chunk_list = new Mix_Chunk*[CHUNK_SIZE];
+    music_list = MALLOC(Mix_Music *, MUSIC_SIZE);
+    chunk_list = MALLOC(Mix_Chunk *, CHUNK_SIZE);
     for (i = 0; i < MUSIC_SIZE; i++) 
 	music_list[i] = NULL;
     for (i = 0; i < CHUNK_SIZE; i++)
@@ -30,10 +29,12 @@ void Audio::init()
     size_music = MUSIC_SIZE;
     size_chunk = CHUNK_SIZE;
 #endif
+    return self;
 }
 
-void Audio::free()
+-free
 {
+#ifndef DISABLE_AUDIO
     int i;
 
     for (i = 0; i < size_music; i++)
@@ -43,9 +44,11 @@ void Audio::free()
     for (i = 0; i < size_chunk; i++)
 	if (chunk_list[i] != NULL)
 	    Mix_FreeChunk(chunk_list[i]);
+    [super free];
+#endif
 }
 
-int Audio::AddMusic(char *filename)
+-(int)addMusic: (char *)filename
 {
 #ifndef DISABLE_AUDIO
     Mix_Music *music;
@@ -62,7 +65,8 @@ int Audio::AddMusic(char *filename)
 
     // If no place was found... a new will created...
     if (index == -1) {
-	Mix_Music **new_list = new Mix_Music*[size_music + MUSIC_SIZE];
+	Mix_Music **new_list = MALLOC_ARRAY(Mix_Music *, 
+					    size_music + MUSIC_SIZE);
 	for (i = 0; i < size_music; i++)
 	    new_list[i] = music_list[i];
 	size_music += MUSIC_SIZE;
@@ -75,10 +79,12 @@ int Audio::AddMusic(char *filename)
 
     // Return music id
     return index;
+#else
+    return 0;
 #endif
 }
 
-int Audio::AddChunk(char *filename)
+-(int)addChunk: (char *)filename
 {
 #ifndef DISABLE_AUDIO
     Mix_Chunk *chunk;
@@ -95,7 +101,8 @@ int Audio::AddChunk(char *filename)
 
     // If no place was found... a new will created...
     if (index == -1) {
-	Mix_Chunk **new_list = new Mix_Chunk*[size_chunk + CHUNK_SIZE];
+	Mix_Chunk **new_list = MALLOC_ARRAY(Mix_Chunk *, 
+					    size_chunk + CHUNK_SIZE);
 	for (i = 0; i < size_chunk; i++)
 	    new_list[i] = chunk_list[i];
 	size_chunk += CHUNK_SIZE;
@@ -108,10 +115,12 @@ int Audio::AddChunk(char *filename)
 
     // Return chunk id
     return index;
+#else
+    return 0;
 #endif
 }
 
-void Audio::DeleteMusic(int id)
+-deleteMusic: (int)id
 {
 #ifndef DISABLE_AUDIO
     Mix_FreeMusic(music_list[id]);
@@ -119,7 +128,7 @@ void Audio::DeleteMusic(int id)
 #endif
 }
 
-void Audio::DeleteChunk(int id)
+-deleteChunk: (int)id
 {
 #ifndef DISABLE_AUDIO
     Mix_FreeChunk(chunk_list[id]);
@@ -127,7 +136,7 @@ void Audio::DeleteChunk(int id)
 #endif
 }
 
-void Audio::PlayMusic(int id)
+-playMusic: (int)id
 {
 #ifndef DISABLE_AUDIO
     //Mix_Music *music;
@@ -138,16 +147,18 @@ void Audio::PlayMusic(int id)
 #endif
 }
 
-void Audio::StopMusic()
+-stopMusic
 {
 #ifndef DISABLE_AUDIO
     // TODO
 #endif
 }
 
-void Audio::PlayChunk(int id)
+-playChunk: (int)id
 {
 #ifndef DISABLE_AUDIO
     Mix_PlayChannel(-1, chunk_list[id], 0);
 #endif
 }
+
+@end
