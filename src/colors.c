@@ -8,7 +8,7 @@ static int load_gimp_palette(char *file);
 void init_colors()
 {
     /* Load GIMP palette */
-    load_gimp_palette("data/palette3.gpl");
+    load_gimp_palette("data/palette2.gpl");
 
     /* Set palette */
     SDL_SetColors(screen, colors, 0, n_colors);

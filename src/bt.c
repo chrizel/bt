@@ -12,6 +12,7 @@
 #include "colors.h"
 #include "textshow.h"
 #include "input.h"
+#include "filter.h"
 
 
 static void init_sdl(void);
@@ -20,6 +21,9 @@ static void quit();
 
 int main(int argc, char *argv[])
 {
+    cur_filter = NULL;
+    con_last_param = NULL;
+
     init_sdl();
     init_colors();
     init_sdl_events();

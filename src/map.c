@@ -15,7 +15,7 @@
 
 static SDL_Surface **stocks;
 static SDL_Surface *wallpaper;
-static int xoffset = 0, yoffset = 0;
+static int xoffset = 6, yoffset = 198;
 static int anim_ticker = 0;
 static int file_version = 1;
 static map_data *cur_map = NULL;
@@ -53,7 +53,7 @@ void init_map()
     //write_map("main.map");
     read_map("main.map");
 
-    SDL_AddTimer(250, switch_anim_ticker, NULL);
+    SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
 
 static void write_map(char *filename)

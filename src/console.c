@@ -4,6 +4,7 @@
 #include "bt.h"
 #include "console.h"
 #include "console/SDL_console.h"
+#include "filter.h"
 
 typedef struct {
     char *command;
@@ -12,6 +13,8 @@ typedef struct {
 
 t_command commands[] = {
     {"exit", bt_exit},
+    {"night", con_switch_filter},
+    {"day", con_switch_filter},
     {NULL, NULL},
 };
 
@@ -43,13 +46,16 @@ void init_console()
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
     int i;
+    con_last_param = command;
 
     for (i = 0; commands[i].command; ++i) {
         if (strcmp(commands[i].command, command) == 0) {
             commands[i].func();
+            con_last_param = NULL;
             return;
         }
     }
 
+    con_last_param = NULL;
     CON_Out(console, "Command not found");
 }

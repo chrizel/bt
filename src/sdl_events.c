@@ -5,6 +5,7 @@
 #include "alloc.h"
 #include "event.h"
 #include "sdl_events.h"
+#include "filter.h"
 
 void init_sdl_events(void)
 {
@@ -59,6 +60,11 @@ void sdl_event_loop(void)
         evl_call(evl_sdl, EV_SDL_IDLE);
         SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
         evl_call(evl_sdl, EV_SDL_PAINT);
+
+        /* Execute surface filter... */
+        if (cur_filter)
+            cur_filter();
+
         CON_DrawConsole(btConsole);
         
         SDL_Flip(screen);
