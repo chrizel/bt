@@ -58,7 +58,7 @@ void init_input()
     evl_reg(evl_sdl, EV_SDL_KEYDOWN, on_key);
     evl_reg(evl_sdl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
     evl_reg(evl_sdl, EV_SDL_JOYAXIS, on_joyaxis);
-    evl_red(evl_sdl, EV_INP_RUN, inp_run);
+    evl_reg(evl_sdl, EV_INP_RUN, inp_run);
 }
 
 void free_input()
