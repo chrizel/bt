@@ -182,3 +182,4 @@ static void CommandHandler(ConsoleInformation *console, char *command)
 	[curConsole handleCommand:command];
 }
 
+@end

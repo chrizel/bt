@@ -256,9 +256,19 @@ Game::~Game()
 
 }
 
+- print:(char *)t
+{
+    [self printLine:t];
+}
+
 - printLine:(char *)t
 {
-    // [console printLine:t];
+    // stdio...
+    puts(t);
+    puts("\n");
+
+    // and console
+    [console printLine:t];
 }
 
 - (id)getConsole

@@ -46,7 +46,10 @@
 /* virtual ~Game(); */
 
 - run;
+
+- print:(char *)t;
 - printLine:(char *)t;
+
 - (id)getConsole;
 - (id)getMap;
 - (id)getPlayer;
