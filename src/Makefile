@@ -6,6 +6,7 @@ CFLAGS=-g `sdl-config --cflags`
 LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image 
 CC=gcc
 
+all: $(BIN)
 
 $(BIN): $(OBJ)
 	gcc -o $(BIN) $(LIBS) $(OBJ)
