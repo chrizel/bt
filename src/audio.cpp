@@ -1,3 +1,4 @@
+#include <iostream>
 #include "audio.h"
 
 Audio::Audio()
@@ -16,6 +17,7 @@ void Audio::init()
 
     // Initialize audio
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
+    Mix_AllocateChannels(MIXER_CHANNELS);
 
     // Reseve memory for arrays and set to NULL
     music_list = new Mix_Music*[MUSIC_SIZE];
@@ -90,6 +92,18 @@ int Audio::AddChunk(char *filename)
     return index;
 }
 
+void Audio::DeleteMusic(int id)
+{
+    Mix_FreeMusic(music_list[id]);
+    music_list[id] = NULL;
+}
+
+void Audio::DeleteChunk(int id)
+{
+    Mix_FreeChunk(chunk_list[id]);
+    chunk_list[id] = NULL;
+}
+
 void Audio::PlayMusic(int id)
 {
     //Mix_Music *music;
@@ -101,7 +115,7 @@ void Audio::PlayMusic(int id)
 
 void Audio::StopMusic()
 {
-
+    // TODO
 }
 
 void Audio::PlayChunk(int id)
