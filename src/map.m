@@ -43,18 +43,13 @@ static Uint32 map_anim_timer(Uint32 interval, void *param);
 
 static Uint32 map_anim_timer(Uint32 interval, void *param)
 {
-    /*
-    Map *map;
-    map = (Map *)param;
+    id map;
+    map = (id)param;
+    [map incAnimTicker];
 
-    map->anim_ticker++;
-    if (map->anim_ticker == map->anim_ticks)
-        map->anim_ticker = 0;
-
-    map->switch_palette = 1;
+    //map->switch_palette = 1;
 
     return interval;
-    */
 }
 
 static void writeInt(FILE *fp, Uint32 num)
@@ -75,6 +70,13 @@ static Uint32 readInt(FILE *fp)
     SDL_FreeRW(area);
 
     return num;
+}
+
+- incAnimTicker
+{
+    anim_ticker++;
+    if (anim_ticker == anim_ticks)
+	anim_ticker = 0;
 }
 
 - (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at

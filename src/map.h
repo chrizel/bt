@@ -78,6 +78,8 @@ enum {
 - onDraw:(SDL_Surface *)sfc;
 - onIdle;
 
+- incAnimTicker;
+
 @end
 
 #endif
