@@ -15,6 +15,11 @@ void *bt_malloc(size_t size)
     return ptr;
 }
 
+void *bt_realloc(void *ptr, size_t size)
+{
+    return realloc(ptr, size);
+}
+
 void bt_free(void *ptr)
 {
     free(ptr);
