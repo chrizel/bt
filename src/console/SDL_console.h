@@ -209,6 +209,7 @@ extern "C" {
 
 	/*! Internal: Called if you press Ctrl-C (deletes the commandline) */
 	extern DECLSPEC void SDLCALL Clear_Command(ConsoleInformation *console);
+	extern DECLSPEC void SDLCALL Kill_Command(ConsoleInformation *console);
 	/*! Internal: Called if the command line has changed (assemles console->Command from LCommand and RCommand */
 	extern DECLSPEC void SDLCALL Assemble_Command(ConsoleInformation *console);
 	/*! Internal: Called if you press Ctrl-L (deletes the History) */
