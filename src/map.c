@@ -33,7 +33,7 @@ static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
 {
-    load_stocks("map.stock1", 4, 4); 
+    load_stocks("map.stock1", 15, 15); 
     evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
@@ -90,6 +90,17 @@ void write_map(char *filename)
 
     fclose(fp);
     printf("ok\n");
+}
+
+void fill_map(int id)
+{
+    int x, y;
+
+    for (y = 0; y < cur_map->height; y++) {
+        for (x = 0; x < cur_map->width; x++) {
+            cur_map->data[y * cur_map->width + x] = id;
+        }
+    }
 }
 
 void read_map(char *filename)
@@ -245,10 +256,10 @@ static void on_idle()
         } else if (mousestate & SDL_BUTTON(3)) {
 
             if (editor_pg) {
-                for (y = 0; y < editor_pg_size; y++) {
-                    for (x = 0; x < editor_pg_size; x++) {
+                for (y = 0; y < editor_pg_y; y++) {
+                    for (x = 0; x < editor_pg_x; x++) {
                         set_stock_id(xt + x, yt + y, 
-                                editor_pg[editor_pg_size * y + x]);
+                                editor_pg[editor_pg_x * y + x]);
                     }
                 }
             }

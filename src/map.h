@@ -24,5 +24,6 @@ typedef struct _map_data {
 void init_map();
 void write_map(char *filename);
 void read_map(char *filename);
+void fill_map(int id);
 
 #endif

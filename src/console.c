@@ -20,6 +20,7 @@ t_command commands[] = {
     {"pg", bt_pg},
     {"write", bt_write},
     {"load", bt_load},
+    {"fill", bt_fill},
     {NULL, NULL},
 };
 
@@ -48,19 +49,47 @@ void init_console()
     //CON_Show(btConsole);
 }
 
+static char *CommandFile(char *file)
+{
+    char buf[512];
+    FILE *fp;
+
+    /* "<filename"... we don't need < */
+    file = file + 1;
+
+    fp = fopen(file, "r");
+    if (fp) {
+        fgets(buf, 512, fp);
+        CON_Out(btConsole, buf);
+        CommandHandler(btConsole, buf);
+        fclose(fp);
+    } else {
+        CON_Out(btConsole, "file not found");
+        return NULL;
+    }
+}
+
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
-    int i;
+    int i, found = 0;
+
+    if (command[0] == '<') {
+        command = CommandFile(command);
+        return;
+    }
+
     con_last_param = command;
 
     for (i = 0; commands[i].command; ++i) {
         if (strncmp(commands[i].command, command, strlen(commands[i].command)) == 0) {
             commands[i].func();
             con_last_param = NULL;
-            return;
+            found = 1;
         }
     }
 
     con_last_param = NULL;
-    CON_Out(console, "Command not found");
+
+    if (!found)
+        CON_Out(console, "Command not found");
 }

@@ -121,18 +121,18 @@ void bt_pen(void)
 void bt_pg(void)
 {
     int i, j, len, pos;
-    char buf1[100], buf2[100];
-    sscanf(con_last_param, "%s %d %[^a-z]", buf1, &editor_pg_size, buf2);
+    char buf1[512], buf2[512];
+    sscanf(con_last_param, "%s %d %d %[^a-z]", buf1, &editor_pg_x, &editor_pg_y, buf2);
 
     if (editor_pg)
         FREE(editor_pg);
 
-    editor_pg = MALLOC_ARRAY(int, editor_pg_size * editor_pg_size);
+    editor_pg = MALLOC_ARRAY(int, editor_pg_x * editor_pg_y);
 
     j = 0;
     pos = 0;
     printf("\nbuf2: %s\n", buf2);
-    for (i = 0; (i <= strlen(buf2)) && (pos < editor_pg_size * editor_pg_size); i++) {
+    for (i = 0; (i <= strlen(buf2)) && (pos < editor_pg_x * editor_pg_y); i++) {
         printf("%d: %c\n", i, buf2[i]);
         buf1[j] = buf2[i];
 
@@ -146,14 +146,14 @@ void bt_pg(void)
             j++;
     }
 
-    printf("\npg:\t%d\n", editor_pg_size);
-    for (i = 0; i < editor_pg_size * editor_pg_size; i++)
+    printf("\npg:\t%d\n", editor_pg_x * editor_pg_y);
+    for (i = 0; i < editor_pg_x * editor_pg_y; i++)
         printf("\t%d\n", editor_pg[i]);
 }
 
 void bt_write(void)
 {
-    int buf1[100], buf2[100];
+    char buf1[100], buf2[100];
     sscanf(con_last_param, "%s %s", buf1, buf2);
 
     write_map(buf2);
@@ -161,8 +161,17 @@ void bt_write(void)
 
 void bt_load(void)
 {
-    int buf1[100], buf2[100];
+    char buf1[100], buf2[100];
     sscanf(con_last_param, "%s %s", buf1, buf2);
 
     read_map(buf2);
+}
+
+void bt_fill(void)
+{
+    char buf1[100];
+    int id;
+    sscanf(con_last_param, "%s %d", buf1, &id);
+
+    fill_map(id);
 }
