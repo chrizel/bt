@@ -4,19 +4,19 @@ basic help:
 ----------
 
 How to create the class:
- Audio audio = new Audio();
+ id audio = [Audio new];
 SDL_mixer will be started and free memory to save chunks and musics will be
 allocated.
 
 How to add a music and a chunk:
- int myMusic = audio.AddMusic(filename);
- int myChunk = audio.AddChunk(filename);
+ int myMusic = [audio AddMusic: filename;
+ int myChunk = [audio AddChunk: filename;
 The functions AddMusic and AddChunk will add a special id into myMusic and
 myChunk.
 
 How to play music and chunk:
- audio.PlayMusic(myMusic);
- audio.PlayChunk(myChunk);
+ [audio PlayMusic: myMusic];
+ [audio PlayChunk: myChunk];
 myMusic and myChunk tells the class which music or chunk should be played.
 
 */
@@ -50,7 +50,6 @@ myMusic and myChunk tells the class which music or chunk should be played.
     int size_music, size_chunk;
 }
 
-+new;
 -init;
 -free;
 

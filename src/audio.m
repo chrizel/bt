@@ -1,13 +1,15 @@
 #include <objc/Object.h>
+#include <stdio.h>
 #include "audio.h"
 #include "alloc.h"
+#import "bt.h"
 
 @implementation Audio
 
-+new
+/*+new
 {
     return [[super new] init];
-}
+}*/
 
 -init
 {
@@ -27,6 +29,7 @@
 	chunk_list[i] = NULL;
     size_music = MUSIC_SIZE;
     size_chunk = CHUNK_SIZE;
+    [bt print: "Audio ready"];
 #endif
     return self;
 }
@@ -64,10 +67,8 @@
 
     // If no place was found... a new will created...
     if (index == -1) {
-	Mix_Music **new_list = MALLOC_ARRAY(Mix_Music *, 
+	Mix_Music **new_list = REALLOC_ARRAY(Mix_Music *, music_list,
 					    size_music + MUSIC_SIZE);
-	for (i = 0; i < size_music; i++)
-	    new_list[i] = music_list[i];
 	size_music += MUSIC_SIZE;
 	index = size_music;
     }
