@@ -48,6 +48,9 @@ int ticks_begin, ticks_end;
 
 int main(int argc, char *argv[])
 {
+    bt_argc = argc;
+    bt_argv = argv;
+
     cur_filter = NULL;
     printf("create bt...\n");
     bt = [Game newWithTitle:"Bermuda Triangle"];

@@ -27,16 +27,11 @@
 @interface Console: Object
 {
     ConsoleInformation *console;
-    char *lastParam;
 }
 
-+ (id)new;
-- (id)init;
-// virtual ~Console();
+- init;
+- free;
 
-- (char *)getLastParam;
-- handleCommand:(char *)command;
-- readScript:(char *)filename;
 - print:(char *)str;
 - (BOOL)isVisible;
 - (BOOL)isClosing;

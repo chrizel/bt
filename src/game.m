@@ -23,9 +23,7 @@
 #include "sdl_events.h"
 #include "error.h"
 #include "console.h"
-/*
 #include "editor.h"
-*/
 #include "player.h"
 #include "audio.h"
 #include "python.h"
@@ -59,7 +57,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     printf("make map...\n");
     python = [Python new];
     map = [Map newWithFile:"main.map"];
-    //editor = [Editor new];
+    editor = [Editor new];
     console = [Console new];
     player = [Player new];
 
@@ -159,9 +157,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
             ;
         ticks = SDL_GetTicks() + (1000 / FPS);
 
-	//printf("before PollEvent...\n");
         while (SDL_PollEvent(sdl_ev)) {
-	    //printf("inside PollEvent\n");
 
 	    if ([console isVisible]) {
 		[console onEvent:sdl_ev];
@@ -202,15 +198,14 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 	*/
 
         //map->onIdle();
-	//printf("Map onIdle\n");
 	[map onIdle];
 	[player onIdle];
-	//editor->onIdle();
+	[editor onIdle];
         
 	//printf("Map onDraw\n");
 	[map onDraw:screen];
 	[player onDraw:screen];
-	//[editor onDraw:screen];
+	[editor onDraw:screen];
 	[console draw];
 
         /* Execute surface filter... */

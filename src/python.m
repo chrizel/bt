@@ -17,6 +17,7 @@
 
 #include <Python.h>
 #include "python.h"
+#include "bt.h"
 
 @implementation Python
 
@@ -35,10 +36,14 @@ static PyMethodDef btMethods[] = {
 {
     printf("Init python...");
     Py_Initialize();
+    PySys_SetArgv(bt_argc, bt_argv);
     Py_InitModule("bt", btMethods);
     
     // Import our module here...
     PyRun_SimpleString("import bt");
+
+    // And call init.py
+    PyRun_SimpleString("from init import *");
 
     puts("ok");
     return self;

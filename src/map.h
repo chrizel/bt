@@ -74,7 +74,7 @@ enum {
 
 - fill:(int)id;
 - fillWithID:(int)id;
-- putID:(int)id xT:(int)xt yT:(int)yt;
+- setTID:(int)id onX:(int)x andY:(int)yt;
 
 - onEvent:(SDL_Event *)event;
 - onDraw:(SDL_Surface *)sfc;

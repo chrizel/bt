@@ -31,8 +31,8 @@
 
 //#include "eventhandler.h"
 
-#define SET_STOCK_ID(map, xt, yt, id) \
-    map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = id;
+#define SET_STOCK_ID(map, xt, yt, tid) \
+    map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = tid;
 
 /* global static variables */
 
@@ -204,10 +204,12 @@ static Uint32 readInt(FILE *fp)
             self->data[y * self->width + x] = id;
 }
 
-- putID:(int)id xT:(int)xt yT:(int)yt;
+- setTID:(int)tid onX:(int)x andY:(int)y;
 {
-    int x, y;
+    //int x, y;
 
+    SET_STOCK_ID(self, x, y, tid);
+    
     /* TODO 
     if (id) {
         SET_STOCK_ID(this, xt, yt, editor_pen);

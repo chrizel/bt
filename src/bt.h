@@ -45,18 +45,10 @@ extern int ticks_begin, ticks_end;
 
 id bt;
 
-void bt_exit();
-void bt_pen(void);
-
-void bt_editor();
-void bt_pg(void);
-void bt_write(void);
-void bt_load(void);
-void bt_fill(void);
-void bt_put(void);
-void bt_new(void);
-
 void btQuit();
+
+int bt_argc;
+char **bt_argv;
 
 #ifdef DO_FRAMETEST
 void fps_output();

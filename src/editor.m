@@ -15,8 +15,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#include <iostream>
-
 #include <SDL.h>
 #include <SDL_endian.h>
 
@@ -24,94 +22,57 @@
 #include "map.h"
 #include "bt.h"
 
-Editor::Editor(Map *aMap)
+@implementation Editor
+
+- init
 {
-    mode = 1;
+    active = YES;
     pen = 0;
     pg = NULL;
-    
-    map = aMap;
 }
 
-Editor::~Editor()
+- free
 {
+    [super free];
 }
 
-void Editor::writeInt(FILE *fp, Uint32 num)
+- (BOOL)isActive
 {
-    SDL_RWops *area;
-    area = SDL_RWFromFP(fp, 0);
-    SDL_WriteLE32(area, num);
-    SDL_FreeRW(area);
+    return active;
 }
 
-Uint32 Editor::readInt(FILE *fp)
+- setActive:(BOOL)value
 {
-    int num;
-
-    SDL_RWops *area;
-    area = SDL_RWFromFP(fp, 0);
-    num = SDL_ReadLE32(area);
-    SDL_FreeRW(area);
-
-    return num;
+    active = value;
 }
 
-bool Editor::getMode()
-{
-    return mode;
-}
-
-bool Editor::setMode(bool value)
-{
-    mode = value;
-    return mode;
-}
-
-int Editor::getPen()
+- (int)getPen
 {
     return pen;
 }
 
-int Editor::setPen(int value)
+- (int)setPen:(int)value
 {
     pen = value;
     return pen;
 }
 
-int Editor::setTile(int id, int x, int y)
+- setTID:(int)tid onX:(int)x andY:(int)y
 {
-    map->put(id, x, y);
+    [[bt getMap] setTID:tid onX:x andY:y];
 }
 
-void Editor::saveMap(char *file)
-{
-    map->save(file);
-}
-
-void Editor::openMap(char *file)
-{
-    map->open(file);
-}
-
-void Editor::newMap(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks)
+- onEvent:(SDL_Event *)event
 {
 }
 
-void Editor::onEvent(SDL_Event *event)
+- onDraw:(SDL_Surface *)sfc;
 {
 }
 
-void Editor::onDraw(SDL_Surface *sfc)
+- onIdle
 {
-}
-
-void Editor::onIdle()
-{
-    if (bt->getConsole()->isVisible())
-	return;
-
-    if (mode) {
+    if (active) {
 	int x, y, xt, yt;
         Uint8 mousestate = SDL_GetMouseState(&x, &y);
 
@@ -119,14 +80,14 @@ void Editor::onIdle()
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
         if (mousestate & SDL_BUTTON(1)) {
-	    std::cout << "button1..." << std::endl;
-            map->put(1, xt, yt);
+	    [self setTID:pen onX:xt andY:yt];
 	    whole_redraw = 1;
         } else if (mousestate & SDL_BUTTON(3)) {
-	    std::cout << "button2..." << std::endl;
-            map->put(0, xt, yt);
+	    [self setTID:0 onX:xt andY:yt];
 	    whole_redraw = 1;
 	}
 
     }
 }
+
+@end

@@ -30,7 +30,7 @@
     id map;
     id console;
     id player;
-    //id editor;
+    id editor;
     id audio;
     id python;
 
