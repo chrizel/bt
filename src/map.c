@@ -36,8 +36,8 @@ static void read_map(char *filename);
 void init_map()
 {
     load_stocks("map.stock1", 3, 4); 
-    evl_reg(sdl_evl, EV_SDL_PAINT, draw_map);
-    evl_reg(sdl_evl, EV_SDL_IDLE, on_idle);
+    evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
+    evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
     /* TODO: load map */
     /*

@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include "event.h"
 
-t_evl *sdl_evl;
+t_evl *evl_sdl;
 SDL_Event *sdl_ev;
 
 /* event hooks */

@@ -28,9 +28,9 @@ void init_input()
     inputs = MALLOC(inp_item);
     inputs->type = INP_TYPE_FREE;
 
-    evl_reg(sdl_evl, EV_SDL_KEYDOWN, on_key);
-    evl_reg(sdl_evl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
-    evl_reg(sdl_evl, EV_SDL_JOYAXIS, on_joyaxis);
+    evl_reg(evl_sdl, EV_SDL_KEYDOWN, on_key);
+    evl_reg(evl_sdl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
+    evl_reg(evl_sdl, EV_SDL_JOYAXIS, on_joyaxis);
 }
 
 void free_input()

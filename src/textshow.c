@@ -12,7 +12,7 @@ static void textshow_paint()
 
 int init_textshow()
 {
-    evl_reg(sdl_evl, EV_SDL_PAINT, textshow_paint);
+    evl_reg(evl_sdl, EV_SDL_PAINT, textshow_paint);
 
     background = (SDL_Surface *) bmpl_get("font.bg.test");
     if(background == NULL)

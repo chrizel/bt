@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     init_textshow();
     init_input();
 
-    evl_reg(sdl_evl, EV_SDL_KEYDOWN, keydown);
+    evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
 
     /* start main loop */
     sdl_event_loop();

@@ -9,7 +9,7 @@
 void init_sdl_events(void)
 {
     sdl_ev  = MALLOC(SDL_Event);
-    sdl_evl = evl_new(EV_SDL_LAST);
+    evl_sdl = evl_new(EV_SDL_LAST);
 }
 
 void sdl_event_loop(void)
@@ -38,27 +38,27 @@ void sdl_event_loop(void)
                         break;
                     }
 
-                    evl_call(sdl_evl, EV_SDL_KEYDOWN);
+                    evl_call(evl_sdl, EV_SDL_KEYDOWN);
                     break;
                 case SDL_KEYUP:
-                    evl_call(sdl_evl, EV_SDL_KEYUP);
+                    evl_call(evl_sdl, EV_SDL_KEYUP);
                     break;
                 case SDL_JOYBUTTONDOWN:
-                    evl_call(sdl_evl, EV_SDL_JOYBUTTONDOWN);
+                    evl_call(evl_sdl, EV_SDL_JOYBUTTONDOWN);
                     break;
                 case SDL_JOYBUTTONUP:
-                    evl_call(sdl_evl, EV_SDL_JOYBUTTONUP);
+                    evl_call(evl_sdl, EV_SDL_JOYBUTTONUP);
                     break;
                 case SDL_JOYAXISMOTION:
-                    evl_call(sdl_evl, EV_SDL_JOYAXIS);
+                    evl_call(evl_sdl, EV_SDL_JOYAXIS);
                     break;
                 }
             }
         }
 
-        evl_call(sdl_evl, EV_SDL_IDLE);
+        evl_call(evl_sdl, EV_SDL_IDLE);
         SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-        evl_call(sdl_evl, EV_SDL_PAINT);
+        evl_call(evl_sdl, EV_SDL_PAINT);
         CON_DrawConsole(btConsole);
         
         SDL_Flip(screen);
