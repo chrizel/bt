@@ -45,7 +45,6 @@ int ticks_begin, ticks_end;
 
 
 //Game *bt;
-id bt;
 
 int main(int argc, char *argv[])
 {

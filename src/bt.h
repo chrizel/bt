@@ -40,7 +40,7 @@ extern int frames;
 extern int ticks_begin, ticks_end;
 #endif
 
-extern Game *bt;
+id bt;
 
 void bt_exit();
 void bt_pen(void);
