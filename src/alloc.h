@@ -13,7 +13,7 @@ void bt_free(void *ptr);
 #define MALLOC(type)                        MALLOC_ARRAY(type, 1)
 
 /* memory reallocation */
-#define REALLOC_BYTES(type, ptr, bytes)     ((type)bt_realloc(ptr, bytes))
+#define REALLOC_BYTES(type, ptr, bytes)     ((type *)bt_realloc(ptr, bytes))
 #define REALLOC_ARRAY(type, ptr, n)         REALLOC_BYTES(type, ptr, \
                                                           sizeof(type) * n)
 #define REALLOC(type, ptr, bytes)           REALLOC_BYTES(type, ptr, bytes)
