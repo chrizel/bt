@@ -41,8 +41,8 @@
 - eventLoop;
 - printGPL;
 
-+ newWithTitle:(char *)t;
-- initWithTitle:(char *)t;
++ (id)newWithTitle:(char *)t;
+- (id)initWithTitle:(char *)t;
 /* virtual ~Game(); */
 
 - run;

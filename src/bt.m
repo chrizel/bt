@@ -50,8 +50,10 @@ id bt;
 int main(int argc, char *argv[])
 {
     cur_filter = NULL;
+    printf("create bt...\n");
     bt = [Game newWithTitle:"Bermuda Triangle"];
     minilogo = bmpl_get("main.minilogo");
+    printf("run...\n");
     [bt run];
 
     return 0;

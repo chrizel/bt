@@ -41,12 +41,12 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     */
 }
 
-+ newWithTitle:(char *)t
++ (id)newWithTitle:(char *)t
 {
     return [[super new] initWithTitle:t];
 }
 
-- initWithTitle:(char *)t
+- (id)initWithTitle:(char *)t
 {
     title = t;
     [self initSDL];
@@ -55,14 +55,25 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     init_colors();
 #endif
 
+    printf("make map...\n");
     map = [Map newWithFile:"main.map"];
     //editor = [Editor new];
     //console = [Console new];
     //player = [Player new];
+
+    printf("make audio...\n");
     audio = [Audio new];
+
+    printf("addMusic...\n");
     music = [audio addMusic:"data/penguinplanet.ogg"];
+
+    printf("addChunk...\n");
     chunk = [audio addChunk:"data/sound.wav"];
+
+    printf("play music...\n");
     [audio playMusic:music];
+
+    return self;
 }
 
 /*
@@ -108,6 +119,8 @@ Game::~Game()
 
 - run
 {
+    printf("inside run\n");
+
     // Handle fps
     int done = 0;
     Uint32 ticks = SDL_GetTicks();
@@ -128,6 +141,7 @@ Game::~Game()
     ticks_end = ticks_begin;
 #endif
 
+    printf("before while...\n");
     while (!done) {
 	ur_count = 0;
 #ifdef DO_FRAMETEST
@@ -141,7 +155,9 @@ Game::~Game()
             ;
         ticks = SDL_GetTicks() + (1000 / FPS);
 
+	//printf("before PollEvent...\n");
         while (SDL_PollEvent(sdl_ev)) {
+	    //printf("inside PollEvent\n");
 
 	    //if (bt->getConsole()->isVisible()) {
                 /*
@@ -198,9 +214,11 @@ Game::~Game()
 	*/
 
         //map->onIdle();
+	//printf("Map onIdle\n");
 	[map onIdle];
 	//editor->onIdle();
         
+	//printf("Map onDraw\n");
 	[map onDraw:screen];
 	//[player onDraw:screen];
 	//[editor onDraw:screen];
@@ -209,10 +227,12 @@ Game::~Game()
         // if (cur_filter)
 	// cur_filter();
 
+	//printf("BlitSurface\n");
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
         //bt->getConsole()->draw();
         
+	//printf("whole_redraw\n");
 	if (whole_redraw /*|| bt->getConsole()->isVisible()*/) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);

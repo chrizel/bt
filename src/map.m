@@ -110,7 +110,10 @@ static Uint32 readInt(FILE *fp)
 
 + (id)newWithFile:(char *)file
 {
-    return [[super new] open:file];
+    printf("+ newWithFile\n");
+    id me = [super new];
+    [me open:file];
+    return me;
 }
 
 + (id)newWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at
