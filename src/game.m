@@ -193,10 +193,6 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 	    }
 	}
 
-	/*
-
-	*/
-
         //map->onIdle();
 	[map onIdle];
 	[player onIdle];
@@ -207,6 +203,10 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 	[player onDraw:screen];
 	[editor onDraw:screen];
 	[console draw];
+
+	// If editor is running, we'll update it's GUI stuff
+	if ([editor isActive])
+	    [editor updateGUI];
 
         /* Execute surface filter... */
         // if (cur_filter)

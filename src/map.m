@@ -188,6 +188,8 @@ static Uint32 readInt(FILE *fp)
     fclose(fp);
     printf("ok (cur_map->data[0] = %u)\n", self->data[0]);
     srcrect.w = srcrect.h = TILE_SIZE;
+
+    whole_redraw = 1;
 }
 
 - fill:(int)id

@@ -17,21 +17,52 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from Tkinter import *
+from tkFileDialog import *
+import bt
 
-class Editor:
-    def __init__(self):
-        self.w = Tk()
-        
-        self.b = Button(self.w)
-        self.b["text"] = "Hello you"
-        self.b["command"] = self.hi_test
-        self.b.pack()
+class Editor(Frame):
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.pack()
+
+        self.master.title("BT Editor")
+
+        self.btitle = Button(self)
+        self.btitle["text"] = "Bermuda Triangle\nLevel Editor Controls"
+        self.btitle["bg"] = "#efefaf"
+        self.btitle["command"] = self.hi_test
+        self.btitle.pack(fill="both")
+
+        self.bopen = Button(self)
+        self.bopen["text"] = "Open Map"
+        self.bopen["command"] = self.bt_open
+        self.bopen.pack(fill="both")
+
+        self.bsave = Button(self)
+        self.bsave["text"] = "Save Map"
+        self.bsave["command"] = self.bt_save
+        self.bsave.pack(fill="both")
+
+        self.bexit = Button(self)
+        self.bexit["text"] = "Quit BT"
+        self.bexit["bg"] = "#efafaf"
+        self.bexit["command"] = self.bt_exit
+        self.bexit.pack(fill="both")
+
+        print "Python: new editor created"
 
     def hi_test(self):
         print "hiho"
 
-    def run(self):
-#        self.w.mainloop()
-        while 1:
-            self.w.update()
+    def bt_exit(self):
+        bt.exit()
+
+    def bt_save(self):
+        bt.save_map("mein_test.map")
+
+    def bt_open(self):
+        file = askopenfilename(defaultextension="*.map", filetypes=[('Map files', '*.map'), ('All files', '*.*')])
+        if file != "":
+            bt.open_map(file)
+
         

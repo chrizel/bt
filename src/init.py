@@ -16,8 +16,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import sys
+import bt
 import editor
+import console
 
-def make_editor():
+from Tkinter import *
+
+try:
+    
+    # editor uses root window as master
     e = editor.Editor()
-    e.start()
+
+    # for the console, we create an extra toplevel window
+    cw = Toplevel()
+    c = console.Console(cw)
+
+    def updateGUI():
+        e.update()
+        c.update()
+
+except:
+    print "*** Error while init.py:"
+    for line in sys.exc_info():
+        print "python>>>", line
+    bt.exit()

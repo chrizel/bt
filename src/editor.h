@@ -45,6 +45,11 @@
 - onDraw:(SDL_Surface *)sfc;
 - onIdle;
 
+- saveMap:(char *)file;
+- openMap:(char *)file;
+
+- updateGUI;
+
 @end
 
 #endif

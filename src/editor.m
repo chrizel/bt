@@ -18,6 +18,8 @@
 #include <SDL.h>
 #include <SDL_endian.h>
 
+#include "Python.h"
+
 #include "editor.h"
 #include "map.h"
 #include "bt.h"
@@ -70,6 +72,16 @@
 {
 }
 
+- saveMap:(char *)file
+{
+    [[bt getMap] save:file];
+}
+
+- openMap:(char *)file
+{
+    [[bt getMap] open:file];
+}
+
 - onIdle
 {
     if (active) {
@@ -88,6 +100,12 @@
 	}
 
     }
+}
+
+- updateGUI
+{
+    // Update the TK GUI
+    PyRun_SimpleString("updateGUI()");
 }
 
 @end

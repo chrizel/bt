@@ -26,9 +26,45 @@ static PyObject* bt_exit(PyObject *self, PyObject *args)
     exit(0);
 }
 
+static PyObject* bt_exec_code(PyObject *self, PyObject *args)
+{
+    char *code;
+    if (!PyArg_ParseTuple(args, "s", &code))
+	return NULL;
+    PyRun_SimpleString(code);
+    return Py_None;
+}
+
+static PyObject* bt_open_map(PyObject *self, PyObject *args)
+{
+    char *filename;
+    printf("1\n");
+    if (!PyArg_ParseTuple(args, "s", &filename))
+	return NULL;
+    printf("2\n");
+    [[bt getMap] open:filename];
+    printf("3\n");
+    return Py_None;
+}
+
+static PyObject* bt_save_map(PyObject *self, PyObject *args)
+{
+    char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename))
+	return NULL;
+    [[bt getMap] save:filename];
+    return Py_None;
+}
+
 static PyMethodDef btMethods[] = {
     {"exit", bt_exit, METH_NOARGS,
      "Exits Bermuda Triangle."},
+    {"exec_code", bt_exec_code, METH_VARARGS,
+     "Executes the python code in the string argument."},
+    {"open_map", bt_open_map, METH_VARARGS,
+     "Opens a new map."},
+    {"save_map", bt_save_map, METH_VARARGS,
+     "Saves the current map to a file."},
     {NULL, NULL, 0, NULL}
 };
 
