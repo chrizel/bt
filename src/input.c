@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "input.h"
 
+inp_el *inputs;
+
 static void on_key() 
 {
     printf("Keydown\n");
@@ -22,6 +24,9 @@ static void on_joyaxis()
 void init_input()
 {
     init_joystick();
+
+    inputs = MALLOC(inp_el);
+    inputs->type = INP_TYPE_FREE;
 
     evl_reg(sdl_evl, EV_SDL_KEYDOWN, on_key);
     evl_reg(sdl_evl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
