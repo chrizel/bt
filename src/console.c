@@ -22,6 +22,10 @@
 #include "console.h"
 #include "console/SDL_console.h"
 #include "filter.h"
+#include "error.h"
+
+char *con_last_param;
+ConsoleInformation *btConsole;
 
 typedef struct {
     char *command;

@@ -21,8 +21,8 @@
 #include <SDL.h>
 #include "event.h"
 
-t_evl *evl_sdl;
-SDL_Event *sdl_ev;
+extern t_evl *evl_sdl;
+extern SDL_Event *sdl_ev;
 
 /* event hooks */
 enum {
@@ -41,9 +41,9 @@ void init_sdl_events(void);
 void sdl_event_loop(void);
 
 #define MAX_RECTS 2048
-SDL_Rect update_rects[MAX_RECTS];
-int ur_count;
-int whole_redraw;
+extern SDL_Rect update_rects[MAX_RECTS];
+extern int ur_count;
+extern int whole_redraw;
 
 #define PUSH_UR(rect) \
 	if (!whole_redraw && ur_count < MAX_RECTS) { \

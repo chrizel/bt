@@ -22,6 +22,7 @@
 #include "bmpl.h"
 #include "bitmaps.h"
 #include "colors.h"
+#include "error.h"
 
 static SDL_Surface *load_bitmap(t_bmpl_item *item);
 static t_bmpl_item *item_lookup(char *id);

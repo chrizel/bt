@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
+#include <SDL_endian.h>
 
 #include "bt.h"
 #include "bmpl.h"
@@ -88,8 +89,8 @@ static t_map *map_new_internal(Uint32 width, Uint32 height,
     map->stocks = bmpl_get("map.stock_default");
 
     /* allocate anims and raw data arrays */
-    map->anims = MALLOC_ARRAY(int, anim_count * anim_ticks);
-    map->data  = MALLOC_ARRAY(int, width * height);
+    map->anims = MALLOC_ARRAY(Uint32, anim_count * anim_ticks);
+    map->data  = MALLOC_ARRAY(Uint32, width * height);
 
     /* set data attributes */
     map->width      = width;
@@ -176,7 +177,7 @@ t_map *map_open(char *file)
     /* check if file is available... */
     if (!fp) {
         CON_Out(btConsole, "file not found");
-        return;
+        return 0;
     }
 
     /* read header... */

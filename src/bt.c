@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include <SDL.h>
 
@@ -31,6 +32,20 @@
 #include "input.h"
 #include "filter.h"
 #include "map.h"
+#include "bmpl.h"
+
+SDL_Surface *screen;
+SDL_Surface *minilogo;
+
+t_map *cur_map;
+
+int editor_mode;
+int editor_pen;
+int *editor_pg;
+int editor_pg_y;
+int editor_pg_x;
+
+struct _player player;
 
 
 static void init_sdl(void);

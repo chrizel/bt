@@ -21,9 +21,9 @@
 #include <SDL.h>
 #include "bt.h"
 
-int n_colors;
-SDL_Color colors[256];
-SDL_Color orig_colors[256];
+extern int n_colors;
+extern SDL_Color colors[256];
+extern SDL_Color orig_colors[256];
 
 void init_colors();
 

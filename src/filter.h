@@ -20,7 +20,7 @@
 
 #include "event.h"
 
-t_func cur_filter;
+extern t_func cur_filter;
 
 void con_switch_filter();
 

@@ -18,6 +18,7 @@
 #include "rotozoom/SDL_rotozoom.h"
 #include "sdl_events.h"
 #include "bt.h"
+#include "bmpl.h"
 
 SDL_Surface *background;
 

@@ -23,5 +23,6 @@
 }*/
 
 int textshow_load_background (char *name);
+int init_textshow();
 
 #endif

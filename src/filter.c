@@ -26,6 +26,8 @@
 #define DNUM 50
 #define DARKER(value) ((value - DNUM) < 0 ? 0 : value - DNUM)
 
+t_func cur_filter;
+
 static void night_filter()
 {
     int i;

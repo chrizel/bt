@@ -19,8 +19,14 @@
 #include <stdlib.h>
 #include <SDL.h>
 #include "colors.h"
+#include "error.h"
+
+int n_colors;
+SDL_Color colors[256];
+SDL_Color orig_colors[256];
 
 static int load_gimp_palette(char *file);
+void clone_colors();
 
 void init_colors()
 {

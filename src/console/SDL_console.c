@@ -25,6 +25,7 @@
  *  Code Cleanup and heavily extended by: Clemens Wacha <reflex-2000@gmx.net>
  */
 
+#include <SDL.h>
 #include "SDL_console.h"
 
 #include <stdlib.h>
