@@ -81,12 +81,16 @@ void sdl_event_loop(void)
 
 #ifdef DO_FRAMETEST
     ticks_begin = SDL_GetTicks();
+    ticks_end = ticks_begin;
 #endif
 
     while (!done) {
 	ur_count = 0;
 #ifdef DO_FRAMETEST
 	frames++;
+	ticks_end = SDL_GetTicks();
+	if ( (ticks_end - ticks_begin) >= 4000) 
+	    fps_output();
 #endif
 	
         while(SDL_GetTicks() <= ticks)
