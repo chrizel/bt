@@ -65,6 +65,7 @@ static void day_filter()
 
 void con_switch_filter()
 {
+    /*
   if (!bt->getConsole()->getLastParam())
         return;
 
@@ -78,4 +79,5 @@ void con_switch_filter()
         cur_filter = NULL;
         bt->print("cur_filter = NULL");
     }
+    */
 }

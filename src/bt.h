@@ -26,12 +26,6 @@
 #define FPS 30
 #define BPP 16
 
-const char GPL_TEXT[] =  
-"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
-"Bermuda Triangle comes with ABSOLUTELY NO WARRANTY. This is free software,\n" 
-"and you are welcome to redistribute it under certain conditions; see\n"
-"LICENSE file for details.\n\n";
-
 #if(BPP == 8)
 #define USE_8BIT
 #else

@@ -18,6 +18,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+/*
 class Player {
 private:
     SDL_Surface *my_sfc;
@@ -34,5 +35,6 @@ public:
     bool switchBlink();
     bool getBlink();
 };
+*/
 
 #endif

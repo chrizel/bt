@@ -33,10 +33,12 @@
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
+    /*
     if (bt->getPlayer()->switchBlink())
 	return 200;
     else
 	return 5000;
+    */
 }
 
 + newWithTitle:(char *)t
@@ -58,8 +60,6 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     //console = [Console new];
     //player = [Player new];
     audio = [Audio new];
-
-    audio = new Audio();
     music = [audio addMusic:"data/penguinplanet.ogg"];
     chunk = [audio addChunk:"data/sound.wav"];
     [audio playMusic:music];
@@ -113,7 +113,8 @@ Game::~Game()
     Uint32 ticks = SDL_GetTicks();
     SDL_Rect ml_rect;
 
-    sdl_ev = new SDL_Event;
+    static SDL_Event ev;
+    sdl_ev = &ev;
 
     ml_rect.x = 800 - 100;
     ml_rect.y = 600 - 60;
@@ -231,7 +232,14 @@ Game::~Game()
 
 - printGPL
 {
+    static char GPL_TEXT[] =  
+	"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
+	"Bermuda Triangle comes with ABSOLUTELY NO WARRANTY. This is free software,\n" 
+	"and you are welcome to redistribute it under certain conditions; see\n"
+	"LICENSE file for details.\n\n";
+
     puts(GPL_TEXT);
+
 }
 
 - printLine:(char *)t

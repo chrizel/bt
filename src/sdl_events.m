@@ -18,7 +18,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include <iostream>
+//#include <iostream>
 
 #include "bt.h"
 #include "alloc.h"

@@ -58,10 +58,10 @@ enum {
     Uint32 switch_palette;
 }
 
-- (id)initWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32)anim_count animTicks:(Uint32)anim_ticks;
+- (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at;
 
 + (id)newWithFile:(char *)file;
-+ (id)newWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32) anim_count animTicks:(Uint32)anim_ticks;
++ (id)newWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at;
 
 /*
     virtual ~Map();

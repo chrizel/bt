@@ -22,7 +22,7 @@
 
 #include <SDL.h>
 
-#include <iostream>
+//#include <iostream>
 
 #include "bt.h"
 #include "error.h"

@@ -43,6 +43,7 @@ static Uint32 map_anim_timer(Uint32 interval, void *param);
 
 static Uint32 map_anim_timer(Uint32 interval, void *param)
 {
+    /*
     Map *map;
     map = (Map *)param;
 
@@ -50,10 +51,10 @@ static Uint32 map_anim_timer(Uint32 interval, void *param)
     if (map->anim_ticker == map->anim_ticks)
         map->anim_ticker = 0;
 
-    /* TODO */
     map->switch_palette = 1;
 
     return interval;
+    */
 }
 
 static void writeInt(FILE *fp, Uint32 num)
@@ -76,7 +77,7 @@ static Uint32 readInt(FILE *fp)
     return num;
 }
 
-- (id)initWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32)anim_count animTicks:(Uint32)anim_ticks
+- (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at
 {
     self->stocks = bmpl_get("map.stock_default");
     
@@ -101,7 +102,7 @@ static Uint32 readInt(FILE *fp)
     /* Add SDL_Time, so we can make tile animations... 
      * map as parameter... :)
      */
-    SDL_AddTimer(100, map_anim_timer, (void *)this);
+    SDL_AddTimer(100, map_anim_timer, (void *)self);
     srcrect.w = srcrect.h = TILE_SIZE;
 
     return self;
@@ -112,10 +113,10 @@ static Uint32 readInt(FILE *fp)
     return [[super new] open:file];
 }
 
-+ (id)newWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32) anim_count animTicks:(Uint32)anim_ticks
++ (id)newWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at
 {
     id me = [super new];
-    me = [me initWithWidth:width height:height animCount:anim_count animTicks:anim_ticks];
+    me = [me initWithWidth:w height:h animCount:ac animTicks:at];
     [me fill:0];
     
     return me;
@@ -151,8 +152,8 @@ static Uint32 readInt(FILE *fp)
 
 - open:(char *)file
 {
-    int anim, tick, x, y, i, version;
-    int width, height, anim_count, anim_ticks;
+    int anim, tick, x, y, i, v;
+    int w, h, ac, at;
     FILE *fp;
 
     printf("read map...");
@@ -160,22 +161,22 @@ static Uint32 readInt(FILE *fp)
 
     // check if file is available...
     if (!fp) {
-        bt->print("file not found");
+	[bt printLine:"file not found"];
         return;
     }
 
     // read header...
-    fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &version, &width, &height, &anim_count, &anim_ticks);
+    fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &v, &w, &h, &ac, &at);
 
-    // check version
+    // check v
     // TODO
     /*
-      if (version != file_version)
+      if (v != file_v)
         error("Wrong map version or wrong format.");
     */
 
     // create map in space
-    create(width, height, anim_count, anim_ticks);
+    [self initWithWidth:w height:h animCount:ac animTicks:at];
     
     // read anim data
     for (anim = 0; anim < self->anim_count; anim++)
@@ -189,7 +190,7 @@ static Uint32 readInt(FILE *fp)
     // read map data
     for (y = 0; y < self->height; y++)
         for (x = 0; x < self->width; x++)
-            self->data[self->width * y + x] = Editor::readInt(fp);
+            self->data[self->width * y + x] = readInt(fp);
 
     fclose(fp);
     printf("ok (cur_map->data[0] = %u)\n", self->data[0]);
@@ -312,3 +313,5 @@ static Uint32 readInt(FILE *fp)
     }
     */
 }
+
+@end

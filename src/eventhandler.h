@@ -18,6 +18,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H 
 
+/*
 #include <SDL.h>
 
 class EventHandler
@@ -27,5 +28,6 @@ public:
     virtual void onDraw(SDL_Surface *sfc) = 0;
     virtual void onIdle() = 0;
 };
+*/
 
 #endif

@@ -18,6 +18,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+/*
 #include <SDL.h>
 
 #include "console/SDL_console.h"
@@ -44,5 +45,6 @@ public:
 
     void onEvent(SDL_Event *event);
 };
+*/
 
 #endif
