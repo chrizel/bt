@@ -37,7 +37,7 @@
 SDL_Surface *screen;
 SDL_Surface *minilogo;
 
-t_map *cur_map;
+Map *map;
 
 int editor_mode;
 int editor_pen;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
 
     /* create map... */
-    cur_map = map_new("main.map");
+    map = new Map("main.map");
 
     /* start main loop */
     sdl_event_loop();
@@ -219,7 +219,7 @@ void bt_write(void)
     char buf1[100], buf2[100];
     sscanf(con_last_param, "%s %s", buf1, buf2);
 
-    map_save(cur_map, buf2);
+    map->save(buf2);
 }
 
 void bt_load(void)
@@ -227,8 +227,8 @@ void bt_load(void)
     char buf1[100], buf2[100];
     sscanf(con_last_param, "%s %s", buf1, buf2);
 
-    map_free(cur_map);
-    cur_map = map_new(buf2);
+    delete map;
+    map = new Map(buf2);
 }
 
 void bt_fill(void)
@@ -237,7 +237,7 @@ void bt_fill(void)
     int id;
     sscanf(con_last_param, "%s %d", buf1, &id);
 
-    map_fill(cur_map, id);
+    map->fill(id);
 }
 
 void bt_put(void)
@@ -246,7 +246,7 @@ void bt_put(void)
     int id, x, y;
     sscanf(con_last_param, "%s %d %d %d", buf1, &id, &x, &y);
 
-    map_put(cur_map, id, x, y);
+    map->put(id, x, y);
 }
 
 void bt_new(void)
@@ -256,6 +256,6 @@ void bt_new(void)
 
     sscanf(con_last_param, "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
 
-    map_free(cur_map);
-    cur_map = map_new_empty(width, height, anim_count, anim_ticks);
+    delete map;
+    map = new Map(width, height, anim_count, anim_ticks);
 }

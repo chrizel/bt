@@ -42,7 +42,7 @@ extern struct _player player;
 extern SDL_Surface *screen;
 extern SDL_Surface *minilogo;
 
-extern t_map *cur_map;
+extern Map *map;
 
 extern int editor_mode;
 extern int editor_pen;

@@ -131,11 +131,11 @@ void sdl_event_loop(void)
 	}
 	*/
 
-	map_idle(cur_map);
+        map->idle();
         evl_call(evl_sdl, EV_SDL_IDLE);
 
         //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-	map_draw(cur_map, screen);
+        map->draw(screen);
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */
