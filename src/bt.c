@@ -13,6 +13,7 @@
 #include "textshow.h"
 #include "input.h"
 #include "filter.h"
+#include "map.h"
 
 
 static void init_sdl(void);
@@ -21,6 +22,9 @@ static void quit();
 
 int main(int argc, char *argv[])
 {
+    editor_mode = 1;
+    editor_pen = 0;
+    editor_pg = NULL;
     cur_filter = NULL;
     con_last_param = NULL;
 
@@ -45,8 +49,10 @@ int main(int argc, char *argv[])
 
 static void keydown()
 {
+    /*
     if (sdl_ev->key.keysym.sym == SDLK_ESCAPE)
         bt_exit();
+        */
 }
 
 static void quit()
@@ -91,4 +97,72 @@ static void init_sdl(void)
     SDL_WM_SetCaption( "Bermuda Triangle", NULL);
 }
 
+/*
+Yes, that sprintf stuff is all very quick and dirty, but we will change this in future...
+*/
+void bt_editor(void)
+{
+    char buf[100];
 
+    editor_mode = !editor_mode;
+    sprintf(buf, "editor_mode = %d", editor_mode);
+
+    CON_Out(btConsole, buf);
+}
+
+void bt_pen(void)
+{
+    int buf[100], id;
+    sscanf(con_last_param, "%s %d", buf, &id);
+
+    editor_pen = id;
+}
+
+void bt_pg(void)
+{
+    int i, j, len, pos;
+    char buf1[100], buf2[100];
+    sscanf(con_last_param, "%s %d %[^a-z]", buf1, &editor_pg_size, buf2);
+
+    if (editor_pg)
+        FREE(editor_pg);
+
+    editor_pg = MALLOC_ARRAY(int, editor_pg_size * editor_pg_size);
+
+    j = 0;
+    pos = 0;
+    printf("\nbuf2: %s\n", buf2);
+    for (i = 0; (i <= strlen(buf2)) && (pos < editor_pg_size * editor_pg_size); i++) {
+        printf("%d: %c\n", i, buf2[i]);
+        buf1[j] = buf2[i];
+
+        if ((buf1[j] == ' ') || (i == strlen(buf2))) {
+            buf1[j] = '\0';
+            printf("New item (%d): %s\n", j, buf1);
+            editor_pg[pos] = atoi(buf1);
+            pos++;
+            j = 0;
+        } else
+            j++;
+    }
+
+    printf("\npg:\t%d\n", editor_pg_size);
+    for (i = 0; i < editor_pg_size * editor_pg_size; i++)
+        printf("\t%d\n", editor_pg[i]);
+}
+
+void bt_write(void)
+{
+    int buf1[100], buf2[100];
+    sscanf(con_last_param, "%s %s", buf1, buf2);
+
+    write_map(buf2);
+}
+
+void bt_load(void)
+{
+    int buf1[100], buf2[100];
+    sscanf(con_last_param, "%s %s", buf1, buf2);
+
+    read_map(buf2);
+}

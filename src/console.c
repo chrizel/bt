@@ -13,8 +13,13 @@ typedef struct {
 
 t_command commands[] = {
     {"exit", bt_exit},
+    {"editor", bt_editor},
     {"night", con_switch_filter},
     {"day", con_switch_filter},
+    {"pen", bt_pen},
+    {"pg", bt_pg},
+    {"write", bt_write},
+    {"load", bt_load},
     {NULL, NULL},
 };
 
@@ -49,7 +54,7 @@ static void CommandHandler(ConsoleInformation *console, char *command)
     con_last_param = command;
 
     for (i = 0; commands[i].command; ++i) {
-        if (strcmp(commands[i].command, command) == 0) {
+        if (strncmp(commands[i].command, command, strlen(commands[i].command)) == 0) {
             commands[i].func();
             con_last_param = NULL;
             return;

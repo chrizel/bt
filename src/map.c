@@ -5,7 +5,6 @@
 #include "bt.h"
 #include "bmpl.h"
 #include "sdl_events.h"
-#include "map.h"
 #include "testmap.h"
 #include "colors.h"
 
@@ -15,7 +14,7 @@
 
 static SDL_Surface **stocks;
 static SDL_Surface *wallpaper;
-static int xoffset = 6, yoffset = 198;
+static int xoffset = 0, yoffset = 0;
 static int anim_ticker = 0;
 static int file_version = 1;
 static map_data *cur_map = NULL;
@@ -30,12 +29,11 @@ static void load_stocks(char *id, int xcount, int ycount);
 static SDL_Surface *get_tile(SDL_Surface *src, int x, int y);
 static Uint32 switch_anim_ticker(Uint32 interval, void *param);
 
-static void write_map(char *filename);
-static void read_map(char *filename);
+static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
 {
-    load_stocks("map.stock1", 3, 4); 
+    load_stocks("map.stock1", 4, 4); 
     evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
@@ -56,7 +54,7 @@ void init_map()
     SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
 
-static void write_map(char *filename)
+void write_map(char *filename)
 {
     int anim, tick, x, y, i;
     FILE *fp;
@@ -94,7 +92,7 @@ static void write_map(char *filename)
     printf("ok\n");
 }
 
-static void read_map(char *filename)
+void read_map(char *filename)
 {
     int anim, tick, x, y, i, version;
     FILE *fp;
@@ -213,33 +211,59 @@ static void on_idle()
     
     if (cur_map) {
         if ( keystate[SDLK_UP]) {
-            // map up...
-            if (yoffset < 1)
-                yoffset = cur_map->height - 1;
-            else
+            if (yoffset > 0) {
+                // map up...
                 yoffset--;
+            }
         } else if (keystate[SDLK_DOWN]) {
-            // map down...
-            if (yoffset >= cur_map->height)
-                yoffset = 0;
-            else
+            if ((yoffset + YTILES) < (cur_map->height - 1)) {
+                // map down...
                 yoffset++;
+            }
         }
 
         if (keystate[SDLK_LEFT]) {
             // map left...
-            if (xoffset < 1)
-                xoffset = cur_map->width - 1;
-            else
+            if (xoffset > 0)
                 xoffset--;
         } else if (keystate[SDLK_RIGHT]) {
             // map right...
-            if (xoffset >= cur_map->width)
-                xoffset = 0;
-            else
+            if ((xoffset + XTILES) < (cur_map->width - 1))
                 xoffset++;
         }
     }
+
+    if (editor_mode) {
+        int x, y, xt, yt;
+        Uint8 mousestate = SDL_GetMouseState(&x, &y);
+
+        xt = (x - (x % TILE_SIZE)) / TILE_SIZE;
+        yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
+
+        if (mousestate & SDL_BUTTON(1)) {
+            set_stock_id(xt, yt, editor_pen);
+        } else if (mousestate & SDL_BUTTON(3)) {
+
+            if (editor_pg) {
+                for (y = 0; y < editor_pg_size; y++) {
+                    for (x = 0; x < editor_pg_size; x++) {
+                        set_stock_id(xt + x, yt + y, 
+                                editor_pg[editor_pg_size * y + x]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void set_stock_id(int xt, int yt, int id)
+{
+    /* consider offset */
+    xt += xoffset;
+    yt += yoffset;
+
+    //printf("%d/%d (%d, %d)\n", xt, yt, xoffset, yoffset);
+    cur_map->data[yt * cur_map->width + xt] = id;
 }
 
 static void load_stocks(char *id, int xcount, int ycount)

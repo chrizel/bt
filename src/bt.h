@@ -13,6 +13,17 @@ struct _player {
 
 SDL_Surface *screen;
 
+int editor_mode;
+int editor_pen;
+int *editor_pg;
+int editor_pg_size;
+
 void bt_exit();
+void bt_pen(void);
+
+void bt_editor();
+void bt_pg(void);
+void bt_write(void);
+void bt_load(void);
 
 #endif
