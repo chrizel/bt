@@ -1,4 +1,3 @@
-#include <iostream>
 #include <objc/Object.h>
 #include "audio.h"
 #include "alloc.h"
@@ -20,8 +19,8 @@
     Mix_AllocateChannels(MIXER_CHANNELS);
 
     // Reseve memory for arrays and set to NULL
-    music_list = MALLOC(Mix_Music *, MUSIC_SIZE);
-    chunk_list = MALLOC(Mix_Chunk *, CHUNK_SIZE);
+    music_list = MALLOC_ARRAY(Mix_Music *, MUSIC_SIZE);
+    chunk_list = MALLOC_ARRAY(Mix_Chunk *, CHUNK_SIZE);
     for (i = 0; i < MUSIC_SIZE; i++) 
 	music_list[i] = NULL;
     for (i = 0; i < CHUNK_SIZE; i++)
