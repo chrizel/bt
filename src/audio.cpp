@@ -8,11 +8,12 @@ Audio::Audio()
 
 Audio::~Audio()
 {
-    // TODO
+    free();
 }
 
 void Audio::init()
 {
+#ifndef DISABLE_AUDIO
     int i;
 
     // Initialize audio
@@ -28,10 +29,25 @@ void Audio::init()
 	chunk_list[i] = NULL;
     size_music = MUSIC_SIZE;
     size_chunk = CHUNK_SIZE;
+#endif
+}
+
+void Audio::free()
+{
+    int i;
+
+    for (i = 0; i < size_music; i++)
+	if (music_list[i] != NULL)
+	    Mix_FreeMusic(music_list[i]);
+
+    for (i = 0; i < size_chunk; i++)
+	if (chunk_list[i] != NULL)
+	    Mix_FreeChunk(chunk_list[i]);
 }
 
 int Audio::AddMusic(char *filename)
 {
+#ifndef DISABLE_AUDIO
     Mix_Music *music;
     int index = -1;
     int i;
@@ -59,10 +75,12 @@ int Audio::AddMusic(char *filename)
 
     // Return music id
     return index;
+#endif
 }
 
 int Audio::AddChunk(char *filename)
 {
+#ifndef DISABLE_AUDIO
     Mix_Chunk *chunk;
     int index = -1;
     int i;
@@ -90,35 +108,46 @@ int Audio::AddChunk(char *filename)
 
     // Return chunk id
     return index;
+#endif
 }
 
 void Audio::DeleteMusic(int id)
 {
+#ifndef DISABLE_AUDIO
     Mix_FreeMusic(music_list[id]);
     music_list[id] = NULL;
+#endif
 }
 
 void Audio::DeleteChunk(int id)
 {
+#ifndef DISABLE_AUDIO
     Mix_FreeChunk(chunk_list[id]);
     chunk_list[id] = NULL;
+#endif
 }
 
 void Audio::PlayMusic(int id)
 {
+#ifndef DISABLE_AUDIO
     //Mix_Music *music;
     //    music = Mix_LoadMUS(music_list[id]);
     //    music = Mix_LoadMUS("data/the-brain.mp3");
     //printf("test\n");
     Mix_PlayMusic(music_list[id], 1);
+#endif
 }
 
 void Audio::StopMusic()
 {
+#ifndef DISABLE_AUDIO
     // TODO
+#endif
 }
 
 void Audio::PlayChunk(int id)
 {
+#ifndef DISABLE_AUDIO
     Mix_PlayChannel(-1, chunk_list[id], 0);
+#endif
 }

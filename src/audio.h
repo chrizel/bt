@@ -51,6 +51,7 @@ public:
     ~Audio();
 
     void init();
+    void free();
 
     int AddMusic(char *filename);
     int AddChunk(char *filename);
