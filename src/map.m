@@ -38,20 +38,6 @@
 
 @implementation Map
 
-/* helper functions */
-static Uint32 map_anim_timer(Uint32 interval, void *param);
-
-static Uint32 map_anim_timer(Uint32 interval, void *param)
-{
-    id map;
-    map = (id)param;
-    [map incAnimTicker];
-
-    //map->switch_palette = 1;
-
-    return interval;
-}
-
 static void writeInt(FILE *fp, Uint32 num)
 {
     SDL_RWops *area;
@@ -101,10 +87,8 @@ static Uint32 readInt(FILE *fp)
     self->version        = 1;
     self->switch_palette = 0;
 
-    /* Add SDL_Time, so we can make tile animations... 
-     * map as parameter... :)
-     */
-    SDL_AddTimer(100, map_anim_timer, (void *)self);
+    destTicks = SDL_GetTicks();
+
     srcrect.w = srcrect.h = TILE_SIZE;
 
     return self;
@@ -290,33 +274,44 @@ static Uint32 readInt(FILE *fp)
 
 - onIdle
 {
+    /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
     if ([[bt getConsole] isVisible])
         return;
 
-    if ( keystate[SDLK_KP8]) {
+    if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
         if (yoffset > 0) {
             yoffset--; // this up...
 	    whole_redraw = 1;
 	}
-    } else if (keystate[SDLK_KP2]) {
+    }
+    if (keystate[SDLK_KP1] || keystate[SDLK_KP2] || keystate[SDLK_KP3]) {
         if ((yoffset + YTILES) < (height - 1)) {
             yoffset++; // this down...
 	    whole_redraw = 1;
 	}
     }
-
-    if (keystate[SDLK_KP4]) {
+    if (keystate[SDLK_KP1] || keystate[SDLK_KP4] || keystate[SDLK_KP7]) {
 	if (xoffset > 0) {
 	    xoffset--;	// this left...
 	    whole_redraw = 1;
 	}
-    } else if (keystate[SDLK_KP6]) {
+    } 
+    if (keystate[SDLK_KP3] || keystate[SDLK_KP6] || keystate[SDLK_KP9]) {
     	if ((xoffset + XTILES) < (width - 1)) {
             xoffset++;	// this right...
 	    whole_redraw = 1;
 	}
+    }
+
+    /*** Animation calculations ***/
+    if (SDL_GetTicks() >= destTicks) {
+	/* Do animation */
+	[self incAnimTicker];
+
+	/* Calculate next tick time */
+	destTicks = SDL_GetTicks() + 100;
     }
 }
 

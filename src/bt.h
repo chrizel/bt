@@ -23,6 +23,9 @@
 #include "map.h"
 #include "game.h"
 
+#define SCREEN_W 800
+#define SCREEN_H 600
+
 #define FPS 30
 #define BPP 16
 

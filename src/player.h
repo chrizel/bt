@@ -20,12 +20,23 @@
 
 #include <objc/Object.h>
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
 @interface Player: Object
 {
     SDL_Surface *my_sfc;
     SDL_Rect pos;
-    SDL_Rect cur_shape;
+    SDL_Rect *cur_shape;
     BOOL blink;
+    BOOL going;
+    int direction;
+    int tick;
+    BOOL tick_dir;
+
+    Uint32 destTicks;
 }
 
 + (id)new;
@@ -35,6 +46,15 @@
 - onDraw:(SDL_Surface *)sfc;
 - (BOOL)switchBlink;
 - (BOOL)getBlink;
+
+- (BOOL)isGoing;
+- (int)getDirection;
+- setDirection:(int)dir;
+
+- setTick:(int)t;
+- switchTick;
+- (int)getTick;
+
 - onIdle;
 
 @end

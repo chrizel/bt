@@ -33,10 +33,12 @@
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
+    /*
     if ([(id)param switchBlink])
 	return 200;
     else
 	return 5000;
+    */
 }
 
 + (id)newWithTitle:(char *)t
@@ -68,8 +70,8 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     printf("addChunk...\n");
     chunk = [audio addChunk:"data/sound.wav"];
 
-    printf("play music...\n");
-    [audio playMusic:music];
+    //printf("play music...\n");
+    //[audio playMusic:music];
 
     return self;
 }

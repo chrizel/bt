@@ -74,7 +74,7 @@ static void CommandHandler(ConsoleInformation *console, char *command);
         error("Can not init console!");
 
     CON_SetExecuteFunction(console, CommandHandler);
-    //CON_Alpha(console, 150);
+    CON_Alpha(console, 150);
     CON_SetPrompt(console, "console> ");
     CON_Topmost(console);
     //CON_Show(console);

@@ -25,6 +25,30 @@
 
 @implementation Player
 
+#define PW 48
+#define PH 64
+#define MPW(x) x * PW
+#define MPH(y) y * PH
+
+#define TICK_COUNT 3
+#define PLAYER_RECT(x, y) playerMap[y * TICK_COUNT + x]
+#define SET_PRECT(x, y) cur_shape = &PLAYER_RECT(x, y)
+
+static SDL_Rect playerMap[] = {
+    {MPW(0), MPH(0), PW, PH},
+    {MPW(1), MPH(0), PW, PH},
+    {MPW(2), MPH(0), PW, PH},
+    {MPW(0), MPH(1), PW, PH},
+    {MPW(1), MPH(1), PW, PH},
+    {MPW(2), MPH(1), PW, PH},
+    {MPW(0), MPH(2), PW, PH},
+    {MPW(1), MPH(2), PW, PH},
+    {MPW(2), MPH(2), PW, PH},
+    {MPW(0), MPH(3), PW, PH},
+    {MPW(1), MPH(3), PW, PH},
+    {MPW(2), MPH(3), PW, PH},
+};
+
 static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
     static SDL_Rect wrect;
@@ -49,28 +73,36 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
     blink = NO;
     my_sfc = bmpl_get("player.player1");
 
-    pos.w = 80;
-    pos.h = 100;
+    pos.w = 48;
+    pos.h = 64;
 
     pos.x = 600;
     pos.y = 400;
 
-    cur_shape.w = 80;
-    cur_shape.h = 100;
-    cur_shape.x = 0;
-    cur_shape.y = 0;
+    going = NO;
+    tick_dir = YES;
+    direction = SOUTH;
+    tick = 1;
+
+    SET_PRECT(1, 2);
+
+    destTicks = SDL_GetTicks();
 
     return self;
 }
 
 - onDraw:(SDL_Surface *)sfc;
 {
+    /*
     if (blink)
-	cur_shape.x = 80;
+	cur_shape.x = 48;
     else
-	cur_shape.x = 0;
+        cur_shape.x = 0;
+    */
+    SET_PRECT(tick, direction);
 
-    SDL_BlitSurface(my_sfc, &cur_shape, sfc, &pos);
+    SDL_BlitSurface(my_sfc, cur_shape, sfc, &pos);
+    //whole_redraw = YES;
     PUSH_UR(wider_rect(&pos, 10));
 }
 
@@ -86,18 +118,105 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
     return blink;
 }
 
+- (BOOL)isGoing
+{
+    return going;
+}
+
+- (int)getDirection
+{
+    return direction;
+}
+
+- setDirection:(int)dir
+{
+    direction = dir;
+}
+
+- (int)getTick
+{
+    return tick;
+}
+
+- setTick:(int)t
+{
+    tick = t;
+}
+
+- switchTick
+{
+    //tick = !tick;
+    /*
+    tick_dir = !tick_dir;
+    if (tick_dir)
+	tick = 0;
+    else
+	tick = 2;
+    */
+
+    /*
+    if (tick_dir) {
+	tick++;
+	if (tick == TICK_COUNT - 1) {
+	    tick_dir = NO;
+	}
+    } else {
+	tick--;
+	if (tick == 0) {
+	    tick_dir = YES;
+	}
+    }
+    */
+    /*
+    printf(" tick: %u\n", tick);
+    */
+    /*
+    tick++;
+    if (tick == TICK_COUNT)
+	tick = 0;
+    */
+
+    if (tick == 2)
+	tick = 0;
+    else
+	tick = 2;
+}
+
 - onIdle
 {
+    /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
-    if (keystate[SDLK_UP])
-	pos.y -= 10;
-    else if (keystate[SDLK_DOWN])
-	pos.y += 10;
 
-    if (keystate[SDLK_LEFT])
+    going = keystate[SDLK_UP] || keystate[SDLK_DOWN] ||
+	keystate[SDLK_LEFT] || keystate[SDLK_RIGHT];
+
+    if (keystate[SDLK_UP]) {
+	pos.y -= 10;
+	direction = NORTH;
+    } else if (keystate[SDLK_DOWN]) {
+	pos.y += 10;
+	direction = SOUTH;
+    }
+
+    if (keystate[SDLK_LEFT]) {
 	pos.x -= 10;
-    else if (keystate[SDLK_RIGHT])
+	direction = WEST;
+    } else if (keystate[SDLK_RIGHT]) {
 	pos.x += 10;
+	direction = EAST;
+    }
+
+    /*** Animation calculations ***/
+    if (SDL_GetTicks() >= destTicks) {
+	/* Do animation */
+	if(going)
+	    [self switchTick];
+	else
+	    [self setTick:1];
+
+	/* Calculate next tick time */
+	destTicks = SDL_GetTicks() + 100;
+    }
 }
 
 @end

@@ -48,11 +48,29 @@ extern int whole_redraw;
 
 extern Map *tmp_map;
 
-#define PUSH_UR(rect) \
-	if (!whole_redraw && ur_count < MAX_RECTS) { \
-	    update_rects[ur_count++] = rect; \
-	} else { \
-	    whole_redraw = 1; \
+#define INTERCEPT_CHECK(rect) do {		\
+	if (rect.x < 0)				\
+	    rect.x = 0;				\
+	else if (rect.x >= SCREEN_W)		\
+	    rect.x = SCREEN_W;			\
+	if (rect.y < 0)				\
+	    rect.y = 0;				\
+	else if (rect.y >= SCREEN_H)		\
+	    rect.y = SCREEN_H;			\
+	if ((rect.x + rect.w) >= SCREEN_W)	\
+	    rect.w = SCREEN_W - rect.x;		\
+	if ((rect.y + rect.h) >= SCREEN_H)	\
+	    rect.h = SCREEN_H - rect.y;		\
+    } while(0);
+
+
+#define PUSH_UR(rect)					\
+	if (!whole_redraw && ur_count < MAX_RECTS) {	\
+	    update_rects[ur_count] = rect;		\
+	    INTERCEPT_CHECK(update_rects[ur_count]);	\
+	    ur_count++;					\
+	} else {					\
+	    whole_redraw = 1;				\
 	}
 
 

@@ -56,6 +56,8 @@ enum {
     Uint32 anim_ticker;
     Uint32 anim_ticks;
     Uint32 switch_palette;
+
+    Uint32 destTicks;
 }
 
 - (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at;
