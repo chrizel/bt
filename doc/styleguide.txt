@@ -1,0 +1,33 @@
+   Bermuda Triangle
+- Coding Style Guide -
+
+1. Identation: 4 spaces - no tabs!
+
+2. First brace on the same line as if/while, etc
+
+3. Spaces after keywords like if/while/switch, etc
+
+4. Space after + - / * etc
+
+5. No space after a normal function name.
+
+
+***
+Example:
+...
+int i;
+
+while (num != 5) {
+    num = read_num();
+
+    for (i = 0; i < 10; i++) {
+        do_something(i);
+        printf("%d\n", i);
+    }
+
+    if ((num == 4) || (num == 9))
+        printf("The number is four or nine.\n");
+    else
+        printf("...\n");
+}
+...
