@@ -5,14 +5,16 @@ HDR=error.h event.h bt.h map.h textshow.h bmpl.h bitmaps.h colors.h input.h joys
 CFLAGS=-g `sdl-config --cflags` -D DO_FRAMETEST
 LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer -lobjc
 CC=gcc
+EOBJ=.o
+ESRC=.m
 
 all: $(BIN)
 
 $(BIN): $(OBJ)
 	$(CC) -o $(BIN) $(LIBS) $(OBJ)
 
-%.o: %.m
-	$(CC) $(CFLAGS) -c $<
+$(OBJ): $(HDR) 
+	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
 
 clean:
 	@rm $(BIN) $(OBJ)
