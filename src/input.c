@@ -12,9 +12,9 @@ static void on_key()
     inp_item *pointer = inputs;
 
     for (i = 0; i < i_inputs; i++) {
-	if (pointer->type == INP_TYPE_KEY &&
-	    pointer->arg1 == sdl_evl.key.keysym.sym)
-	    pointer->pressed = 1;
+      //	if (pointer->type == INP_TYPE_KEY &&
+      //	    pointer->arg1 == sdl_ev.key.keysym.sym)
+      //	    pointer->pressed = 1;
 	pointer++;
     }
 }
@@ -55,10 +55,10 @@ void init_input()
 
     inp_add_key(SDLK_UP, on_up);
 
-    evl_reg(sdl_evl, EV_SDL_KEYDOWN, on_key);
-    evl_reg(sdl_evl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
-    evl_reg(sdl_evl, EV_SDL_JOYAXIS, on_joyaxis);
-    evl_red(sdl_evl, EV_INP_RUN, inp_run);
+    evl_reg(evl_sdl, EV_SDL_KEYDOWN, on_key);
+    evl_reg(evl_sdl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
+    evl_reg(evl_sdl, EV_SDL_JOYAXIS, on_joyaxis);
+    evl_red(evl_sdl, EV_INP_RUN, inp_run);
 }
 
 void free_input()
