@@ -2,17 +2,17 @@ BIN=bt
 SRC=bt.m error.m event.m map.m textshow.m bmpl.m colors.m input.m joystick.m alloc.m sdl_events.m filter.m game.m audio.m 
 OBJ=bt.o error.o event.o map.o textshow.o bmpl.o colors.o input.o joystick.o alloc.o sdl_events.o filter.o game.o audio.o
 HDR=error.h event.h bt.h map.h textshow.h bmpl.h bitmaps.h colors.h input.h joystick.h alloc.h sdl_events.h filter.h game.h eventhandler.h audio.h
-CFLAGS=-g `sdl-config --cflags` -D DO_FRAMETEST -lobjc
-LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer
+CFLAGS=-g `sdl-config --cflags` -D DO_FRAMETEST
+LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer -lobjc
 CC=gcc
 
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	gcc -o $(BIN) $(LIBS) $(OBJ)
+	$(CC) -o $(BIN) $(LIBS) $(OBJ)
 
-$(OBJ): $(HDR)
-
+%.o: %.m
+	$(CC) $(CFLAGS) -c $<
 
 clean:
 	@rm $(BIN) $(OBJ)
