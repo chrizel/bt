@@ -1,4 +1,3 @@
-#include <SDL.h>
 /* Bermuda Triangle - action adventure game
    Copyright (C) 2004 Christian Zeller <chrizel@gmx.net>
 
