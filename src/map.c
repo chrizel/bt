@@ -30,6 +30,9 @@ static void load_stocks(char *id, int xcount, int ycount);
 static SDL_Surface *get_tile(SDL_Surface *src, int x, int y);
 static Uint32 switch_anim_ticker(Uint32 interval, void *param);
 
+static void write_int(FILE *fp, unsigned int num);
+static unsigned int read_int(FILE *fp);
+
 static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
@@ -55,24 +58,62 @@ void init_map()
     SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
 
+static void swap(unsigned char *c1, unsigned char *c2)
+{
+    unsigned char tmp;
+
+    tmp = *c1;
+    *c1 = *c2;
+    *c2 = tmp;
+}
+
+static void write_int(FILE *fp, unsigned int num)
+{
+    int i;
+
+    utile.as_int = num;
+
+    /* write int as 4 chars */
+    for (i = 0; i < 4; i++) {
+        printf("%.2x ", utile.as_char[i]);
+        fputc(utile.as_char[i], fp);
+    }
+
+    printf(" = %u\n", utile.as_int);
+}
+
+static unsigned int read_int(FILE *fp)
+{
+    int i;
+
+    /* put tile data into union */
+    for (i = 0; i < 4; i++)
+        utile.as_char[i] = (unsigned char) fgetc(fp);
+
+    swap(&utile.as_char[0], &utile.as_char[1]);
+    swap(&utile.as_char[0], &utile.as_char[3]);
+
+    printf("%.2x%.2x %.2x%.2x = %u\n", utile.as_char[0], utile.as_char[1], utile.as_char[2], utile.as_char[3], utile.as_int);
+}
+
 void write_map(char *filename)
 {
     int anim, tick, x, y, i;
     FILE *fp;
 
-    if(!cur_map)
+    if (!cur_map)
         return;
 
     printf("write map...");
     fp = fopen(filename, "w");
     
     /* write header... */
-    fprintf(fp, "MAP:%d,%d,%d,%d,%d\n", file_version, cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
+    fprintf(fp, "MAP:%u,%u,%u,%u,%u\n", file_version, cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
 
     /* write anim data */
     for (anim = 0; anim < cur_map->anim_count; anim++) {
         for (tick = 0; tick < cur_map->anim_ticks; tick++) {
-            fprintf(fp, "%d.", cur_map->anims[anim * cur_map->anim_count + tick]);
+            fprintf(fp, "%u.", cur_map->anims[anim * cur_map->anim_count + tick]);
         }
     }
     fputc('\n', fp);
@@ -81,11 +122,7 @@ void write_map(char *filename)
     for (y = 0; y < cur_map->height; y++) {
         for (x = 0; x < cur_map->width; x++) {
             /* put tile data into union */
-            utile.as_int = cur_map->data[cur_map->width * y + x];
-
-            /* write int as 4 chars */
-            for (i = 0; i < 4; i++)
-                fputc(utile.as_char[i], fp);
+            write_int(fp, cur_map->data[cur_map->width * y + x]);
         }
     }
 
@@ -106,7 +143,7 @@ void fill_map(int id)
 
 void map_new(unsigned int width, unsigned int height, unsigned int anim_count, unsigned int anim_ticks)
 {
-    printf("create new map structure (%d,%d,%d,%d)...", width, height, anim_count, anim_ticks);
+    printf("create new map structure (%u,%u,%u,%u)...", width, height, anim_count, anim_ticks);
 
     //TODO: cleanup old map!!
 
@@ -142,7 +179,7 @@ void read_map(char *filename)
     }
 
     /* read header... */
-    fscanf(fp, "MAP:%d,%d,%d,%d,%d\n", &version, &width, &height, &anim_count, &anim_ticks);
+    fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &version, &width, &height, &anim_count, &anim_ticks);
 
     /* check version */
     if (version != file_version)
@@ -153,27 +190,24 @@ void read_map(char *filename)
     /* read anim data */
     for (anim = 0; anim < cur_map->anim_count; anim++) {
         for (tick = 0; tick < cur_map->anim_ticks; tick++) {
-            fscanf(fp, "%d.", &cur_map->anims[anim * cur_map->anim_count + tick]);
+            fscanf(fp, "%u.", &cur_map->anims[anim * cur_map->anim_count + tick]);
         }
     }
     fseek(fp, 1, SEEK_CUR); /* jump over \n */
 
+    printf("\n");
+
     /* read map data */
     for (y = 0; y < cur_map->height; y++) {
         for (x = 0; x < cur_map->width; x++) {
-            /* put tile data into union */
-            for (i = 0; i < 4; i++)
-                utile.as_char[i] = (unsigned char) fgetc(fp);
-
             /* write tile data into our struct */
-            cur_map->data[cur_map->width * y + x] = utile.as_int;
-            printf("%d,%d,%d,%d (%d)", utile.as_char[0], utile.as_char[1], utile.as_char[2], utile.as_char[3], utile.as_int);
+            cur_map->data[cur_map->width * y + x] = read_int(fp);
         }
-        printf("|");
     }
 
     fclose(fp);
-    printf("ok (cur_map->data[0] = %d)\n", cur_map->data[0]);
+    exit(0);
+    printf("ok (cur_map->data[0] = %u)\n", cur_map->data[0]);
 }
 
 static Uint32 switch_anim_ticker(Uint32 interval, void *param)
@@ -197,7 +231,7 @@ static void draw_map()
         return;
     }
 
-    //printf("draw map (%d,%d,%d,%d)...", cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
+    //printf("draw map (%u,%u,%u,%u)...", cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
 
     /* consider offsets */
     if (xoffset < 0)
@@ -208,12 +242,12 @@ static void draw_map()
 
     /* draw testmap */
     for (y = 0; y < YTILES; y++) {
-        //printf("y: %d...\n", y);
+        //printf("y: %u...\n", y);
         rect.y = TILE_SIZE * y;
         for (x = 0; x < XTILES; x++) {
             rect.x = TILE_SIZE * x;
 
-            //printf("%d\n", yoffset);
+            //printf("%u\n", yoffset);
 
             if ((y + yoffset) >= cur_map->height)
                 y2 = y + (yoffset - cur_map->height);
@@ -225,14 +259,14 @@ static void draw_map()
             else
                 x2 = x + xoffset;
 
-            //printf("data from: %d...", y2 * cur_map->width + x2);
+            //printf("data from: %u...", y2 * cur_map->width + x2);
             id = cur_map->data[y2 * cur_map->width + x2];
             if (id & MF_ANIM) {
                 /* it's an animation, so we read the current animation tile */
                 id = cur_map->anims[(id & MF_ID) + anim_ticker];
             } 
 
-            //printf("blit (%d)...", id);
+            //printf("blit (%u)...", id);
             SDL_BlitSurface(stocks[id], NULL, screen, &rect);
             //printf("ok\n");
         }
@@ -308,7 +342,7 @@ static void set_stock_id(int xt, int yt, int id)
     xt += xoffset;
     yt += yoffset;
 
-    //printf("%d/%d (%d, %d)\n", xt, yt, xoffset, yoffset);
+    //printf("%u/%u (%u, %u)\n", xt, yt, xoffset, yoffset);
     cur_map->data[yt * cur_map->width + xt] = id;
 }
 
