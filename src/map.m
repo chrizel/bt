@@ -292,35 +292,32 @@ static Uint32 readInt(FILE *fp)
 {
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    /*
-    if (bt->getConsole()->isVisible())
+    if ([[bt getConsole] isVisible])
         return;
-    */
-    /*
-    if ( keystate[SDLK_UP]) {
-        if (this->yoffset > 0) {
-            this->yoffset--; // this up...
+
+    if ( keystate[SDLK_KP8]) {
+        if (yoffset > 0) {
+            yoffset--; // this up...
 	    whole_redraw = 1;
 	}
-    } else if (keystate[SDLK_DOWN]) {
-        if ((this->yoffset + YTILES) < (this->height - 1)) {
-            this->yoffset++; // this down...
+    } else if (keystate[SDLK_KP2]) {
+        if ((yoffset + YTILES) < (height - 1)) {
+            yoffset++; // this down...
 	    whole_redraw = 1;
 	}
     }
 
-    if (keystate[SDLK_LEFT]) {
-	if (this->xoffset > 0) {
-	    this->xoffset--;	// this left...
+    if (keystate[SDLK_KP4]) {
+	if (xoffset > 0) {
+	    xoffset--;	// this left...
 	    whole_redraw = 1;
 	}
-    } else if (keystate[SDLK_RIGHT]) {
-    	if ((this->xoffset + XTILES) < (this->width - 1)) {
-            this->xoffset++;	// this right...
+    } else if (keystate[SDLK_KP6]) {
+    	if ((xoffset + XTILES) < (width - 1)) {
+            xoffset++;	// this right...
 	    whole_redraw = 1;
 	}
     }
-    */
 }
 
 @end

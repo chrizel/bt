@@ -35,6 +35,7 @@
 - onDraw:(SDL_Surface *)sfc;
 - (BOOL)switchBlink;
 - (BOOL)getBlink;
+- onIdle;
 
 @end
 

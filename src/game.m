@@ -192,23 +192,13 @@ Game::~Game()
 	}
 
 	/*
-	  {
-	  Uint8 *keystate = SDL_GetKeyState(NULL);
-	  if (keystate[SDLK_UP])
-	  player.pos.y -= 10;
-	  else if (keystate[SDLK_DOWN])
-	  player.pos.y += 10;
 
-	  if (keystate[SDLK_LEFT])
-	  player.pos.x -= 10;
-	  else if (keystate[SDLK_RIGHT])
-	  player.pos.x += 10;
-	  }
 	*/
 
         //map->onIdle();
 	//printf("Map onIdle\n");
 	[map onIdle];
+	[player onIdle];
 	//editor->onIdle();
         
 	//printf("Map onDraw\n");
@@ -272,7 +262,7 @@ Game::~Game()
 
 - (id)getConsole
 {
-    //return console;
+    return console;
 }
 
 - (id)getMap
@@ -282,7 +272,7 @@ Game::~Game()
 
 - (id)getPlayer
 {
-    //return player;
+    return player;
 }
 
 @end

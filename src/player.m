@@ -86,4 +86,18 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
     return blink;
 }
 
+- onIdle
+{
+    Uint8 *keystate = SDL_GetKeyState(NULL);
+    if (keystate[SDLK_UP])
+	pos.y -= 10;
+    else if (keystate[SDLK_DOWN])
+	pos.y += 10;
+
+    if (keystate[SDLK_LEFT])
+	pos.x -= 10;
+    else if (keystate[SDLK_RIGHT])
+	pos.x += 10;
+}
+
 @end
