@@ -18,40 +18,54 @@
 #include <SDL.h>
 #include <stdlib.h>
 
-#include <iostream>
-
 #include "game.h"
 #include "bt.h"
 #include "sdl_events.h"
 #include "error.h"
+/*
 #include "console.h"
 #include "player.h"
 #include "editor.h"
+*/
 #include "audio.h"
+
+@implementation Game
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
-  if (bt->getPlayer()->switchBlink())
-    return 200;
-  else
-    return 5000;
+    if (bt->getPlayer()->switchBlink())
+	return 200;
+    else
+	return 5000;
 }
 
-Game::Game(char *title)
-{ 
-    this->title = title;
-    this->initSDL();
++ newWithTitle:(char *)t
+{
+    return [[super new] initWithTitle:t];
+}
 
-    #ifdef USE_8BIT
+- initWithTitle:(char *)t
+{
+    title = t;
+    [self initSDL];
+  
+#ifdef USE_8BIT
     init_colors();
-    #endif
+#endif
 
-    map = new Map("main.map");
-    editor = new Editor(map);
-    console = new Console();
-    player = new Player();
+    map = [Map newWithFile:"main.map"];
+    //editor = [Editor new];
+    //console = [Console new];
+    //player = [Player new];
+    audio = [Audio new];
+
+    audio = new Audio();
+    music = [audio addMusic:"data/penguinplanet.ogg"];
+    chunk = [audio addChunk:"data/sound.wav"];
+    [audio playMusic:music];
 }
 
+/*
 Game::~Game()
 {
     delete player;
@@ -59,8 +73,9 @@ Game::~Game()
     delete map;
     delete audio;
 }
+*/
 
-void Game::initSDL()
+- initSDL
 {
     /* Initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -88,15 +103,10 @@ void Game::initSDL()
     else
         printf("> Using software surface\n");
 
-    SDL_WM_SetCaption(this->title, NULL);
-
-    audio = new Audio();
-    music = audio->AddMusic("data/penguinplanet.ogg");
-    chunk = audio->AddChunk("data/sound.wav");
-    audio->PlayMusic(music);
+    SDL_WM_SetCaption(title, NULL);
 }
 
-void Game::run()
+- run
 {
     // Handle fps
     int done = 0;
@@ -117,8 +127,6 @@ void Game::run()
     ticks_end = ticks_begin;
 #endif
 
-    std::cout << "loop begin.." << std::endl;
-
     while (!done) {
 	ur_count = 0;
 #ifdef DO_FRAMETEST
@@ -134,25 +142,27 @@ void Game::run()
 
         while (SDL_PollEvent(sdl_ev)) {
 
-	  if (bt->getConsole()->isVisible()) {
+	    //if (bt->getConsole()->isVisible()) {
                 /*
-                if (!CON_Events(sdl_ev))
-                    continue;
-                    */
-	    bt->getConsole()->onEvent(sdl_ev);
-            } else {
+		  if (!CON_Events(sdl_ev))
+		  continue;
+		*/
+		//bt->getConsole()->onEvent(sdl_ev);
+            //} else {
                 /* call event hooks... */
-                switch(sdl_ev->type) {
+	        switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
-		      if (!bt->getConsole()->isVisible())
-			bt->getConsole()->show();
+			//if (!bt->getConsole()->isVisible()) {
+			//}
+			//bt->getConsole()->show();
+			  
                         break;
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
-			std::cout << "Bye :)" << std::endl;
+			//std::cout << "Bye :)" << std::endl;
 			exit(0);
 		    } else if (sdl_ev->key.keysym.sym == SDLK_s) {
-			audio->PlayChunk(chunk);
+			[audio playChunk:chunk];
 		    }
                     break;
                 case SDL_KEYUP:
@@ -168,30 +178,31 @@ void Game::run()
                     // evl_call(evl_sdl, EV_SDL_JOYAXIS);
                     break;
                 }
-            }
+		//}
         }
 
 	/*
-	{
-	    Uint8 *keystate = SDL_GetKeyState(NULL);
-	    if (keystate[SDLK_UP])
-		player.pos.y -= 10;
-	    else if (keystate[SDLK_DOWN])
-		player.pos.y += 10;
+	  {
+	  Uint8 *keystate = SDL_GetKeyState(NULL);
+	  if (keystate[SDLK_UP])
+	  player.pos.y -= 10;
+	  else if (keystate[SDLK_DOWN])
+	  player.pos.y += 10;
 
-	    if (keystate[SDLK_LEFT])
-		player.pos.x -= 10;
-	    else if (keystate[SDLK_RIGHT])
-		player.pos.x += 10;
-	}
+	  if (keystate[SDLK_LEFT])
+	  player.pos.x -= 10;
+	  else if (keystate[SDLK_RIGHT])
+	  player.pos.x += 10;
+	  }
 	*/
 
-        map->onIdle();
+        //map->onIdle();
+	[map onIdle];
 	//editor->onIdle();
         
-	map->onDraw(screen);
-	player->onDraw(screen);
-	//editor->onDraw(screen);
+	[map onDraw:screen];
+	//[player onDraw:screen];
+	//[editor onDraw:screen];
 
         /* Execute surface filter... */
         // if (cur_filter)
@@ -199,9 +210,9 @@ void Game::run()
 
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
-        bt->getConsole()->draw();
+        //bt->getConsole()->draw();
         
-	if (whole_redraw || bt->getConsole()->isVisible()) {
+	if (whole_redraw /*|| bt->getConsole()->isVisible()*/) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
@@ -214,31 +225,33 @@ void Game::run()
     }
 }
 
-void Game::eventLoop()
+- eventLoop
 {
 }
 
-void Game::printGPL()
+- printGPL
 {
-    std::cout << GPL_TEXT;
+    puts(GPL_TEXT);
 }
 
-void Game::print(char *text)
+- printLine:(char *)t
 {
-    console->print(text);
+    // [console printLine:t];
 }
 
-Console *Game::getConsole()
+- (id)getConsole
 {
-    return console;
+    //return console;
 }
 
-Map *Game::getMap()
+- (id)getMap
 {
     return map;
 }
 
-Player *Game::getPlayer()
+- (id)getPlayer
 {
-    return player;
+    //return player;
 }
+
+@end

@@ -44,14 +44,15 @@ int frames;
 int ticks_begin, ticks_end;
 
 
-Game *bt;
+//Game *bt;
+id bt;
 
 int main(int argc, char *argv[])
 {
     cur_filter = NULL;
-    bt = new Game("Bermuda Triangle");
+    bt = [Game newWithTitle:"Bermuda Triangle"];
     minilogo = bmpl_get("main.minilogo");
-    bt->run();
+    [bt run];
 
     return 0;
 }

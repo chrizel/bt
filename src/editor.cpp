@@ -15,6 +15,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
+#include <iostream>
+
 #include <SDL.h>
 #include <SDL_endian.h>
 
@@ -106,7 +108,6 @@ void Editor::onDraw(SDL_Surface *sfc)
 
 void Editor::onIdle()
 {
-    /*
     if (bt->getConsole()->isVisible())
 	return;
 
@@ -118,13 +119,14 @@ void Editor::onIdle()
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
         if (mousestate & SDL_BUTTON(1)) {
+	    std::cout << "button1..." << std::endl;
             map->put(1, xt, yt);
 	    whole_redraw = 1;
         } else if (mousestate & SDL_BUTTON(3)) {
+	    std::cout << "button2..." << std::endl;
             map->put(0, xt, yt);
 	    whole_redraw = 1;
 	}
 
     }
-    */
 }

@@ -18,7 +18,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "eventhandler.h"
+#include "objc/Object.h"
+//#include "eventhandler.h"
 
 /* Map Format enums */
 enum {
@@ -31,12 +32,8 @@ enum {
 #define XTILES 40 /* tiles per row on screen */
 #define YTILES 30 /* tiles per col on screen */
 
-class Map : public EventHandler
+@interface Map: Object
 {
-private:
-    /*
-     * ATTRIBUTES
-     */
     SDL_Surface *stocks;
     Uint32 xoffset;
     Uint32 yoffset;
@@ -56,28 +53,31 @@ private:
 
     SDL_Rect srcrect;
 
-    void create(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks);
-
-public:
     Uint32 anim_ticker;
     Uint32 anim_ticks;
     Uint32 switch_palette;
+}
 
-    Map(char *file);
-    Map(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks);
+- (id)initWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32)anim_count animTicks:(Uint32)anim_ticks;
 
++ (id)newWithFile:(char *)file;
++ (id)newWithWidth:(Uint32)width height:(Uint32)height animCount:(Uint32) anim_count animTicks:(Uint32)anim_ticks;
+
+/*
     virtual ~Map();
+*/
 
-    void save(char *file);
-    void open(char *file);
+- save:(char *)file;
+- open:(char *)file;
 
-    void fill(int id);
-    void put(int id, int xt, int yt);
+- fill:(int)id;
+- fillWithID:(int)id;
+- putID:(int)id xT:(int)xt yT:(int)yt;
 
-    /* Event handling */
-    void onEvent(SDL_Event *event);
-    void onDraw(SDL_Surface *sfc);
-    void onIdle();
-};
+- onEvent:(SDL_Event *)event;
+- onDraw:(SDL_Surface *)sfc;
+- onIdle;
+
+@end
 
 #endif

@@ -19,42 +19,38 @@
 #define GAME_H 
 
 #include <SDL.h>
+#include <objc/Object.h>
 
-#include "editor.h"
+//#include "editor.h"
 
-class Map;
-class Console;
-class Player;
-class Audio;
-
-class Game
+@interface Game: Object
 {
-private:
     char *title;
 
-    Map *map;
-    Console *console;
-    Player *player;
-    Editor *editor;
-    Audio *audio;
+    id map;
+    //id console;
+    //id player;
+    //id editor;
+    id audio;
 
     int music;
     int chunk;
+}
 
-    void initSDL();
-    void eventLoop();
+- initSDL;
+- eventLoop;
+- printGPL;
 
-    void printGPL();
++ newWithTitle:(char *)t;
+- initWithTitle:(char *)t;
+/* virtual ~Game(); */
 
-public:
-    Game(char *title);
-    virtual ~Game();
+- run;
+- printLine:(char *)t;
+- (id)getConsole;
+- (id)getMap;
+- (id)getPlayer;
 
-    void run();
-    void print(char *text);
-    Console *getConsole();
-    Map *getMap();
-    Player *getPlayer();
-};
+@end
 
 #endif
