@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "input.h"
 
-inp_el *inputs;
+inp_item *inputs;
 
 static void on_key() 
 {
@@ -25,10 +25,15 @@ void init_input()
 {
     init_joystick();
 
-    inputs = MALLOC(inp_el);
+    inputs = MALLOC(inp_item);
     inputs->type = INP_TYPE_FREE;
 
     evl_reg(sdl_evl, EV_SDL_KEYDOWN, on_key);
     evl_reg(sdl_evl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
     evl_reg(sdl_evl, EV_SDL_JOYAXIS, on_joyaxis);
+}
+
+void free_input()
+{
+    FREE(inputs);
 }

@@ -19,15 +19,16 @@ enum {
   INP_TYPE_NULL
 };
 
-typedef struct _inp_el {
+typedef struct _inp_item {
   INP_TYPE type;
   t_func func;
   int arg1, arg2, arg3;
-} inp_el;
+} inp_item;
 
-extern inp_el *inputs;
+extern inp_item *inputs;
 
 void init_input();
+void free_input();
 void inp_add_key(int key, void (*func)());
 
 #endif
