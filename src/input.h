@@ -4,7 +4,7 @@
 #define INPUT_H
 
 #include <SDL.h>
-#include "event.h"
+#include "sdl_events.h"
 #include "joystick.h"
 
 void init_input();

@@ -4,7 +4,7 @@
 
 #include "bt.h"
 #include "bmpl.h"
-#include "event.h"
+#include "sdl_events.h"
 #include "map.h"
 #include "testmap.h"
 #include "colors.h"
@@ -36,8 +36,8 @@ static void read_map(char *filename);
 void init_map()
 {
     load_stocks("map.stock1", 3, 4); 
-    reg_func(draw_map, EH_PAINT); 
-    reg_func(on_idle, EH_IDLE);
+    evl_reg(sdl_evl, EV_SDL_PAINT, draw_map);
+    evl_reg(sdl_evl, EV_SDL_IDLE, on_idle);
 
     /* TODO: load map */
     /*

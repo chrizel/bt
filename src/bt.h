@@ -2,6 +2,7 @@
 #define MEGA_H 
 
 #include "console.h"
+#include "sdl_events.h"
 
 #define FPS 30
 

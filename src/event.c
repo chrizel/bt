@@ -1,128 +1,108 @@
-#include <assert.h>
+#include <string.h>
 
-#include <SDL.h>
-#include <SDL_ttf.h>
-
-#include "bt.h"
 #include "event.h"
 #include "error.h"
 #include "alloc.h"
 
-static ev null_ev[] = {{0, 0}}; 
-static ev *major_el = null_ev; /* pointer to major event list */
-static ev *minor_el = null_ev; /* pointer to minor event list */
 
-#define EH_BUF 16
-static void (**eh_list[EH_LAST])();
-static int eh_counts[EH_LAST];
+/* static t_evl_item functions */
+static t_evl_item *evl_item_new()
+{
+    t_evl_item *item = MALLOC(t_evl_item);
+    memset(item, 0, sizeof(t_evl_item));
+}
 
-SDL_Event event;
+static void evl_item_reg(t_evl_item *item, t_func func)
+{
+    /* if we don't have any functions yet... */
+    if (item->count == 0)
+        /* ...initialize functions array */
+        item->funcs = MALLOC_ARRAY(t_func, MAX_EV_FUNCS);
+    else if (item->count == MAX_EV_FUNCS)
+        /* if this happens, you should increase MAX_EV_FUNCS */
+        error("evl_item_reg: item->count == MAX_EV_FUNCS");
 
-static int disp_el(ev *el, SDL_Event *event)
+    /* now we can assume, that we can do the job */
+    item->funcs[item->count] = func;
+    item->count++;
+}
+
+static void evl_item_call(t_evl_item *item)
 {
     int i;
-    for (i = 0; el[i].sdl_event != 0; ++i)
-        if (el[i].sdl_event == event->type) {
-            if (el[i].func)
-                if(el[i].func(event)) 
-                    return 1;
-                else
-                    return 0;
-        }
-
-    return 0;
+    for (i = 0; i < item->count; i++)
+        item->funcs[i]();
 }
 
-static void disp_ev(SDL_Event *event)
+static void evl_item_free(t_evl_item *item)
 {
-    if (!disp_el (minor_el, event)) /* dispatch minor event list first... */
-        disp_el (major_el, event);  /* if not succeeded... dispatch major one */
+    FREE(item->funcs);
+    FREE(item);
 }
 
-void set_major_el(ev *el)
+t_evl *evl_new(int count)
 {
-    major_el = el ? el : null_ev;
+    t_evl *list = MALLOC(t_evl);
+
+    list->count = count;
+    list->items = MALLOC_ARRAY(t_evl_item *, count);
+
+    /* set item stuff to NULL - it will be filled in evl_reg */
+    memset(list->items, 0, sizeof(t_evl_item *) * count);
+
+    return list;
 }
 
-void set_minor_el(ev *el)
+void evl_reg(t_evl *list, int event, t_func func)
 {
-    minor_el = el ? el : null_ev;
-}
-
-void main_loop(void)
-{
-    // Handle fps
-    int done = 0;
-    Uint32 ticks = SDL_GetTicks();
-
-    while (!done) {
-        while(SDL_GetTicks() <= ticks)
-            ;
-        ticks = SDL_GetTicks() + (1000 / FPS);
-
-        while (SDL_PollEvent(&event)) {
-
-            if (CON_isVisible(btConsole)) {
-                if (!CON_Events(&event))
-                    continue;
-            } else {
-                sdl_ev = &event;
-                disp_ev(&event);
-
-                /* call event hooks... */
-                switch(event.type) {
-                case SDL_KEYDOWN: 
-                    if (event.key.keysym.sym == SDLK_F1) {
-                        if (!CON_isVisible(btConsole))
-                            CON_Show(btConsole);
-                        break;
-                    }
-
-                    call_hooks(EH_KEYDOWN);
-                    break;
-                case SDL_KEYUP:
-                    call_hooks(EH_KEYUP);
-                    break;
-		case SDL_JOYBUTTONDOWN:
-		    call_hooks(EH_JOYBUTTONDOWN);
-		    break;
-		case SDL_JOYBUTTONUP:
-		    call_hooks(EH_JOYBUTTONUP);
-		    break;
-		case SDL_JOYAXISMOTION:
-		    call_hooks(EH_JOYAXIS);
-		    break;
-                }
-            }
-        }
-
-        call_hooks(EH_IDLE);
-        SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-        call_hooks(EH_PAINT);
-        CON_DrawConsole(btConsole);
-        
-        SDL_Flip(screen);
+    /* check if all is ok... */
+    if (!list) {
+        warning("evl_reg: list is NULL");
+        return;
     }
-}
 
-void call_hooks(int eh_type)
-{
-    int i;
-    for (i = 0; i < eh_counts[eh_type]; i++)
-        eh_list[eh_type][i]();
-}
-
-void reg_func(void (*eh_func)(), int eh_type)
-{
-    eh_counts[eh_type]++;
-    eh_list[eh_type][eh_counts[eh_type]-1] = eh_func;
-}
-
-void init_hooks()
-{
-    int i;
-    for (i = 0; i < EH_LAST; i++) {
-        eh_list[i] = MALLOC_BYTES(void (**)(), EH_BUF);
-        eh_counts[i] = 0;
+    if (!func) {
+        warning("evl_reg: func is NULL");
+        return;
     }
+
+    if (event >= list->count) {
+        warning("evl_reg: event >= list->count");
+        return;
+    }
+
+    /* no let's check if list->items[event] is already allocated,
+     * if not, create it. */
+    if (list->items[event] == NULL)
+        list->items[event] = evl_item_new();
+
+    /* register function */
+    evl_item_reg(list->items[event], func);
+}
+
+void evl_call(t_evl *list, int event)
+{
+    /* error checking */
+    if (!list) {
+        warning("evl_call: list is NULL");
+        return;
+    }
+
+    if (event >= list->count) {
+        warning("evl_call: event >= list->count");
+        return;
+    }
+
+    /* do the job */
+    if (list->items[event])
+        evl_item_call(list->items[event]);
+}
+
+void evl_free(t_evl *list)
+{
+    while (--(list->count))
+        evl_item_free(list->items[list->count]);
+
+    FREE(list->items);
+    FREE(list);
 }

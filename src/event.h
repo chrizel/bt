@@ -1,36 +1,24 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <SDL.h>
+typedef void (*t_func)();
 
-typedef struct _ev {
-    int sdl_event;
-    int (*func)(SDL_Event *event);
-} ev; 
+typedef struct {
+    int count;
+    t_func *funcs;
+} t_evl_item;
 
-/* event hooks */
-enum {
-    EH_IDLE,
-    EH_PAINT,
-    EH_KEYDOWN,
-    EH_KEYUP,
-    EH_JOYBUTTONDOWN,
-    EH_JOYBUTTONUP,
-    EH_JOYAXIS,
+typedef struct {
+    int count;
+    t_evl_item **items;
+} t_evl;
 
-    EH_LAST, /* has to be the last! */
-};
+t_evl *evl_new(int count);
+void evl_reg(t_evl *list, int event, t_func func);
+void evl_call(t_evl *list, int event);
+void evl_free(t_evl *list);
 
-extern SDL_Event event;
-
-
-SDL_Event *sdl_ev;
-void call_hooks(int eh_type);
-void reg_func(void (*eh_func)(), int eh_type);
-void init_hooks();
-
-void set_major_el(ev *el); /* set major event list */
-void set_minor_el(ev *el); /* set minor event list */
-void main_loop(void);
+/* increase this, if needed! */
+#define MAX_EV_FUNCS 16
 
 #endif

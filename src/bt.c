@@ -15,42 +15,37 @@
 
 
 static void init_sdl(void);
-static int keydown(SDL_Event *event);
-static int quit(SDL_Event *event);
-
-/* Main event list */
-ev main_el[] = {
-    {SDL_KEYDOWN, keydown},
-    {SDL_QUIT, quit},
-    {0, 0},
-};
+static void keydown();
+static void quit();
 
 int main(int argc, char *argv[])
 {
     init_sdl();
     init_colors();
-    init_hooks();
+    init_sdl_events();
+
     init_console();
     init_map();
     init_textshow();
     init_input();
 
+    evl_reg(sdl_evl, EV_SDL_KEYDOWN, keydown);
+
     /* start main loop */
-    set_major_el(main_el);
-    main_loop();
+    sdl_event_loop();
 
     CON_Destroy(btConsole);
 
     return 0;
 }
 
-static int  keydown(SDL_Event *event)
+static void keydown()
 {
-    if (event->key.keysym.sym == SDLK_ESCAPE)
-        bt_exit(event);
+    if (sdl_ev->key.keysym.sym == SDLK_ESCAPE)
+        bt_exit();
 }
 
-static int quit(SDL_Event *event)
+static void quit()
 {
     bt_exit();
 }

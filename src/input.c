@@ -23,7 +23,7 @@ void init_input()
 {
     init_joystick();
 
-    reg_func(on_key, EH_KEYDOWN);
-    reg_func(on_joybutton, EH_JOYBUTTONDOWN);
-    reg_func(on_joyaxis, EH_JOYAXIS);
+    evl_reg(sdl_evl, EV_SDL_KEYDOWN, on_key);
+    evl_reg(sdl_evl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
+    evl_reg(sdl_evl, EV_SDL_JOYAXIS, on_joyaxis);
 }
