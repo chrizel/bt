@@ -20,7 +20,7 @@ gnustep: $(BIN)
 	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
 
 clean:
-	rm -f $(BIN) $(OBJ) "Bermuda Triangle.app" 2> /dev/null
+	rm -rf $(BIN) $(OBJ) "Bermuda Triangle.app" 2> /dev/null
 
 .PHONY: all clean gnu_step
 
