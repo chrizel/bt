@@ -35,5 +35,3 @@ SDL_Event *sdl_ev;
 SDL_Rect update_rects[MAX_RECTS];
 int ur_count;
 int whole_redraw;
-
-Map *tmp_map;

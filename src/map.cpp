@@ -27,6 +27,7 @@
 #include "alloc.h"
 
 #include "error.h"
+#include "editor.h"
 
 #include "eventhandler.h"
 
@@ -37,28 +38,6 @@
 
 /* helper functions */
 static Uint32 map_anim_timer(Uint32 interval, void *param);
-static void write_int(FILE *fp, Uint32 num);
-static Uint32 read_int(FILE *fp);
-
-static void write_int(FILE *fp, Uint32 num)
-{
-    SDL_RWops *area;
-    area = SDL_RWFromFP(fp, 0);
-    SDL_WriteLE32(area, num);
-    SDL_FreeRW(area);
-}
-
-static Uint32 read_int(FILE *fp)
-{
-    int num;
-
-    SDL_RWops *area;
-    area = SDL_RWFromFP(fp, 0);
-    num = SDL_ReadLE32(area);
-    SDL_FreeRW(area);
-
-    return num;
-}
 
 static Uint32 map_anim_timer(Uint32 interval, void *param)
 {
@@ -129,22 +108,22 @@ void Map::save(char *file)
 
     fp = fopen(file, "w");
 
-    /* write header... */
+    // write header...
     fprintf(fp, "MAP:%u,%u,%u,%u,%u\n", 
 	    this->version, this->width, this->height, 
 	    this->anim_count, this->anim_ticks);
 
-    /* write anim data */
+    // write anim data
     for (anim = 0; anim < this->anim_count; anim++)
         for (tick = 0; tick < this->anim_ticks; tick++)
             fprintf(fp, "%u.", this->anims[anim * this->anim_count + tick]);
 
     fputc('\n', fp);
 
-    /* write map data */
+    // write map data
     for (y = 0; y < this->height; y++)
         for (x = 0; x < this->width; x++)
-            write_int(fp, this->data[this->width * y + x]);
+	    Editor::writeInt(fp, this->data[this->width * y + x]);
 
     fclose(fp);
     printf("ok\n");
@@ -159,37 +138,38 @@ void Map::open(char *file)
     printf("read map...");
     fp = fopen(file, "r");
 
-    /* check if file is available... */
+    // check if file is available...
     if (!fp) {
         bt->print("file not found");
         return;
     }
 
-    /* read header... */
+    // read header...
     fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &version, &width, &height, &anim_count, &anim_ticks);
 
-    /* check version */
-    /* TODO
-    if (version != file_version)
+    // check version
+    // TODO
+    /*
+      if (version != file_version)
         error("Wrong map version or wrong format.");
     */
 
-    /* create map in space */
+    // create map in space
     create(width, height, anim_count, anim_ticks);
-
-    /* read anim data */
+    
+    // read anim data
     for (anim = 0; anim < this->anim_count; anim++)
         for (tick = 0; tick < this->anim_ticks; tick++)
             fscanf(fp, "%u.", 
 		   &this->anims[anim * this->anim_count + tick]);
 
     if (anim)
-        fseek(fp, 1, SEEK_CUR); /* jump over \n */
+        fseek(fp, 1, SEEK_CUR); // jump over \n
 
-    /* read map data */
+    // read map data
     for (y = 0; y < this->height; y++)
         for (x = 0; x < this->width; x++)
-            this->data[this->width * y + x] = read_int(fp);
+            this->data[this->width * y + x] = Editor::readInt(fp);
 
     fclose(fp);
     printf("ok (cur_map->data[0] = %u)\n", this->data[0]);
@@ -209,15 +189,18 @@ void Map::put(int id, int xt, int yt)
 {
     int x, y;
 
+    /* TODO 
     if (id) {
         SET_STOCK_ID(this, xt, yt, editor_pen);
     } else {
+	
         if (editor_pg)
             for (y = 0; y < editor_pg_y; y++)
                 for (x = 0; x < editor_pg_x; x++)
                     SET_STOCK_ID(this, xt + x, yt + y, 
 				 editor_pg[editor_pg_x * y + x]);
     }
+    */
 }
 
 void Map::onEvent(SDL_Event *event)
@@ -301,20 +284,4 @@ void Map::onIdle()
 	}
     }
     */
-
-    if (editor_mode) {
-        int x, y, xt, yt;
-        Uint8 mousestate = SDL_GetMouseState(&x, &y);
-
-        xt = (x - (x % TILE_SIZE)) / TILE_SIZE;
-        yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
-
-        if (mousestate & SDL_BUTTON(1)) {
-            put(1, xt, yt);
-	    whole_redraw = 1;
-        } else if (mousestate & SDL_BUTTON(3)) {
-            put(0, xt, yt);
-	    whole_redraw = 1;
-	}
-    }
 }

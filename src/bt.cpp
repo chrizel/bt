@@ -40,52 +40,20 @@
 SDL_Surface *screen;
 SDL_Surface *minilogo;
 
-int editor_mode;
-int editor_pen;
-int *editor_pg;
-int editor_pg_y;
-int editor_pg_x;
-
 int frames;
 int ticks_begin, ticks_end;
 
 
 Game *bt;
 
-static void keydown();
-static void quit();
-
 int main(int argc, char *argv[])
 {
-    editor_mode = 1;
-    editor_pen = 0;
-    editor_pg = NULL;
     cur_filter = NULL;
-
-    puts(GPL_TEXT);
-
     bt = new Game("Bermuda Triangle");
-
-    // init_sdl_events();
-
     minilogo = bmpl_get("main.minilogo");
-
-    // evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
-
     bt->run();
 
     return 0;
-}
-
-static void keydown()
-{
-  if (sdl_ev->key.keysym.sym == SDLK_q)
-    bt_exit();
-}
-
-static void quit()
-{
-    bt_exit();
 }
 
 void bt_exit()
@@ -99,6 +67,7 @@ void bt_exit()
 /*
 Yes, that sprintf stuff is all very quick and dirty, but we will change this in future...
 */
+/*
 void bt_editor(void)
 {
     char buf[100];
@@ -146,12 +115,6 @@ void bt_pg(void)
     }
 
     bt->print("set pg");
-
-    /*
-    printf("\npg:\t%d\n", editor_pg_x * editor_pg_y);
-    for (i = 0; i < editor_pg_x * editor_pg_y; i++)
-        printf("\t%d\n", editor_pg[i]);
-        */
 }
 
 void bt_write(void)
@@ -168,10 +131,10 @@ void bt_load(void)
     sscanf(bt->getConsole()->getLastParam(), "%s %s", buf1, buf2);
 
     std::cout << "Not implemented.";
-    /* TODO
+
+    TODO:
     delete map;
     map = new Map(buf2);
-    */
 }
 
 void bt_fill(void)
@@ -200,11 +163,12 @@ void bt_new(void)
     sscanf(bt->getConsole()->getLastParam(), "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
 
     std::cout << "Not implemented.";
-    /* TODO
+
+    TODO:
     delete map;
     map = new Map(width, height, anim_count, anim_ticks);
-    */
 }
+*/
 
 #ifdef DO_FRAMETEST
 void fps_output()

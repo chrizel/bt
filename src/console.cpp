@@ -31,9 +31,10 @@ typedef struct {
 
 t_command commands[] = {
     {"exit", bt_exit},
-    {"editor", bt_editor},
+    //{"editor", bt_editor},
     {"night", con_switch_filter},
     {"day", con_switch_filter},
+    /*
     {"pen", bt_pen},
     {"pg", bt_pg},
     {"write", bt_write},
@@ -42,6 +43,7 @@ t_command commands[] = {
     {"fill", bt_fill},
     {"put", bt_put},
     {"new", bt_new},
+    */
     {NULL, NULL},
 };
 

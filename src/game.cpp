@@ -26,15 +26,11 @@
 #include "error.h"
 #include "console.h"
 #include "player.h"
+#include "editor.h"
 #include "audio.h"
-
-int myMusic;
-int myChunk;
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
-  std::cout << "blink" << std::endl;
-
   if (bt->getPlayer()->switchBlink())
     return 200;
   else
@@ -51,11 +47,9 @@ Game::Game(char *title)
     #endif
 
     map = new Map("main.map");
+    editor = new Editor(map);
     console = new Console();
     player = new Player();
-
-    tmp_map = map;
-
 }
 
 Game::~Game()
@@ -97,9 +91,9 @@ void Game::initSDL()
     SDL_WM_SetCaption(this->title, NULL);
 
     audio = new Audio();
-    myMusic = audio->AddMusic("data/penguinplanet.ogg");
-    myChunk = audio->AddChunk("data/sound.wav");
-    audio->PlayMusic(myMusic);
+    music = audio->AddMusic("data/penguinplanet.ogg");
+    chunk = audio->AddChunk("data/sound.wav");
+    audio->PlayMusic(music);
 }
 
 void Game::run()
@@ -158,7 +152,7 @@ void Game::run()
 			std::cout << "Bye :)" << std::endl;
 			exit(0);
 		    } else if (sdl_ev->key.keysym.sym == SDLK_s) {
-			audio->PlayChunk(myChunk);
+			audio->PlayChunk(chunk);
 		    }
                     break;
                 case SDL_KEYUP:
@@ -192,19 +186,16 @@ void Game::run()
 	}
 	*/
 
-        tmp_map->onIdle();
-        // evl_call(evl_sdl, EV_SDL_IDLE);
-
-        //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-        tmp_map->onDraw(screen);
-	bt->getPlayer()->onDraw(screen);
-        // evl_call(evl_sdl, EV_SDL_PAINT);
+        map->onIdle();
+	//editor->onIdle();
+        
+	map->onDraw(screen);
+	player->onDraw(screen);
+	//editor->onDraw(screen);
 
         /* Execute surface filter... */
         // if (cur_filter)
 	// cur_filter();
-
-
 
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 

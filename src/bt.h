@@ -41,12 +41,6 @@ const char GPL_TEXT[] =
 extern SDL_Surface *screen;
 extern SDL_Surface *minilogo;
 
-extern int editor_mode;
-extern int editor_pen;
-extern int *editor_pg;
-extern int editor_pg_y;
-extern int editor_pg_x;
-
 #ifdef DO_FRAMETEST
 extern int frames;
 extern int ticks_begin, ticks_end;

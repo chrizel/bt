@@ -20,6 +20,8 @@
 
 #include <SDL.h>
 
+#include "editor.h"
+
 class Map;
 class Console;
 class Player;
@@ -33,7 +35,11 @@ private:
     Map *map;
     Console *console;
     Player *player;
+    Editor *editor;
     Audio *audio;
+
+    int music;
+    int chunk;
 
     void initSDL();
     void eventLoop();
