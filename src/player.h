@@ -15,38 +15,24 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef GAME_H
-#define GAME_H 
+#ifndef PLAYER_H
+#define PLAYER_H
 
-#include <SDL.h>
+class Player {
+ private:
+    SDL_Surface *my_sfc;
+    SDL_Rect pos;
+    SDL_Rect cur_shape;
+    bool blink;
 
-class Map;
-class Console;
-class Player;
+ public:
+    Player();
+    virtual ~Player();
 
-class Game
-{
-private:
-    char *title;
+    void onDraw(SDL_Surface *sfc);
 
-    Map *map;
-    Console *console;
-    Player *player;
-
-    void initSDL();
-    void eventLoop();
-
-    void printGPL();
-
-public:
-    Game(char *title);
-    virtual ~Game();
-
-    void run();
-    void print(char *text);
-    Console *getConsole();
-    Map *getMap();
-    Player *getPlayer();
+    bool switchBlink();
+    bool getBlink();
 };
 
 #endif

@@ -18,6 +18,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
+#include <iostream>
+
 #include "bt.h"
 #include "alloc.h"
 #include "event.h"
@@ -25,6 +27,7 @@
 #include "filter.h"
 #include "map.h"
 #include "game.h"
+#include "player.h"
 
 t_evl *evl_sdl;
 SDL_Event *sdl_ev;
@@ -35,28 +38,14 @@ int whole_redraw;
 
 Map *tmp_map;
 
-SDL_Rect wider_rect(SDL_Rect *rect, int border)
-{
-    static SDL_Rect wrect;
-    
-    //printf("%d,%d,%d,%d\n", rect->x, rect->y, rect->w, rect->h);
-
-    wrect.x = rect->x - border;
-    wrect.y = rect->y - border;
-    wrect.w = rect->w + border * 2;
-    wrect.h = rect->h + border * 2;
-
-    return wrect;
-}
-
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
-    player.blink = !player.blink;
+  std::cout << "blink" << std::endl;
 
-    if (player.blink)
-	return 200;
-    else
-	return 5000;
+  if (bt->getPlayer()->switchBlink())
+    return 200;
+  else
+    return 5000;
 }
 
 void init_sdl_events(void)
@@ -153,19 +142,14 @@ void sdl_event_loop(void)
 
         //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
         tmp_map->onDraw(screen);
+	bt->getPlayer()->onDraw(screen);
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */
         // if (cur_filter)
 	// cur_filter();
 
-	if (player.blink)
-	    player.cur_shape.x = 80;
-	else
-	    player.cur_shape.x = 0;
 
-	SDL_BlitSurface(player.sfc, &player.cur_shape, screen, &player.pos);
-	PUSH_UR(wider_rect(&player.pos, 10));
 
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 

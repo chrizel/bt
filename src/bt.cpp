@@ -22,6 +22,8 @@
 
 #include <SDL.h>
 
+#include <iostream>
+
 #include "bt.h"
 #include "error.h"
 #include "event.h"
@@ -37,8 +39,6 @@
 
 SDL_Surface *screen;
 SDL_Surface *minilogo;
-
-Map *map;
 
 int editor_mode;
 int editor_pen;
@@ -66,33 +66,14 @@ int main(int argc, char *argv[])
 
     bt = new Game("Bermuda Triangle");
 
-    #ifdef USE_8BIT
-    init_colors();
-    #endif
-
     init_sdl_events();
 
     init_textshow();
     init_input();
 
     minilogo = bmpl_get("main.minilogo");
-    player.sfc = bmpl_get("player.player1");
-
-    player.pos.w = 80;
-    player.pos.h = 100;
-
-    player.pos.x = 600;
-    player.pos.y = 400;
-
-    player.cur_shape.w = 80;
-    player.cur_shape.h = 100;
-    player.cur_shape.x = 0;
-    player.cur_shape.y = 0;
 
     evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
-
-    /* create map... */
-    map = new Map("main.map");
 
     bt->run();
 
@@ -181,7 +162,7 @@ void bt_write(void)
     char buf1[100], buf2[100];
     sscanf(bt->getConsole()->getLastParam(), "%s %s", buf1, buf2);
 
-    map->save(buf2);
+    bt->getMap()->save(buf2);
 }
 
 void bt_load(void)
@@ -189,8 +170,11 @@ void bt_load(void)
     char buf1[100], buf2[100];
     sscanf(bt->getConsole()->getLastParam(), "%s %s", buf1, buf2);
 
+    std::cout << "Not implemented.";
+    /* TODO
     delete map;
     map = new Map(buf2);
+    */
 }
 
 void bt_fill(void)
@@ -199,7 +183,7 @@ void bt_fill(void)
     int id;
     sscanf(bt->getConsole()->getLastParam(), "%s %d", buf1, &id);
 
-    map->fill(id);
+    bt->getMap()->fill(id);
 }
 
 void bt_put(void)
@@ -208,7 +192,7 @@ void bt_put(void)
     int id, x, y;
     sscanf(bt->getConsole()->getLastParam(), "%s %d %d %d", buf1, &id, &x, &y);
 
-    map->put(id, x, y);
+    bt->getMap()->put(id, x, y);
 }
 
 void bt_new(void)
@@ -218,8 +202,11 @@ void bt_new(void)
 
     sscanf(bt->getConsole()->getLastParam(), "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
 
+    std::cout << "Not implemented.";
+    /* TODO
     delete map;
     map = new Map(width, height, anim_count, anim_ticks);
+    */
 }
 
 #ifdef DO_FRAMETEST

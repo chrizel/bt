@@ -25,18 +25,29 @@
 #include "sdl_events.h"
 #include "error.h"
 #include "console.h"
-
-Player player;
+#include "player.h"
 
 Game::Game(char *title)
 { 
     this->title = title;
     this->initSDL();
 
+    #ifdef USE_8BIT
+    init_colors();
+    #endif
+
     map = new Map("main.map");
     console = new Console();
+    player = new Player();
 
     tmp_map = map;
+}
+
+Game::~Game()
+{
+    delete player;
+    delete console;
+    delete map;
 }
 
 void Game::initSDL()
@@ -92,4 +103,14 @@ void Game::print(char *text)
 Console *Game::getConsole()
 {
     return console;
+}
+
+Map *Game::getMap()
+{
+    return map;
+}
+
+Player *Game::getPlayer()
+{
+    return player;
 }
