@@ -9,7 +9,7 @@ void init_colors()
 {
     printf("load color palette...");
     /* Load GIMP palette */
-    load_gimp_palette("data/palette2.gpl");
+    load_gimp_palette("data/palette3.gpl");
     clone_colors();
     printf("ok\n");
 

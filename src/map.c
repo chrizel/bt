@@ -18,6 +18,7 @@ static SDL_Surface *wallpaper;
 static int xoffset = 0, yoffset = 0;
 static int anim_ticker = 0;
 static int file_version = 1;
+static int switch_palette = 0;
 static map_data *cur_map = NULL;
 static union _utile {
     unsigned int as_int;
@@ -43,7 +44,7 @@ void init_map()
 
     read_map("main.map");
 
-    SDL_AddTimer(1000, switch_anim_ticker, NULL);
+    SDL_AddTimer(150, switch_anim_ticker, NULL);
 }
 
 static void write_int(FILE *fp, unsigned int num)
@@ -184,14 +185,63 @@ void read_map(char *filename)
 
 static Uint32 switch_anim_ticker(Uint32 interval, void *param)
 {
+    /*
     anim_ticker = !anim_ticker;
     return interval;
+    */
+    switch_palette = 1;
+
+
+    return interval;
+}
+
+void set_color(SDL_Color *c1, SDL_Color *c2)
+{
+    c1->r = c2->r;
+    c1->g = c2->g;
+    c1->b = c2->b;
+}
+
+void draw_color(SDL_Color *c)
+{
+    //printf("%.2x%.2x%.2x ", c->r, c->g, c->b);
 }
 
 static void draw_map()
 {
     int x, y, x2, y2, id;
     SDL_Rect srcrect, rect;
+
+    if (switch_palette) {
+        int i;
+        SDL_Color tmp;
+        SDL_Color colors[7];
+        
+        tmp = screen->format->palette->colors[249];
+        for (i = 0; i < 6; i++) {
+            colors[i] = screen->format->palette->colors[250 + i];
+            draw_color(&colors[i]);
+        }
+        colors[6] = tmp;
+        draw_color(&colors[6]);
+        //printf("\n");
+
+        /*
+        //colors[0] = screen->format->palette->colors[255];
+        set_color(&colors[0], &screen->format->palette->colors[255]);
+        for (i = 249; i < 255; i++)
+            //colors[i] = screen->format->palette->colors[i+1];
+            set_color(&colors[i], &screen->format->palette->colors[i+1]);
+        set_color(&colors[255], &colors[0]);
+
+        // ok, now we shift our color palette range
+        //SDL_SetColors(screen, screen->format->palette->colors, 249, 255);
+        */
+        SDL_SetPalette(screen, SDL_LOGPAL, colors, 249, 7);
+
+        //printf("change palette\n");
+        switch_palette = 0;
+    }
 
     // TODO: We could do that already in init_map, if srcrect would be global!?
     srcrect.w = TILE_SIZE;
