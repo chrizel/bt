@@ -36,7 +36,7 @@ static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
 {
-    stocks = bmpl_get("map.stock1");
+    stocks = bmpl_get("map.stock2");
 
     evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);

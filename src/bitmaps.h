@@ -5,6 +5,7 @@
 
 t_bmpl_item bmpl_list[] = {
     {"map.stock1", "data/tiles/empty_stock.bmp", NULL, 0},
+    {"map.stock2", "data/tiles/stock1.bmp", NULL, 0},
     {"font.bg.test", "data/Speak/test3.bmp", NULL, BL_COLORKEY},
 
     {NULL, NULL, NULL, 0}, /* the last entry must be NULL! */
