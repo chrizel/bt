@@ -28,7 +28,7 @@
     char *title;
 
     id map;
-    //id console;
+    id console;
     id player;
     //id editor;
     id audio;

@@ -22,9 +22,8 @@
 #include "bt.h"
 #include "sdl_events.h"
 #include "error.h"
-/*
 #include "console.h"
-
+/*
 #include "editor.h"
 */
 #include "player.h"
@@ -57,7 +56,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     printf("make map...\n");
     map = [Map newWithFile:"main.map"];
     //editor = [Editor new];
-    //console = [Console new];
+    console = [Console new];
     player = [Player new];
 
     printf("make audio...\n");
@@ -158,20 +157,15 @@ Game::~Game()
         while (SDL_PollEvent(sdl_ev)) {
 	    //printf("inside PollEvent\n");
 
-	    //if (bt->getConsole()->isVisible()) {
-                /*
-		  if (!CON_Events(sdl_ev))
-		  continue;
-		*/
-		//bt->getConsole()->onEvent(sdl_ev);
-            //} else {
+	    if ([console isVisible]) {
+		[console onEvent:sdl_ev];
+            } else {
                 /* call event hooks... */
 	        switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
-			//if (!bt->getConsole()->isVisible()) {
-			//}
-			//bt->getConsole()->show();
+			if (![console isVisible])
+			    [console show];
 			  
                         break;
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
@@ -194,8 +188,8 @@ Game::~Game()
                     // evl_call(evl_sdl, EV_SDL_JOYAXIS);
                     break;
                 }
-		//}
-        }
+	    }
+	}
 
 	/*
 	  {
@@ -221,6 +215,7 @@ Game::~Game()
 	[map onDraw:screen];
 	[player onDraw:screen];
 	//[editor onDraw:screen];
+	[console draw];
 
         /* Execute surface filter... */
         // if (cur_filter)
@@ -232,7 +227,7 @@ Game::~Game()
         //bt->getConsole()->draw();
         
 	//printf("whole_redraw\n");
-	if (whole_redraw /*|| bt->getConsole()->isVisible()*/) {
+	if (whole_redraw || [console isVisible]) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;

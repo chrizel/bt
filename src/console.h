@@ -18,33 +18,34 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-/*
+#include <objc/Object.h>
+
 #include <SDL.h>
 
 #include "console/SDL_console.h"
-#include "eventhandler.h"
 
-class Console// : public EventHandler
+@interface Console: Object
 {
-private:
     ConsoleInformation *console;
     char *lastParam;
+}
 
-public:
-    Console();
-    virtual ~Console();
-    char *getLastParam();
-    void handleCommand(char *command);
-    void readScript(char *filename);
-    void print(char *str);
-    bool isVisible();
++ (id)new;
+- (id)init;
+// virtual ~Console();
 
-    void show();
-    void hide();
-    void draw();
+- (char *)getLastParam;
+- handleCommand:(char *)command;
+- readScript:(char *)filename;
+- print:(char *)str;
+- (BOOL)isVisible;
 
-    void onEvent(SDL_Event *event);
-};
-*/
+- show;
+- hide;
+- draw;
+
+- onEvent:(SDL_Event *)event;
+
+@end
 
 #endif

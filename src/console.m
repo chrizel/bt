@@ -24,6 +24,8 @@
 #include "filter.h"
 #include "error.h"
 
+@implementation Console
+
 typedef struct {
     char *command;
     void (*func)();
@@ -47,10 +49,15 @@ t_command commands[] = {
     {NULL, NULL},
 };
 
-static Console *curConsole = 0;
+static id curConsole = NULL;
 static void CommandHandler(ConsoleInformation *console, char *command);
 
-Console::Console()
++ (id)new
+{
+    return [[super new] init];
+}
+
+- (id)init
 {
     SDL_Rect conRect;
 
@@ -61,33 +68,35 @@ Console::Console()
     conRect.h = 195;
 
     /* init console */
-    this->console = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);
+    console = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);
 
-    if (!this->console)
+    if (!console)
         error("Can not init console!");
 
-    CON_SetExecuteFunction(this->console, CommandHandler);
-    //CON_Alpha(this->console, 150);
-    CON_SetPrompt(this->console, "console> ");
-    CON_Topmost(this->console);
-    //CON_Show(this->console);
+    CON_SetExecuteFunction(console, CommandHandler);
+    //CON_Alpha(console, 150);
+    CON_SetPrompt(console, "console> ");
+    CON_Topmost(console);
+    //CON_Show(console);
     
-    curConsole = this;
+    curConsole = self;
 }
 
+/*
 Console::~Console()
 {
     CON_Hide(this->console);
     CON_Destroy(this->console);
     curConsole = 0;
 }
+*/
 
-void Console::handleCommand(char *command)
+- handleCommand:(char *)command
 {
     int i, found = 0;
 
     if (command[0] == '<') {
-        readScript(command + 1);
+	[self readScript:command + 1];
         return;
     }
 
@@ -104,10 +113,10 @@ void Console::handleCommand(char *command)
     lastParam = 0;
 
     if (!found)
-        print("Command not found");
+	[self print:"Command not found"];
 }
 
-void Console::readScript(char *filename)
+- readScript:(char *)filename
 {
     char buf[512];
     FILE *fp;
@@ -121,55 +130,55 @@ void Console::readScript(char *filename)
         while (!feof(fp)) {
             fgets(buf, 512, fp);
             printf("%s\n", buf);
-            print(buf);
-            CommandHandler(this->console, buf);
+	    [self print:buf];
+            CommandHandler(console, buf);
         }
 
         fclose(fp);
     } else {
-        print("file not found");
+        [self print:"file not found"];
         return;
     }
 }
 
-char *Console::getLastParam()
+- (char *)getLastParam
 {
     return lastParam;
 }
 
-void Console::print(char *str)
+- print:(char *)str
 {
-    CON_Out(this->console, str);
+    CON_Out(console, str);
 }
 
-bool Console::isVisible()
+- (BOOL)isVisible
 {
-    return CON_isVisible(this->console);
+    return CON_isVisible(console);
 }
 
-void Console::onEvent(SDL_Event *event)
+- onEvent:(SDL_Event *)event
 {
     CON_Events(event);
 }
 
-void Console::show()
+- show
 {
-    CON_Show(this->console);
+    CON_Show(console);
 }
 
-void Console::hide()
+- hide
 {
-    CON_Hide(this->console);
+    CON_Hide(console);
 }
 
-void Console::draw()
+- draw
 {
-    CON_DrawConsole(this->console);
+    CON_DrawConsole(console);
 }
 
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
     if (curConsole)
-        curConsole->handleCommand(command);
+	[curConsole handleCommand:command];
 }
 
