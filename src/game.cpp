@@ -29,6 +29,7 @@
 #include "audio.h"
 
 int myMusic;
+int myChunk;
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
@@ -97,6 +98,7 @@ void Game::initSDL()
 
     audio = new Audio();
     myMusic = audio->AddMusic("data/penguinplanet.ogg");
+    myChunk = audio->AddChunk("data/sound.wav");
     audio->PlayMusic(myMusic);
 }
 
@@ -155,6 +157,8 @@ void Game::run()
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
 			std::cout << "Bye :)" << std::endl;
 			exit(0);
+		    } else if (sdl_ev->key.keysym.sym == SDLK_s) {
+			audio->PlayChunk(myChunk);
 		    }
                     break;
                 case SDL_KEYUP:
