@@ -9,7 +9,7 @@ LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image
 $(BIN): $(OBJ)
 	gcc -o $(BIN) $(LIBS) $(OBJ)
 
-$(OBJ): $(SRC) $(HDR)
+$(OBJ): $(HDR)
 
 
 clean:
