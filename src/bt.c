@@ -74,10 +74,8 @@ int main(int argc, char *argv[])
 
 static void keydown()
 {
-    /*
-    if (sdl_ev->key.keysym.sym == SDLK_ESCAPE)
-        bt_exit();
-        */
+  if (sdl_ev->key.keysym.sym == SDLK_q)
+    bt_exit();
 }
 
 static void quit()

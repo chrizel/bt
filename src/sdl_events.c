@@ -50,7 +50,7 @@ void sdl_event_loop(void)
                 /* call event hooks... */
                 switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
-                    if (sdl_ev->key.keysym.sym == SDLK_F1) {
+                    if (sdl_ev->key.keysym.sym == SDLK_c) {
                         if (!CON_isVisible(btConsole))
                             CON_Show(btConsole);
                         break;

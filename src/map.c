@@ -42,7 +42,7 @@ static union _utile {
     unsigned char as_char[4];
 } utile;
 
-static void draw_map();
+static void map_draw();
 static void on_idle();
 static SDL_Surface *get_tile(SDL_Surface *src, int x, int y);
 static Uint32 switch_anim_ticker(Uint32 interval, void *param);
@@ -56,7 +56,7 @@ void init_map()
 {
     stocks = bmpl_get("map.stock2");
 
-    evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
+    evl_reg(evl_sdl, EV_SDL_PAINT, map_draw);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
     read_map("main.map");
@@ -224,7 +224,7 @@ void draw_color(SDL_Color *c)
     //printf("%.2x%.2x%.2x ", c->r, c->g, c->b);
 }
 
-static void draw_map()
+static void map_draw()
 {
     int x, y, x2, y2, id;
     SDL_Rect srcrect, rect;
