@@ -32,7 +32,7 @@ typedef struct {
 } t_command;
 
 t_command commands[] = {
-    {"exit", bt_exit},
+    //{"exit", btQuit},
     //{"editor", bt_editor},
     {"night", con_switch_filter},
     {"day", con_switch_filter},
@@ -74,8 +74,8 @@ static void CommandHandler(ConsoleInformation *console, char *command);
         error("Can not init console!");
 
     CON_SetExecuteFunction(console, CommandHandler);
-    CON_Alpha(console, 150);
-    CON_SetPrompt(console, "console> ");
+    //CON_Alpha(console, 150);
+    CON_SetPrompt(console, ">>> ");
     CON_Topmost(console);
     //CON_Show(console);
     
@@ -156,6 +156,11 @@ Console::~Console()
     return CON_isVisible(console);
 }
 
+- (BOOL)isClosing
+{
+    return console->Visible == CON_CLOSING;
+}
+
 - onEvent:(SDL_Event *)event
 {
     CON_Events(event);
@@ -179,7 +184,8 @@ Console::~Console()
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
     if (curConsole)
-	[curConsole handleCommand:command];
+	//[curConsole handleCommand:command];
+	[[bt getPython] evalString:command];
 }
 
 @end

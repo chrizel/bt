@@ -145,38 +145,7 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 
 - switchTick
 {
-    //tick = !tick;
-    /*
-    tick_dir = !tick_dir;
-    if (tick_dir)
-	tick = 0;
-    else
-	tick = 2;
-    */
-
-    /*
-    if (tick_dir) {
-	tick++;
-	if (tick == TICK_COUNT - 1) {
-	    tick_dir = NO;
-	}
-    } else {
-	tick--;
-	if (tick == 0) {
-	    tick_dir = YES;
-	}
-    }
-    */
-    /*
-    printf(" tick: %u\n", tick);
-    */
-    /*
-    tick++;
-    if (tick == TICK_COUNT)
-	tick = 0;
-    */
-
-    if (tick == 2)
+    if (tick)
 	tick = 0;
     else
 	tick = 2;

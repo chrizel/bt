@@ -32,6 +32,7 @@
     id player;
     //id editor;
     id audio;
+    id python;
 
     int music;
     int chunk;
@@ -43,7 +44,7 @@
 
 + (id)newWithTitle:(char *)t;
 - (id)initWithTitle:(char *)t;
-/* virtual ~Game(); */
+- free;
 
 - run;
 
@@ -53,6 +54,7 @@
 - (id)getConsole;
 - (id)getMap;
 - (id)getPlayer;
+- getPython;
 
 @end
 

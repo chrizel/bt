@@ -15,51 +15,20 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef BT_H
-#define BT_H
+#ifndef PYTHON_H
+#define PYTHON_H
 
-#include "console.h"
-#include "sdl_events.h"
-#include "map.h"
-#include "game.h"
+#include <objc/Object.h>
 
-#define SCREEN_W 800
-#define SCREEN_H 600
+@interface Python: Object
+{
+}
 
-#define FPS 30
-#define BPP 16
+- init;
+- free;
 
-#if(BPP == 8)
-#define USE_8BIT
-#else
-#define USE_16BIT
-#endif
+- evalString:(char *)str;
 
-extern SDL_Surface *screen;
-extern SDL_Surface *minilogo;
-
-#ifdef DO_FRAMETEST
-extern int frames;
-extern int ticks_begin, ticks_end;
-#endif
-
-id bt;
-
-void bt_exit();
-void bt_pen(void);
-
-void bt_editor();
-void bt_pg(void);
-void bt_write(void);
-void bt_load(void);
-void bt_fill(void);
-void bt_put(void);
-void bt_new(void);
-
-void btQuit();
-
-#ifdef DO_FRAMETEST
-void fps_output();
-#endif
+@end
 
 #endif

@@ -28,6 +28,7 @@
 */
 #include "player.h"
 #include "audio.h"
+#include "python.h"
 
 @implementation Game
 
@@ -56,6 +57,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 #endif
 
     printf("make map...\n");
+    python = [Python new];
     map = [Map newWithFile:"main.map"];
     //editor = [Editor new];
     console = [Console new];
@@ -76,15 +78,17 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     return self;
 }
 
-/*
-Game::~Game()
+
+- free
 {
-    delete player;
-    delete console;
-    delete map;
-    delete audio;
+    [player free];
+    [console free];
+    [map free];
+    [audio free];
+    [python free];
+
+    [super free];
 }
-*/
 
 - initSDL
 {
@@ -219,7 +223,7 @@ Game::~Game()
         //bt->getConsole()->draw();
         
 	//printf("whole_redraw\n");
-	if (whole_redraw || [console isVisible]) {
+	if (whole_redraw || [console isVisible] || [console isClosing]) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
@@ -275,6 +279,11 @@ Game::~Game()
 - (id)getPlayer
 {
     return player;
+}
+
+- getPython
+{
+    return python;
 }
 
 @end

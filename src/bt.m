@@ -51,19 +51,24 @@ int main(int argc, char *argv[])
     cur_filter = NULL;
     printf("create bt...\n");
     bt = [Game newWithTitle:"Bermuda Triangle"];
+
+    // register quit function for cleanup
+    atexit(btQuit);
+
     minilogo = bmpl_get("main.minilogo");
+
     printf("run...\n");
     [bt run];
 
     return 0;
 }
 
-void bt_exit()
+void btQuit()
 {
-    /* TODO: cleanup all surfaces, etc. */
+    printf("Call bt free...\n");
+    [bt free];
 
     printf("Bye :)\n");
-    exit(0);
 }
 
 /*

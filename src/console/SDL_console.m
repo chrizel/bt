@@ -39,6 +39,8 @@
 #include "SDL_image.h"
 #endif
 
+#include "../sdl_events.h"
+
 /* This contains a pointer to the "topmost" console. The console that
  * is currently taking keyboard input. */
 static ConsoleInformation *Topmost;
@@ -47,127 +49,135 @@ static ConsoleInformation *Topmost;
     If the event was not handled (i.e. WM events or unknown ctrl-shift 
     sequences) the function returns the event for further processing. */
 SDL_Event* CON_Events(SDL_Event *event) {
-	if(Topmost == NULL)
-		return event;
-	if(!CON_isVisible(Topmost))
-		return event;
+    int len;
 
-	if(event->type == SDL_KEYDOWN) {
-		if(event->key.keysym.mod & KMOD_CTRL) {
-			/* CTRL pressed */
-			switch(event->key.keysym.sym) {
-			case SDLK_a:
-				Cursor_Home(Topmost);
-				break;
-			case SDLK_e:
-				Cursor_End(Topmost);
-				break;
-			case SDLK_c:
-				Clear_Command(Topmost);
-				break;
-			case SDLK_l:
-				Clear_History(Topmost);
-				CON_UpdateConsole(Topmost);
-				break;
-			default:
-				return event;
-			}
-		} else if(event->key.keysym.mod & KMOD_ALT) {
-			/* the console does not handle ALT combinations! */
-			return event;
-		} else {
-			/* first of all, check if the console hide key was pressed */
-			if(event->key.keysym.sym == Topmost->HideKey) {
-				CON_Hide(Topmost);
-				return NULL;
-			}
-			switch (event->key.keysym.sym) {
-			case SDLK_HOME:
-				if(event->key.keysym.mod & KMOD_SHIFT) {
-					Topmost->ConsoleScrollBack = Topmost->LineBuffer-1;
-					CON_UpdateConsole(Topmost);
-				} else {
-					Cursor_Home(Topmost);
-				}
-				break;
-			case SDLK_END:
-				if(event->key.keysym.mod & KMOD_SHIFT) {
-					Topmost->ConsoleScrollBack = 0;
-					CON_UpdateConsole(Topmost);
-				} else {
-					Cursor_End(Topmost);
-				}
-				break;
-			case SDLK_PAGEUP:
-				Topmost->ConsoleScrollBack += CON_LINE_SCROLL;
-				if(Topmost->ConsoleScrollBack > Topmost->LineBuffer-1)
-					Topmost->ConsoleScrollBack = Topmost->LineBuffer-1;
-
-				CON_UpdateConsole(Topmost);
-				break;
-			case SDLK_PAGEDOWN:
-				Topmost->ConsoleScrollBack -= CON_LINE_SCROLL;
-				if(Topmost->ConsoleScrollBack < 0)
-					Topmost->ConsoleScrollBack = 0;
-				CON_UpdateConsole(Topmost);
-				break;
-			case SDLK_UP:
-				Command_Up(Topmost);
-				break;
-			case SDLK_DOWN:
-				Command_Down(Topmost);
-				break;
-			case SDLK_LEFT:
-				Cursor_Left(Topmost);
-				break;
-			case SDLK_RIGHT:
-				Cursor_Right(Topmost);
-				break;
-			case SDLK_BACKSPACE:
-				Cursor_BSpace(Topmost);
-				break;
-			case SDLK_DELETE:
-				Cursor_Del(Topmost);
-				break;
-			case SDLK_INSERT:
-				Topmost->InsMode = 1-Topmost->InsMode;
-				break;
-			case SDLK_TAB:
-				CON_TabCompletion(Topmost);
-				break;
-			case SDLK_RETURN:
-				if(strlen(Topmost->Command) > 0) {
-					CON_NewLineCommand(Topmost);
-
-					/* copy the input into the past commands strings */
-					strcpy(Topmost->CommandLines[0], Topmost->Command);
-
-					/* display the command including the prompt */
-					CON_Out(Topmost, "%s%s", Topmost->Prompt, Topmost->Command);
-
-					CON_Execute(Topmost, Topmost->Command);
-					/* printf("Command: %s\n", Topmost->Command); */
-
-					Clear_Command(Topmost);
-					Topmost->CommandScrollBack = -1;
-				}
-				break;
-			case SDLK_ESCAPE:
-				/* deactivate Console */
-				CON_Hide(Topmost);
-				return NULL;
-			default:
-				if(Topmost->InsMode)
-					Cursor_Add(Topmost, event);
-				else {
-					Cursor_Add(Topmost, event);
-					Cursor_Del(Topmost);
-				}
-			}
-		}
-		return NULL;
-	}
+    if(Topmost == NULL)
 	return event;
+    if(!CON_isVisible(Topmost))
+	return event;
+
+    if(event->type == SDL_KEYDOWN) {
+	if(event->key.keysym.mod & KMOD_CTRL) {
+	    /* CTRL pressed */
+	    switch(event->key.keysym.sym) {
+	    case SDLK_a:
+		Cursor_Home(Topmost);
+		break;
+	    case SDLK_e:
+		Cursor_End(Topmost);
+		break;
+	    case SDLK_c:
+		Clear_Command(Topmost);
+		break;
+	    case SDLK_l:
+		Clear_History(Topmost);
+		CON_UpdateConsole(Topmost);
+		break;
+	    default:
+		return event;
+	    }
+	} else if(event->key.keysym.mod & KMOD_ALT) {
+	    /* the console does not handle ALT combinations! */
+	    return event;
+	} else {
+	    /* first of all, check if the console hide key was pressed */
+	    if(event->key.keysym.sym == Topmost->HideKey) {
+		CON_Hide(Topmost);
+		return NULL;
+	    }
+	    switch (event->key.keysym.sym) {
+	    case SDLK_HOME:
+		if(event->key.keysym.mod & KMOD_SHIFT) {
+		    Topmost->ConsoleScrollBack = Topmost->LineBuffer-1;
+		    CON_UpdateConsole(Topmost);
+		} else {
+		    Cursor_Home(Topmost);
+		}
+		break;
+	    case SDLK_END:
+		if(event->key.keysym.mod & KMOD_SHIFT) {
+		    Topmost->ConsoleScrollBack = 0;
+		    CON_UpdateConsole(Topmost);
+		} else {
+		    Cursor_End(Topmost);
+		}
+		break;
+	    case SDLK_PAGEUP:
+		Topmost->ConsoleScrollBack += CON_LINE_SCROLL;
+		if(Topmost->ConsoleScrollBack > Topmost->LineBuffer-1)
+		    Topmost->ConsoleScrollBack = Topmost->LineBuffer-1;
+
+		CON_UpdateConsole(Topmost);
+		break;
+	    case SDLK_PAGEDOWN:
+		Topmost->ConsoleScrollBack -= CON_LINE_SCROLL;
+		if(Topmost->ConsoleScrollBack < 0)
+		    Topmost->ConsoleScrollBack = 0;
+		CON_UpdateConsole(Topmost);
+		break;
+	    case SDLK_UP:
+		Command_Up(Topmost);
+		break;
+	    case SDLK_DOWN:
+		Command_Down(Topmost);
+		break;
+	    case SDLK_LEFT:
+		Cursor_Left(Topmost);
+		break;
+	    case SDLK_RIGHT:
+		Cursor_Right(Topmost);
+		break;
+	    case SDLK_BACKSPACE:
+		Cursor_BSpace(Topmost);
+		break;
+	    case SDLK_DELETE:
+		Cursor_Del(Topmost);
+		break;
+	    case SDLK_INSERT:
+		Topmost->InsMode = 1-Topmost->InsMode;
+		break;
+	    case SDLK_TAB:
+		CON_TabCompletion(Topmost);
+		break;
+	    case SDLK_RETURN:
+		len = strlen(Topmost->Command);
+		if (len > 0) {
+		    CON_NewLineCommand(Topmost);
+
+		    // Python handling
+		    if (Topmost->Command[len-1] == ':') {
+			// ???
+		    } else {
+			/* copy the input into the past commands strings */
+			strcpy(Topmost->CommandLines[0], Topmost->Command);
+
+			/* display the command including the prompt */
+			CON_Out(Topmost, "%s%s", Topmost->Prompt, Topmost->Command);
+
+			CON_Execute(Topmost, Topmost->Command);
+			/* printf("Command: %s\n", Topmost->Command); */
+
+			Clear_Command(Topmost);
+			Topmost->CommandScrollBack = -1;
+		    }
+		}
+		break;
+	    case SDLK_ESCAPE:
+		/* deactivate Console */
+		CON_Hide(Topmost);
+		return NULL;
+	    default:
+		if(Topmost->InsMode)
+		    Cursor_Add(Topmost, event);
+		else {
+		    Cursor_Add(Topmost, event);
+		    Cursor_Del(Topmost);
+		}
+	    }
+	}
+	return NULL;
+    }
+    return event;
 }
 
 /* CON_AlphaGL() -- sets the alpha channel of an SDL_Surface to the
@@ -320,6 +330,7 @@ void CON_UpdateOffset(ConsoleInformation* console) {
 		if(console->RaiseOffset <= 0) {
 			console->RaiseOffset = 0;
 			console->Visible = CON_CLOSED;
+			whole_redraw = YES;
 		}
 		break;
 	case CON_OPENING:
@@ -499,10 +510,10 @@ void CON_Show(ConsoleInformation *console) {
 
 /* Hides the console (make it invisible) */
 void CON_Hide(ConsoleInformation *console) {
-	if(console) {
-		console->Visible = CON_CLOSING;
-		SDL_EnableUNICODE(console->WasUnicode);
-	}
+    if(console) {
+	console->Visible = CON_CLOSING;
+	SDL_EnableUNICODE(console->WasUnicode);
+    }
 }
 
 /* tells wether the console is visible or not */

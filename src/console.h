@@ -39,6 +39,7 @@
 - readScript:(char *)filename;
 - print:(char *)str;
 - (BOOL)isVisible;
+- (BOOL)isClosing;
 
 - show;
 - hide;
