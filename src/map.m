@@ -82,14 +82,14 @@ static Uint32 readInt(FILE *fp)
     self->stocks = bmpl_get("map.stock_default");
     
     /* allocate anims and raw data arrays */
-    self->anims = MALLOC_ARRAY(Uint32, anim_count * anim_ticks);
-    self->data  = MALLOC_ARRAY(Uint32, width * height);
+    self->anims = MALLOC_ARRAY(Uint32, ac * at);
+    self->data  = MALLOC_ARRAY(Uint32, w * h);
 
     /* set data attributes */
-    self->width      = width;
-    self->height     = height;
-    self->anim_count = anim_count;
-    self->anim_ticks = anim_ticks;
+    self->width      = w;
+    self->height     = h;
+    self->anim_count = ac;
+    self->anim_ticks = at;
 
     /* set other attributes */
     self->xoffset        = 0;
@@ -170,6 +170,7 @@ static Uint32 readInt(FILE *fp)
 
     // read header...
     fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &v, &w, &h, &ac, &at);
+    printf("::%u, %u, %u, %u, %u\n", v, w, h, ac, at);
 
     // check v
     // TODO
@@ -187,10 +188,13 @@ static Uint32 readInt(FILE *fp)
             fscanf(fp, "%u.", 
 		   &self->anims[anim * self->anim_count + tick]);
 
-    if (anim)
-        fseek(fp, 1, SEEK_CUR); // jump over \n
+    //if (anim) {
+    printf("skip anim\n");
+    fseek(fp, 1, SEEK_CUR); // jump over \n
+    //}
 
     // read map data
+    printf("width: %u height: %u\n", width, height);
     for (y = 0; y < self->height; y++)
         for (x = 0; x < self->width; x++)
             self->data[self->width * y + x] = readInt(fp);
