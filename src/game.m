@@ -263,9 +263,8 @@ Game::~Game()
 
 - printLine:(char *)t
 {
-    // stdio...
+    // stdout...
     puts(t);
-    puts("\n");
 
     // and console
     [console printLine:t];
