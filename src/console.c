@@ -34,7 +34,7 @@ void init_console()
         error("Can not init console!");
 
     CON_SetExecuteFunction(btConsole, CommandHandler);
-    CON_Alpha(btConsole, 150);
+    //CON_Alpha(btConsole, 150);
     CON_SetPrompt(btConsole, "console> ");
     CON_Topmost(btConsole);
     //CON_Show(btConsole);

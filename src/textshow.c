@@ -6,7 +6,8 @@ SDL_Surface *background;
 
 static void textshow_paint()
 {
-    SDL_BlitSurface(background, NULL, screen, NULL);
+    /* Nononono... we won't blit this :-D
+       SDL_BlitSurface(background, NULL, screen, NULL); */
 }
 
 int init_textshow()
