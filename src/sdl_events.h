@@ -40,4 +40,15 @@ enum {
 void init_sdl_events(void);
 void sdl_event_loop(void);
 
+#define MAX_RECTS 2048
+SDL_Rect update_rects[MAX_RECTS];
+int ur_count;
+int whole_redraw;
+
+#define PUSH_UR(rect) \
+	if (!whole_redraw) { \
+	    update_rects[ur_count++] = rect; \
+	}
+
+
 #endif

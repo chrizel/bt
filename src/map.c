@@ -101,6 +101,7 @@ static t_map *map_new_internal(Uint32 width, Uint32 height,
     map->xoffset        = 0;
     map->yoffset        = 0;
     map->anim_ticker    = 0;
+    map->prev_ticker    = 1;
     map->version        = 1;
     map->switch_palette = 0;
 
@@ -237,14 +238,16 @@ void map_put(t_map *map, int id, int xt, int yt)
 void map_draw(t_map *map, SDL_Surface *sfc)
 {
     int x, y, x2, y2, id;
+    int anim_switched = 0;
     SDL_Rect rect;
 
     if (!map)
 	return;
 
     // TODO: We could do that already in init_map, if srcrect would be global!?
-    srcrect.w = TILE_SIZE;
-    srcrect.h = TILE_SIZE;
+    srcrect.w = srcrect.h = rect.w = rect.h = TILE_SIZE;
+
+    anim_switched = map->prev_ticker != map->anim_ticker;
 
     /* draw testmap */
     for (y = 0; y < YTILES; y++) {
@@ -257,17 +260,27 @@ void map_draw(t_map *map, SDL_Surface *sfc)
 
             id = map->data[y2 * map->width + x2];
 
-            if (id & MF_ANIM)
+            if (id & MF_ANIM) {
                 /* it's an animation, so we read the current animation tile */
                 id = map->anims[(id & MF_ID) + map->anim_ticker];
 
-            // calculate source rect
-            srcrect.x = (id % XTILES) * TILE_SIZE;
-            srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
+		// calculate source rect
+		srcrect.x = (id % XTILES) * TILE_SIZE;
+		srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
 
-            SDL_BlitSurface(map->stocks, &srcrect, screen, &rect);
+		if (anim_switched)
+		    PUSH_UR(rect);
+	    } else {
+		// calculate source rect
+		srcrect.x = (id % XTILES) * TILE_SIZE;
+		srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
+	    }
+
+	    SDL_BlitSurface(map->stocks, &srcrect, screen, &rect);
         }
     }
+
+    map->prev_ticker = map->anim_ticker;
 }
 
 void map_idle(t_map *map)
@@ -278,19 +291,27 @@ void map_idle(t_map *map)
         return;
 
     if ( keystate[SDLK_UP]) {
-	if (map->yoffset > 0)
-	    map->yoffset--; // map up...
+        if (map->yoffset > 0) {
+            map->yoffset--; // map up...
+	    whole_redraw = 1;
+	}
     } else if (keystate[SDLK_DOWN]) {
-	if ((map->yoffset + YTILES) < (map->height - 1))
-	    map->yoffset++; // map down...
+        if ((map->yoffset + YTILES) < (map->height - 1)) {
+            map->yoffset++; // map down...
+	    whole_redraw = 1;
+	}
     }
 
     if (keystate[SDLK_LEFT]) {
-	if (map->xoffset > 0)
+	if (map->xoffset > 0) {
 	    map->xoffset--;	// map left...
+	    whole_redraw = 1;
+	}
     } else if (keystate[SDLK_RIGHT]) {
-	if ((map->xoffset + XTILES) < (map->width - 1))
-	    map->xoffset++;	// map right...
+    	if ((map->xoffset + XTILES) < (map->width - 1)) {
+            map->xoffset++;	// map right...
+	    whole_redraw = 1;
+	}
     }
 
     if (editor_mode) {
@@ -300,9 +321,12 @@ void map_idle(t_map *map)
         xt = (x - (x % TILE_SIZE)) / TILE_SIZE;
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
-        if (mousestate & SDL_BUTTON(1))
+        if (mousestate & SDL_BUTTON(1)) {
             map_put(map, 1, xt, yt);
-        else if (mousestate & SDL_BUTTON(3))
+	    whole_redraw = 1;
+        } else if (mousestate & SDL_BUTTON(3)) {
             map_put(map, 0, xt, yt);
+	    whole_redraw = 1;
+	}
     }
 }

@@ -36,8 +36,12 @@ void sdl_event_loop(void)
     // Handle fps
     int done = 0;
     Uint32 ticks = SDL_GetTicks();
+    
+    whole_redraw = 1;
 
     while (!done) {
+	ur_count = 0;
+	
         while(SDL_GetTicks() <= ticks)
             ;
         ticks = SDL_GetTicks() + (1000 / FPS);
@@ -88,6 +92,15 @@ void sdl_event_loop(void)
 
         CON_DrawConsole(btConsole);
         
-        SDL_Flip(screen);
+	if (whole_redraw || CON_isVisible(btConsole)) {
+	    // printf("whole_redraw\n");
+	    SDL_Flip(screen);
+	    whole_redraw = 0;
+	} else {
+	    if (ur_count) {
+		// printf("update_rects: %d\n", ur_count);
+		SDL_UpdateRects(screen, ur_count, update_rects);
+	    }
+	}
     }
 }

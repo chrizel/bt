@@ -43,6 +43,7 @@ typedef struct {
     Uint32 xoffset;
     Uint32 yoffset;
     Uint32 anim_ticker;
+    Uint32 prev_ticker;
     Uint32 version;
     Uint32 switch_palette;
 
@@ -56,7 +57,7 @@ typedef struct {
     Uint32 *anims;
 
     /* map data itself */
-    Uint32 *data; 
+    Uint32 *data;
 } t_map;
 
 /*
