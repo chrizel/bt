@@ -58,7 +58,9 @@ class Editor(Frame):
         bt.exit()
 
     def bt_save(self):
-        bt.save_map("mein_test.map")
+        file = asksavefilename(defaultextension="*.map", filetypes=[('Map files', '*.map'), ('All files', '*.*')])
+        if file != "":
+            bt.save_map(file)
 
     def bt_open(self):
         file = askopenfilename(defaultextension="*.map", filetypes=[('Map files', '*.map'), ('All files', '*.*')])
