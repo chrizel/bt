@@ -26,7 +26,9 @@
 #include "error.h"
 #include "console.h"
 #include "player.h"
+#include "audio.h"
 
+int myMusic;
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
@@ -52,6 +54,7 @@ Game::Game(char *title)
     player = new Player();
 
     tmp_map = map;
+
 }
 
 Game::~Game()
@@ -59,6 +62,7 @@ Game::~Game()
     delete player;
     delete console;
     delete map;
+    delete audio;
 }
 
 void Game::initSDL()
@@ -90,6 +94,10 @@ void Game::initSDL()
         printf("> Using software surface\n");
 
     SDL_WM_SetCaption(this->title, NULL);
+
+    audio = new Audio();
+    myMusic = audio->AddMusic("data/penguinplanet.ogg");
+    audio->PlayMusic(myMusic);
 }
 
 void Game::run()

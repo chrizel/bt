@@ -23,6 +23,7 @@
 class Map;
 class Console;
 class Player;
+class Audio;
 
 class Game
 {
@@ -32,6 +33,7 @@ private:
     Map *map;
     Console *console;
     Player *player;
+    Audio *audio;
 
     void initSDL();
     void eventLoop();
