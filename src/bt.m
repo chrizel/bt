@@ -20,7 +20,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include <SDL.h>
+#include <glSDL.h>
 
 //#include <iostream>
 

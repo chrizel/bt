@@ -18,7 +18,7 @@
 #ifndef SDL_EVENTS_H
 #define SDL_EVENTS_H
 
-#include <SDL.h>
+#include <glSDL.h>
 #include "event.h"
 #include "map.h"
 

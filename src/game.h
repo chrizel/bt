@@ -18,7 +18,7 @@
 #ifndef GAME_H
 #define GAME_H 
 
-#include <SDL.h>
+#include <glSDL.h>
 #include <objc/Object.h>
 
 //#include "editor.h"

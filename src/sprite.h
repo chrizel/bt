@@ -18,7 +18,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <SDL.h>
+#include <glSDL.h>
 #include <objc/Object.h>
 
 @interface Sprite: Object

@@ -20,7 +20,7 @@
 
 #include <objc/Object.h>
 
-#include <SDL.h>
+#include <glSDL.h>
 
 #include "console/SDL_console.h"
 

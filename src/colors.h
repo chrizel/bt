@@ -18,7 +18,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <SDL.h>
+#include <glSDL.h>
 #include "bt.h"
 
 extern int n_colors;

@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#include <SDL.h>
+#include <glSDL.h>
 #include <stdlib.h>
 
 #include "game.h"
@@ -114,7 +114,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     atexit(SDL_Quit);
 
     /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE);
+    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE | SDL_GLSDL);
 
     if (!screen)
         error("Couldn't set VideoMode: %s", SDL_GetError());
