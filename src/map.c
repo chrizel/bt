@@ -111,6 +111,12 @@ void read_map(char *filename)
     printf("read map...");
     fp = fopen(filename, "r");
 
+    /* check if file is available... */
+    if (!fp) {
+        CON_Out(btConsole, "file not found");
+        return;
+    }
+
     /* check if cur_map is null */
     if (cur_map == NULL)
         cur_map = (map_data *)malloc(sizeof(map_data));
