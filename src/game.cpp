@@ -27,6 +27,17 @@
 #include "console.h"
 #include "player.h"
 
+
+static Uint32 blink_anim_timer(Uint32 interval, void *param)
+{
+  std::cout << "blink" << std::endl;
+
+  if (bt->getPlayer()->switchBlink())
+    return 200;
+  else
+    return 5000;
+}
+
 Game::Game(char *title)
 { 
     this->title = title;
@@ -83,7 +94,121 @@ void Game::initSDL()
 
 void Game::run()
 {
-    sdl_event_loop();
+    // Handle fps
+    int done = 0;
+    Uint32 ticks = SDL_GetTicks();
+    SDL_Rect ml_rect;
+
+    sdl_ev = new SDL_Event;
+
+    ml_rect.x = 800 - 100;
+    ml_rect.y = 600 - 60;
+    
+    whole_redraw = 1;
+
+    SDL_AddTimer(2500, blink_anim_timer, 0);
+
+#ifdef DO_FRAMETEST
+    ticks_begin = SDL_GetTicks();
+    ticks_end = ticks_begin;
+#endif
+
+    std::cout << "loop begin.." << std::endl;
+
+    while (!done) {
+	ur_count = 0;
+#ifdef DO_FRAMETEST
+	frames++;
+	ticks_end = SDL_GetTicks();
+	if ( (ticks_end - ticks_begin) >= 4000) 
+	    fps_output();
+#endif
+	
+        while(SDL_GetTicks() <= ticks)
+            ;
+        ticks = SDL_GetTicks() + (1000 / FPS);
+
+        while (SDL_PollEvent(sdl_ev)) {
+
+	  if (bt->getConsole()->isVisible()) {
+                /*
+                if (!CON_Events(sdl_ev))
+                    continue;
+                    */
+	    bt->getConsole()->onEvent(sdl_ev);
+            } else {
+                /* call event hooks... */
+                switch(sdl_ev->type) {
+                case SDL_KEYDOWN: 
+                    if (sdl_ev->key.keysym.sym == SDLK_c) {
+		      if (!bt->getConsole()->isVisible())
+			bt->getConsole()->show();
+                        break;
+                    } else if (sdl_ev->key.keysym.sym == SDLK_q) {
+			std::cout << "Bye :)" << std::endl;
+			exit(0);
+		    }
+                    break;
+                case SDL_KEYUP:
+                    // evl_call(evl_sdl, EV_SDL_KEYUP);
+                    break;
+		case SDL_JOYBUTTONDOWN:
+                    // evl_call(evl_sdl, EV_SDL_JOYBUTTONDOWN);
+                    break;
+                case SDL_JOYBUTTONUP:
+                    // evl_call(evl_sdl, EV_SDL_JOYBUTTONUP);
+                    break;
+                case SDL_JOYAXISMOTION:
+                    // evl_call(evl_sdl, EV_SDL_JOYAXIS);
+                    break;
+                }
+            }
+        }
+
+	/*
+	{
+	    Uint8 *keystate = SDL_GetKeyState(NULL);
+	    if (keystate[SDLK_UP])
+		player.pos.y -= 10;
+	    else if (keystate[SDLK_DOWN])
+		player.pos.y += 10;
+
+	    if (keystate[SDLK_LEFT])
+		player.pos.x -= 10;
+	    else if (keystate[SDLK_RIGHT])
+		player.pos.x += 10;
+	}
+	*/
+
+        tmp_map->onIdle();
+        // evl_call(evl_sdl, EV_SDL_IDLE);
+
+        //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+        tmp_map->onDraw(screen);
+	bt->getPlayer()->onDraw(screen);
+        // evl_call(evl_sdl, EV_SDL_PAINT);
+
+        /* Execute surface filter... */
+        // if (cur_filter)
+	// cur_filter();
+
+
+
+	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
+
+        bt->getConsole()->draw();
+        
+	if (whole_redraw || bt->getConsole()->isVisible()) {
+	    // printf("whole_redraw\n");
+	    SDL_Flip(screen);
+	    whole_redraw = 0;
+	} else {
+	    if (ur_count) {
+		// printf("update_rects: %d\n", ur_count);
+		SDL_UpdateRects(screen, ur_count, update_rects);
+	    }
+	}
+    }
 }
 
 void Game::eventLoop()

@@ -71,11 +71,12 @@ void init_input()
     inputs->type = INP_TYPE_FREE;
 
     inp_add_key(SDLK_UP, on_up);
-
+    /*
     evl_reg(evl_sdl, EV_SDL_KEYDOWN, on_key);
     evl_reg(evl_sdl, EV_SDL_JOYBUTTONDOWN, on_joybutton);
     evl_reg(evl_sdl, EV_SDL_JOYAXIS, on_joyaxis);
     evl_reg(evl_sdl, EV_INP_RUN, inp_run);
+    */
 }
 
 void free_input()

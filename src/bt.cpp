@@ -66,14 +66,11 @@ int main(int argc, char *argv[])
 
     bt = new Game("Bermuda Triangle");
 
-    init_sdl_events();
-
-    init_textshow();
-    init_input();
+    // init_sdl_events();
 
     minilogo = bmpl_get("main.minilogo");
 
-    evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
+    // evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
 
     bt->run();
 

@@ -38,7 +38,6 @@ const char GPL_TEXT[] =
 #define USE_16BIT
 #endif
 
-extern Console *console;
 extern SDL_Surface *screen;
 extern SDL_Surface *minilogo;
 
