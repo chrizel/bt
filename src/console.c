@@ -19,8 +19,11 @@ t_command commands[] = {
     {"pen", bt_pen},
     {"pg", bt_pg},
     {"write", bt_write},
+    {"read", bt_load},
     {"load", bt_load},
     {"fill", bt_fill},
+    {"put", bt_put},
+    {"new", bt_new},
     {NULL, NULL},
 };
 
@@ -59,9 +62,14 @@ static char *CommandFile(char *file)
 
     fp = fopen(file, "r");
     if (fp) {
-        fgets(buf, 512, fp);
-        CON_Out(btConsole, buf);
-        CommandHandler(btConsole, buf);
+
+        while (!feof(fp)) {
+            fgets(buf, 512, fp);
+            printf("%s\n", buf);
+            CON_Out(btConsole, buf);
+            CommandHandler(btConsole, buf);
+        }
+
         fclose(fp);
     } else {
         CON_Out(btConsole, "file not found");

@@ -7,9 +7,11 @@ static int load_gimp_palette(char *file);
 
 void init_colors()
 {
+    printf("load color palette...");
     /* Load GIMP palette */
     load_gimp_palette("data/palette2.gpl");
     clone_colors();
+    printf("ok\n");
 
     /* Set palette */
     SDL_SetColors(screen, colors, 0, n_colors);
@@ -53,7 +55,7 @@ static int load_gimp_palette(char *file)
         colors[i].g = rgb[1];
         colors[i].b = rgb[2];
 
-        printf("%d,%d,%d\n", rgb[0], rgb[1], rgb[2]);
+        //printf("%d,%d,%d\n", rgb[0], rgb[1], rgb[2]);
 
         /* goto next line... */
         fgets(buf, 100, fp);

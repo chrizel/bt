@@ -27,5 +27,7 @@ void bt_pg(void);
 void bt_write(void);
 void bt_load(void);
 void bt_fill(void);
+void bt_put(void);
+void bt_new(void);
 
 #endif

@@ -25,5 +25,7 @@ void init_map();
 void write_map(char *filename);
 void read_map(char *filename);
 void fill_map(int id);
+void map_put(int id, int xt, int yt);
+void map_new(unsigned int width, unsigned int height, unsigned int anim_count, unsigned int anim_ticks);
 
 #endif

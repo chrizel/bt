@@ -63,7 +63,7 @@ static void quit()
 void bt_exit()
 {
     /* TODO: cleanup all surfaces, etc. */
-    printf("Ende :)\n");
+    printf("Bye :)\n");
     exit(0);
 }
 
@@ -90,9 +90,9 @@ static void init_sdl(void)
         error("Couldn't set VideoMode: %s", SDL_GetError());
 
     if ((screen->flags & SDL_HWSURFACE))
-        printf("* Using Hardware Surface\n");
+        printf("> Using hardware surface\n");
     else
-        printf("* Using Software Surface\n");
+        printf("> Using software surface\n");
 
     SDL_WM_SetCaption( "Bermuda Triangle", NULL);
 }
@@ -131,14 +131,14 @@ void bt_pg(void)
 
     j = 0;
     pos = 0;
-    printf("\nbuf2: %s\n", buf2);
+    //printf("\nbuf2: %s\n", buf2);
     for (i = 0; (i <= strlen(buf2)) && (pos < editor_pg_x * editor_pg_y); i++) {
-        printf("%d: %c\n", i, buf2[i]);
+        //printf("%d: %c\n", i, buf2[i]);
         buf1[j] = buf2[i];
 
         if ((buf1[j] == ' ') || (i == strlen(buf2))) {
             buf1[j] = '\0';
-            printf("New item (%d): %s\n", j, buf1);
+            //printf("New item (%d): %s\n", j, buf1);
             editor_pg[pos] = atoi(buf1);
             pos++;
             j = 0;
@@ -146,9 +146,13 @@ void bt_pg(void)
             j++;
     }
 
+    CON_Out(btConsole, "set pg");
+
+    /*
     printf("\npg:\t%d\n", editor_pg_x * editor_pg_y);
     for (i = 0; i < editor_pg_x * editor_pg_y; i++)
         printf("\t%d\n", editor_pg[i]);
+        */
 }
 
 void bt_write(void)
@@ -174,4 +178,24 @@ void bt_fill(void)
     sscanf(con_last_param, "%s %d", buf1, &id);
 
     fill_map(id);
+}
+
+void bt_put(void)
+{
+    char buf1[100];
+    int id, x, y;
+    sscanf(con_last_param, "%s %d %d %d", buf1, &id, &x, &y);
+
+    map_put(id, x, y);
+}
+
+void bt_new(void)
+{
+    char buf1[100];
+    int width, height, anim_count, anim_ticks;
+
+    sscanf(con_last_param, "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
+
+    map_new(width, height, anim_count, anim_ticks);
+    fill_map(0);
 }

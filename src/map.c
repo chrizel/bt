@@ -7,6 +7,7 @@
 #include "sdl_events.h"
 #include "testmap.h"
 #include "colors.h"
+#include "alloc.h"
 
 #define TILE_SIZE 20
 #define XTILES 40 /* tiles per row */
@@ -19,8 +20,8 @@ static int anim_ticker = 0;
 static int file_version = 1;
 static map_data *cur_map = NULL;
 static union _utile {
-    int as_int;
-    char as_char[4];
+    unsigned int as_int;
+    unsigned char as_char[4];
 } utile;
 
 static void draw_map();
@@ -33,7 +34,7 @@ static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
 {
-    load_stocks("map.stock1", 15, 15); 
+    load_stocks("map.stock1", 40, 30); 
     evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
@@ -49,7 +50,7 @@ void init_map()
     //read_map("main.map");
 
     //write_map("main.map");
-    read_map("main.map");
+    //read_map("main.map");
 
     SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
@@ -80,7 +81,7 @@ void write_map(char *filename)
     for (y = 0; y < cur_map->height; y++) {
         for (x = 0; x < cur_map->width; x++) {
             /* put tile data into union */
-            utile.as_int = cur_map->data[y * cur_map->width + x];
+            utile.as_int = cur_map->data[cur_map->width * y + x];
 
             /* write int as 4 chars */
             for (i = 0; i < 4; i++)
@@ -103,9 +104,32 @@ void fill_map(int id)
     }
 }
 
+void map_new(unsigned int width, unsigned int height, unsigned int anim_count, unsigned int anim_ticks)
+{
+    printf("create new map structure (%d,%d,%d,%d)...", width, height, anim_count, anim_ticks);
+
+    //TODO: cleanup old map!!
+
+    /* check if cur_map is null */
+    if (cur_map == NULL)
+        cur_map = MALLOC(map_data);
+
+    /* reserve space for our map */
+    cur_map->anims = MALLOC_ARRAY(int, anim_count * anim_ticks);
+    cur_map->data = MALLOC_ARRAY(int, width * height);
+
+    /* set attributes */
+    cur_map->width = width;
+    cur_map->height = height;
+    cur_map->anim_count = anim_count;
+    cur_map->anim_ticks = anim_ticks;
+}
+
+
 void read_map(char *filename)
 {
     int anim, tick, x, y, i, version;
+    int width, height, anim_count, anim_ticks;
     FILE *fp;
 
     printf("read map...");
@@ -117,20 +141,14 @@ void read_map(char *filename)
         return;
     }
 
-    /* check if cur_map is null */
-    if (cur_map == NULL)
-        cur_map = (map_data *)malloc(sizeof(map_data));
-
     /* read header... */
-    fscanf(fp, "MAP:%d,%d,%d,%d,%d\n", &version, &cur_map->width, &cur_map->height, &cur_map->anim_count, &cur_map->anim_ticks);
+    fscanf(fp, "MAP:%d,%d,%d,%d,%d\n", &version, &width, &height, &anim_count, &anim_ticks);
 
     /* check version */
     if (version != file_version)
-        error("Wrong map version.");
+        error("Wrong map version or wrong format.");
 
-    /* ok, now it's important to reserve enough space for our map! */
-    cur_map->anims = (int *)malloc(cur_map->anim_count * cur_map->anim_ticks * sizeof(int));
-    cur_map->data  = (int *)malloc(cur_map->width * cur_map->height * sizeof(int));
+    map_new(width, height, anim_count, anim_ticks);
 
     /* read anim data */
     for (anim = 0; anim < cur_map->anim_count; anim++) {
@@ -148,12 +166,14 @@ void read_map(char *filename)
                 utile.as_char[i] = (unsigned char) fgetc(fp);
 
             /* write tile data into our struct */
-            cur_map->data[y * cur_map->width + x] = utile.as_int;
+            cur_map->data[cur_map->width * y + x] = utile.as_int;
+            printf("%d,%d,%d,%d (%d)", utile.as_char[0], utile.as_char[1], utile.as_char[2], utile.as_char[3], utile.as_int);
         }
+        printf("|");
     }
 
     fclose(fp);
-    printf("ok\n");
+    printf("ok (cur_map->data[0] = %d)\n", cur_map->data[0]);
 }
 
 static Uint32 switch_anim_ticker(Uint32 interval, void *param)
@@ -167,6 +187,7 @@ static void draw_map()
     int x, y, x2, y2, id;
     SDL_Rect rect;
 
+
     if (cur_map == NULL) {
         /*
         rect.x = 0;
@@ -175,6 +196,8 @@ static void draw_map()
         */
         return;
     }
+
+    //printf("draw map (%d,%d,%d,%d)...", cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
 
     /* consider offsets */
     if (xoffset < 0)
@@ -185,6 +208,7 @@ static void draw_map()
 
     /* draw testmap */
     for (y = 0; y < YTILES; y++) {
+        //printf("y: %d...\n", y);
         rect.y = TILE_SIZE * y;
         for (x = 0; x < XTILES; x++) {
             rect.x = TILE_SIZE * x;
@@ -201,15 +225,19 @@ static void draw_map()
             else
                 x2 = x + xoffset;
 
+            //printf("data from: %d...", y2 * cur_map->width + x2);
             id = cur_map->data[y2 * cur_map->width + x2];
             if (id & MF_ANIM) {
                 /* it's an animation, so we read the current animation tile */
                 id = cur_map->anims[(id & MF_ID) + anim_ticker];
             } 
 
+            //printf("blit (%d)...", id);
             SDL_BlitSurface(stocks[id], NULL, screen, &rect);
+            //printf("ok\n");
         }
     }
+    //printf("ok\n");
 }
 
 static void on_idle()
@@ -219,13 +247,6 @@ static void on_idle()
     if (CON_isVisible(btConsole))
         return;
 
-    if (keystate[SDLK_r]) {
-        if (!cur_map)
-            read_map("main.map");
-    } else if (keystate[SDLK_w]) {
-        write_map("main.map");
-    }
-    
     if (cur_map) {
         if ( keystate[SDLK_UP]) {
             if (yoffset > 0) {
@@ -250,23 +271,31 @@ static void on_idle()
         }
     }
 
-    if (editor_mode) {
+    if (cur_map && editor_mode) {
         int x, y, xt, yt;
         Uint8 mousestate = SDL_GetMouseState(&x, &y);
 
         xt = (x - (x % TILE_SIZE)) / TILE_SIZE;
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
-        if (mousestate & SDL_BUTTON(1)) {
-            set_stock_id(xt, yt, editor_pen);
-        } else if (mousestate & SDL_BUTTON(3)) {
+        if (mousestate & SDL_BUTTON(1))
+            map_put(1, xt, yt);
+        else if (mousestate & SDL_BUTTON(3))
+            map_put(0, xt, yt);
+    }
+}
 
-            if (editor_pg) {
-                for (y = 0; y < editor_pg_y; y++) {
-                    for (x = 0; x < editor_pg_x; x++) {
-                        set_stock_id(xt + x, yt + y, 
-                                editor_pg[editor_pg_x * y + x]);
-                    }
+void map_put(int id, int xt, int yt)
+{
+    if (id) {
+        set_stock_id(xt, yt, editor_pen);
+    } else {
+        if (editor_pg) {
+            int x, y;
+            for (y = 0; y < editor_pg_y; y++) {
+                for (x = 0; x < editor_pg_x; x++) {
+                    set_stock_id(xt + x, yt + y, 
+                            editor_pg[editor_pg_x * y + x]);
                 }
             }
         }
