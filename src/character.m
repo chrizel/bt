@@ -15,22 +15,65 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef PLAYER_H
-#define PLAYER_H
-
 #include "character.h"
 
-@interface Player: Character
+@implementation Character
+
+- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect
 {
+    [super initWithSfcName:sfc_name position:prect];
+
+    going = NO;
+    tick = 0;
+    destTicks = SDL_GetTicks();
+
+    return self;
 }
 
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-- free;
+- switchTick
+{
+    tick = 0; //TODO: tick-count attribute, so i can calc this tick stuff
+}
 
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
-- switchTick;
-- onIdle;
+- (BOOL)isGoing
+{
+    return going;
+}
+
+- (int)getDirection
+{
+    return direction;
+}
+
+- setDirection:(int)dir
+{
+    direction = dir;
+}
+
+- (int)getTick
+{
+    return tick;
+}
+
+- setTick:(int)t
+{
+    tick = t;
+}
+
+- onIdle
+{
+    if (going) {
+	/*** Animation calculations ***/
+	if (SDL_GetTicks() >= destTicks) {
+	    /* Do animation */
+	    [self switchTick];
+
+	    /* Calculate next tick time */
+	    destTicks = SDL_GetTicks() + 100; //TODO: speed attribute
+	}
+    } else {
+	tick = 1;
+    }
+}
 
 @end
-
-#endif

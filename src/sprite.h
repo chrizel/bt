@@ -15,21 +15,24 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef SPRITE_H
+#define SPRITE_H
 
-#include "character.h"
+#include <SDL.h>
+#include <objc/Object.h>
 
-@interface Player: Character
+@interface Sprite: Object
 {
+    SDL_Surface *sfc;
+    SDL_Rect pos;
+    SDL_Rect def_src_rect;
+    SDL_Rect *src_rect;
 }
 
++ newWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
 - initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-- free;
 
 - draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
-- switchTick;
-- onIdle;
 
 @end
 

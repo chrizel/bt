@@ -36,6 +36,11 @@
 
     int music;
     int chunk;
+
+    SDL_Rect ppos;
+
+    Uint32 xOffset;
+    Uint32 yOffset;
 }
 
 - initSDL;

@@ -15,20 +15,36 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef CHARACTER_H
+#define CHARACTER_H
 
-#include "character.h"
+#include "sprite.h"
 
-@interface Player: Character
+#define NORTH 0
+#define EAST  1
+#define SOUTH 2
+#define WEST  3
+
+@interface Character: Sprite
 {
+    BOOL going;
+    int direction;
+    int tick;
+
+    Uint32 destTicks;
 }
 
 - initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
 - free;
 
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
+- (BOOL)isGoing;
+- (int)getDirection;
+- setDirection:(int)dir;
+
+- setTick:(int)t;
+- (int)getTick;
 - switchTick;
+
 - onIdle;
 
 @end

@@ -58,6 +58,8 @@ class Editor(Frame):
         bt.exit()
 
     def bt_save(self):
+        file = asksavefilename
+        
         file = asksavefilename(defaultextension="*.map", filetypes=[('Map files', '*.map'), ('All files', '*.*')])
         if file != "":
             bt.save_map(file)

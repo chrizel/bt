@@ -42,7 +42,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
 + (id)newWithTitle:(char *)t
 {
-    return [[super new] initWithTitle:t];
+    return [[self new] initWithTitle:t];
 }
 
 - (id)initWithTitle:(char *)t
@@ -54,12 +54,20 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     init_colors();
 #endif
 
+    xOffset = 0;
+    yOffset = 0;
+
     printf("make map...\n");
     python = [Python new];
     map = [Map newWithFile:"main.map"];
     editor = [Editor new];
     console = [Console new];
-    player = [Player new];
+
+    ppos.x = 400;
+    ppos.y = 300;
+    ppos.w = 48;
+    ppos.h = 92;
+    player = [Player newWithSfcName:"player.player1" position:&ppos];
 
     printf("make audio...\n");
     audio = [Audio new];
@@ -199,8 +207,9 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 	[editor onIdle];
         
 	//printf("Map onDraw\n");
+	//[map draw:screen xOffset:xOffset yOffset:yOffset];
 	[map onDraw:screen];
-	[player onDraw:screen];
+	[player draw:screen xOffset:xOffset yOffset:yOffset];
 	[editor onDraw:screen];
 	[console draw];
 

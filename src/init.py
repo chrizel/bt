@@ -26,15 +26,16 @@ from Tkinter import *
 try:
     
     # editor uses root window as master
-    e = editor.Editor()
+    #e = editor.Editor()
 
     # for the console, we create an extra toplevel window
-    cw = Toplevel()
-    c = console.Console(cw)
+    #cw = Toplevel()
+    #c = console.Console(cw)
 
     def updateGUI():
-        e.update()
-        c.update()
+        pass
+        #e.update()
+        #c.update()
 
 except:
     print "*** Error while init.py:"

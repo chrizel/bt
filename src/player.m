@@ -32,7 +32,7 @@
 
 #define TICK_COUNT 3
 #define PLAYER_RECT(x, y) playerMap[y * TICK_COUNT + x]
-#define SET_PRECT(x, y) cur_shape = &PLAYER_RECT(x, y)
+#define SET_PRECT(x, y) src_rect = &PLAYER_RECT(x, y)
 
 static SDL_Rect playerMap[] = {
     {MPW(0), MPH(0), PW, PH},
@@ -49,98 +49,26 @@ static SDL_Rect playerMap[] = {
     {MPW(2), MPH(3), PW, PH},
 };
 
-static SDL_Rect wider_rect(SDL_Rect *rect, int border)
+- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
 {
-    static SDL_Rect wrect;
-    
-    //printf("%d,%d,%d,%d\n", rect->x, rect->y, rect->w, rect->h);
-
-    wrect.x = rect->x - border;
-    wrect.y = rect->y - border;
-    wrect.w = rect->w + border * 2;
-    wrect.h = rect->h + border * 2;
-
-    return wrect;
-}
-
-+ (id)new
-{
-    return [[super new] init];
-}
-
-- (id)init
-{
-    blink = NO;
-    my_sfc = bmpl_get("player.player1");
-
-    pos.w = 48;
-    pos.h = 64;
-
-    pos.x = 600;
-    pos.y = 400;
+    [super initWithSfcName:sfc_name position:prect];
 
     going = NO;
-    tick_dir = YES;
     direction = SOUTH;
     tick = 1;
 
     SET_PRECT(1, 2);
-
-    destTicks = SDL_GetTicks();
-
-    return self;
 }
 
-- onDraw:(SDL_Surface *)sfc;
+- free
 {
-    /*
-    if (blink)
-	cur_shape.x = 48;
-    else
-        cur_shape.x = 0;
-    */
+    [super free];
+}
+
+- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
+{
     SET_PRECT(tick, direction);
-
-    SDL_BlitSurface(my_sfc, cur_shape, sfc, &pos);
-    //whole_redraw = YES;
-    PUSH_UR(wider_rect(&pos, 10));
-}
-
-- (BOOL)switchBlink
-{
-    printf("blink\n");
-    blink = !blink;
-    return blink;
-}
-
-- (BOOL)getBlink
-{
-    return blink;
-}
-
-- (BOOL)isGoing
-{
-    return going;
-}
-
-- (int)getDirection
-{
-    return direction;
-}
-
-- setDirection:(int)dir
-{
-    direction = dir;
-}
-
-- (int)getTick
-{
-    return tick;
-}
-
-- setTick:(int)t
-{
-    tick = t;
+    [super draw:dst_sfc xOffset:xo yOffset:yo];
 }
 
 - switchTick
