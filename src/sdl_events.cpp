@@ -79,8 +79,15 @@ void sdl_event_loop(void)
 
     SDL_AddTimer(2500, blink_anim_timer, 0);
 
+#ifdef DO_FRAMETEST
+    ticks_begin = SDL_GetTicks();
+#endif
+
     while (!done) {
 	ur_count = 0;
+#ifdef DO_FRAMETEST
+	frames++;
+#endif
 	
         while(SDL_GetTicks() <= ticks)
             ;
@@ -168,4 +175,7 @@ void sdl_event_loop(void)
 	    }
 	}
     }
+
+
 }
+

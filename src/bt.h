@@ -23,7 +23,7 @@
 #include "map.h"
 
 #define FPS 30
-#define BPP 16
+#define BPP 8
 
 #if(BPP == 8)
 #define USE_8BIT
@@ -39,6 +39,11 @@ extern int editor_pen;
 extern int *editor_pg;
 extern int editor_pg_y;
 extern int editor_pg_x;
+
+#ifdef DO_FRAMETEST
+extern Uint32 frames;
+extern Uint32 ticks_begin, ticks_end;
+#endif
 
 void bt_exit();
 void bt_pen(void);

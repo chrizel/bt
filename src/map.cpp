@@ -117,7 +117,7 @@ Map::Map(Uint32 width, Uint32 height, Uint32 anim_count, Uint32 anim_ticks)
 
 Map::~Map()
 {
-    // TODO
+    // TODO    
 }
 
 void Map::save(char *file)

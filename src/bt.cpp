@@ -46,6 +46,10 @@ int *editor_pg;
 int editor_pg_y;
 int editor_pg_x;
 
+Uint32 frames;
+Uint32 ticks_begin, ticks_end;
+
+
 static Game *bt;
 
 static void keydown();
@@ -119,6 +123,16 @@ static void quit()
 void bt_exit()
 {
     /* TODO: cleanup all surfaces, etc. */
+    // To check fps
+#ifdef DO_FRAMETEST
+    ticks_end = SDL_GetTicks();
+    printf("Frame statistic:\n");
+    printf("----------------\n");
+    printf("Frames: %i\n", frames);
+    printf("Milliseconds: %i\n", ticks_end - ticks_begin);
+    printf("FPS: %i\n", (1000 * frames) / (ticks_end - ticks_begin));
+#endif
+
     printf("Bye :)\n");
     exit(0);
 }
