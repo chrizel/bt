@@ -6,6 +6,7 @@
 #include "bt.h"
 #include "event.h"
 #include "error.h"
+#include "alloc.h"
 
 static ev null_ev[] = {{0, 0}}; 
 static ev *major_el = null_ev; /* pointer to major event list */
@@ -121,7 +122,7 @@ void init_hooks()
 {
     int i;
     for (i = 0; i < EH_LAST; i++) {
-        eh_list[i] = (void (**)())malloc(EH_BUF);
+        eh_list[i] = MALLOC_BYTES(void (**)(), EH_BUF);
         eh_counts[i] = 0;
     }
 }
