@@ -46,8 +46,10 @@ int ur_count;
 int whole_redraw;
 
 #define PUSH_UR(rect) \
-	if (!whole_redraw) { \
+	if (!whole_redraw && ur_count < MAX_RECTS) { \
 	    update_rects[ur_count++] = rect; \
+	} else { \
+	    whole_redraw = 1; \
 	}
 
 

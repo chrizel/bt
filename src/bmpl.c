@@ -59,23 +59,26 @@ static SDL_Surface *load_bitmap(t_bmpl_item *item)
     if (!temp)
         error("Can't load bitmap: %s", item->file);
 
+    #ifdef USE_8BIT
     SDL_SetColors(temp, colors, 0, n_colors);
+    #endif
 
     /* ColorKey... */
     if (item->flags & BL_COLORKEY) {
-      if (SDL_SetColorKey (temp, SDL_SRCCOLORKEY, 141))
+	if (SDL_SetColorKey (temp, SDL_SRCCOLORKEY, SDL_MapRGB(temp->format, 0xff, 0, 0xff)))
             error("Can't set colorkey %s", item->file);
     }
-    
+
+    if (item->flags & BL_ALPHA_50) {
+	SDL_SetAlpha(temp, SDL_SRCALPHA, 128);
+    }
+
     /* Convert */
-    /*
     surf = SDL_DisplayFormat(temp);
     if (!surf)
         error("Can't convert %s", item->file);
-        */
 
+    SDL_FreeSurface(temp);
 
-    //SDL_FreeSurface(temp);
-
-    return temp;
+    return surf;
 }

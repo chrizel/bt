@@ -25,6 +25,30 @@
 #include "filter.h"
 #include "map.h"
 
+SDL_Rect wider_rect(SDL_Rect *rect, int border)
+{
+    static SDL_Rect wrect;
+    
+    //printf("%d,%d,%d,%d\n", rect->x, rect->y, rect->w, rect->h);
+
+    wrect.x = rect->x - border;
+    wrect.y = rect->y - border;
+    wrect.w = rect->w + border * 2;
+    wrect.h = rect->h + border * 2;
+
+    return wrect;
+}
+
+static Uint32 blink_anim_timer(Uint32 interval, void *param)
+{
+    player.blink = !player.blink;
+
+    if (player.blink)
+	return 200;
+    else
+	return 5000;
+}
+
 void init_sdl_events(void)
 {
     sdl_ev  = MALLOC(SDL_Event);
@@ -36,8 +60,14 @@ void sdl_event_loop(void)
     // Handle fps
     int done = 0;
     Uint32 ticks = SDL_GetTicks();
+    SDL_Rect ml_rect;
+
+    ml_rect.x = 800 - 100;
+    ml_rect.y = 600 - 60;
     
     whole_redraw = 1;
+
+    SDL_AddTimer(2500, blink_anim_timer, 0);
 
     while (!done) {
 	ur_count = 0;
@@ -66,7 +96,7 @@ void sdl_event_loop(void)
                 case SDL_KEYUP:
                     evl_call(evl_sdl, EV_SDL_KEYUP);
                     break;
-                case SDL_JOYBUTTONDOWN:
+		case SDL_JOYBUTTONDOWN:
                     evl_call(evl_sdl, EV_SDL_JOYBUTTONDOWN);
                     break;
                 case SDL_JOYBUTTONUP:
@@ -79,6 +109,21 @@ void sdl_event_loop(void)
             }
         }
 
+	/*
+	{
+	    Uint8 *keystate = SDL_GetKeyState(NULL);
+	    if (keystate[SDLK_UP])
+		player.pos.y -= 10;
+	    else if (keystate[SDLK_DOWN])
+		player.pos.y += 10;
+
+	    if (keystate[SDLK_LEFT])
+		player.pos.x -= 10;
+	    else if (keystate[SDLK_RIGHT])
+		player.pos.x += 10;
+	}
+	*/
+
 	map_idle(cur_map);
         evl_call(evl_sdl, EV_SDL_IDLE);
 
@@ -87,8 +132,18 @@ void sdl_event_loop(void)
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */
-        if (cur_filter)
-            cur_filter();
+        // if (cur_filter)
+	// cur_filter();
+
+	if (player.blink)
+	    player.cur_shape.x = 80;
+	else
+	    player.cur_shape.x = 0;
+
+	SDL_BlitSurface(player.sfc, &player.cur_shape, screen, &player.pos);
+	PUSH_UR(wider_rect(&player.pos, 10));
+
+	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
         CON_DrawConsole(btConsole);
         

@@ -54,12 +54,30 @@ int main(int argc, char *argv[])
     puts(GPL_TEXT);
 
     init_sdl();
+
+    #ifdef USE_8BIT
     init_colors();
+    #endif
+
     init_sdl_events();
 
     init_console();
     init_textshow();
     init_input();
+
+    minilogo = bmpl_get("main.minilogo");
+    player.sfc = bmpl_get("player.player1");
+
+    player.pos.w = 80;
+    player.pos.h = 100;
+
+    player.pos.x = 600;
+    player.pos.y = 400;
+
+    player.cur_shape.w = 80;
+    player.cur_shape.h = 100;
+    player.cur_shape.x = 0;
+    player.cur_shape.y = 0;
 
     evl_reg(evl_sdl, EV_SDL_KEYDOWN, keydown);
 
@@ -110,7 +128,8 @@ static void init_sdl(void)
     atexit(SDL_Quit);
 
     /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, 8, SDL_DOUBLEBUF | SDL_HWPALETTE);
+    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE);
+
     if (!screen)
         error("Couldn't set VideoMode: %s", SDL_GetError());
 

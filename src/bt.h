@@ -23,13 +23,23 @@
 #include "map.h"
 
 #define FPS 30
+#define BPP 16
 
-struct _player {
-    int x;
-    int y;
+#if(BPP == 8)
+#define USE_8BIT
+#else
+#define USE_16BIT
+#endif
+
+struct {
+    SDL_Surface *sfc;
+    SDL_Rect pos;
+    SDL_Rect cur_shape;
+    int blink;
 } player;
 
 SDL_Surface *screen;
+SDL_Surface *minilogo;
 
 t_map *cur_map;
 

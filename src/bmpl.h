@@ -26,6 +26,7 @@
 
 enum {
     BL_COLORKEY = (1 << 0),
+    BL_ALPHA_50 = (1 << 1),
 };
 
 typedef struct {

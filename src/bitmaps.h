@@ -21,10 +21,12 @@
 #include "bmpl.h"
 
 t_bmpl_item bmpl_list[] = {
-    {"map.stock_default", "data/tiles/stock1.bmp", NULL, 0},
+    {"map.stock_default", "data/tiles/stock2.bmp", NULL, 0},
     {"map.stock1", "data/tiles/empty_stock.bmp", NULL, 0},
-    {"map.stock2", "data/tiles/stock1.bmp", NULL, 0},
+    {"map.stock2", "data/tiles/stock2.bmp", NULL, 0},
     {"font.bg.test", "data/Speak/test3.bmp", NULL, BL_COLORKEY},
+    {"main.minilogo", "data/tiles/minilogo.bmp", NULL, BL_COLORKEY | BL_ALPHA_50},
+    {"player.player1", "data/player/player2.bmp", NULL, BL_COLORKEY},
 
     {NULL, NULL, NULL, 0}, /* the last entry must be NULL! */
 };

@@ -289,7 +289,7 @@ void map_idle(t_map *map)
 
     if (CON_isVisible(btConsole))
         return;
-
+    /*
     if ( keystate[SDLK_UP]) {
         if (map->yoffset > 0) {
             map->yoffset--; // map up...
@@ -313,6 +313,7 @@ void map_idle(t_map *map)
 	    whole_redraw = 1;
 	}
     }
+    */
 
     if (editor_mode) {
         int x, y, xt, yt;
