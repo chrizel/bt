@@ -18,23 +18,24 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-/*
-class Player {
-private:
+#include <objc/Object.h>
+
+@interface Player: Object
+{
     SDL_Surface *my_sfc;
     SDL_Rect pos;
     SDL_Rect cur_shape;
-    bool blink;
+    BOOL blink;
+}
 
-public:
-    Player();
-    virtual ~Player();
++ (id)new;
+- (id)init;
+// virtual ~Player();
 
-    void onDraw(SDL_Surface *sfc);
+- onDraw:(SDL_Surface *)sfc;
+- (BOOL)switchBlink;
+- (BOOL)getBlink;
 
-    bool switchBlink();
-    bool getBlink();
-};
-*/
+@end
 
 #endif

@@ -24,21 +24,20 @@
 #include "error.h"
 /*
 #include "console.h"
-#include "player.h"
+
 #include "editor.h"
 */
+#include "player.h"
 #include "audio.h"
 
 @implementation Game
 
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
-    /*
-    if (bt->getPlayer()->switchBlink())
+    if ([(id)param switchBlink])
 	return 200;
     else
 	return 5000;
-    */
 }
 
 + (id)newWithTitle:(char *)t
@@ -59,7 +58,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     map = [Map newWithFile:"main.map"];
     //editor = [Editor new];
     //console = [Console new];
-    //player = [Player new];
+    player = [Player new];
 
     printf("make audio...\n");
     audio = [Audio new];
@@ -134,7 +133,7 @@ Game::~Game()
     
     whole_redraw = 1;
 
-    SDL_AddTimer(2500, blink_anim_timer, 0);
+    SDL_AddTimer(2500, blink_anim_timer, (void *)player);
 
 #ifdef DO_FRAMETEST
     ticks_begin = SDL_GetTicks();
@@ -220,7 +219,7 @@ Game::~Game()
         
 	//printf("Map onDraw\n");
 	[map onDraw:screen];
-	//[player onDraw:screen];
+	[player onDraw:screen];
 	//[editor onDraw:screen];
 
         /* Execute surface filter... */

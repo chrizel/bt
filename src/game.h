@@ -29,7 +29,7 @@
 
     id map;
     //id console;
-    //id player;
+    id player;
     //id editor;
     id audio;
 

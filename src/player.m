@@ -15,7 +15,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-/*
 #include <SDL.h>
 
 #include "player.h"
@@ -24,7 +23,9 @@
 #include "sdl_events.h"
 #include "bmpl.h"
 
-SDL_Rect wider_rect(SDL_Rect *rect, int border)
+@implementation Player
+
+static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
     static SDL_Rect wrect;
     
@@ -38,9 +39,14 @@ SDL_Rect wider_rect(SDL_Rect *rect, int border)
     return wrect;
 }
 
-Player::Player()
++ (id)new
 {
-    blink = false;
+    return [[super new] init];
+}
+
+- (id)init
+{
+    blink = NO;
     my_sfc = bmpl_get("player.player1");
 
     pos.w = 80;
@@ -53,13 +59,11 @@ Player::Player()
     cur_shape.h = 100;
     cur_shape.x = 0;
     cur_shape.y = 0;
+
+    return self;
 }
 
-Player::~Player()
-{
-}
-
-void Player::onDraw(SDL_Surface *sfc)
+- onDraw:(SDL_Surface *)sfc;
 {
     if (blink)
 	cur_shape.x = 80;
@@ -70,14 +74,16 @@ void Player::onDraw(SDL_Surface *sfc)
     PUSH_UR(wider_rect(&pos, 10));
 }
 
-bool Player::switchBlink()
+- (BOOL)switchBlink
 {
+    printf("blink\n");
     blink = !blink;
     return blink;
 }
 
-bool Player::getBlink()
+- (BOOL)getBlink
 {
     return blink;
 }
-*/
+
+@end
