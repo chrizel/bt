@@ -44,7 +44,7 @@ void init_map()
 
     read_map("main.map");
 
-    SDL_AddTimer(150, switch_anim_ticker, NULL);
+    SDL_AddTimer(1000, switch_anim_ticker, NULL);
 }
 
 static void write_int(FILE *fp, unsigned int num)
@@ -215,15 +215,15 @@ static void draw_map()
     if (switch_palette) {
         int i;
         SDL_Color tmp;
-        SDL_Color colors[4];
+        SDL_Color colors[6];
         
-        tmp = screen->format->palette->colors[252];
-        for (i = 0; i < 3; i++) {
-            colors[i] = screen->format->palette->colors[253 + i];
+        tmp = screen->format->palette->colors[250];
+        for (i = 0; i < 5; i++) {
+            colors[i] = screen->format->palette->colors[251 + i];
             draw_color(&colors[i]);
         }
-        colors[3] = tmp;
-        draw_color(&colors[3]);
+        colors[5] = tmp;
+        draw_color(&colors[5]);
         //printf("\n");
 
         /*
@@ -237,7 +237,7 @@ static void draw_map()
         // ok, now we shift our color palette range
         //SDL_SetColors(screen, screen->format->palette->colors, 249, 255);
         */
-        SDL_SetPalette(screen, SDL_LOGPAL, colors, 252, 4);
+        SDL_SetPalette(screen, SDL_LOGPAL, colors, 250, 6);
 
         //printf("change palette\n");
         switch_palette = 0;
