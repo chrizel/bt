@@ -39,29 +39,30 @@ myMusic and myChunk tells the class which music or chunk should be played.
 #define MIXER_CHANNELS 5
 #endif
 
-class Audio {
-private:
+#endif
+
+@interface Audio:Object
+
+{
     // An array for musics and chunks
     Mix_Music **music_list;
     Mix_Chunk **chunk_list;
     int size_music, size_chunk;
-        
-public:
-    Audio();
-    ~Audio();
+}
 
-    void init();
-    void free();
++new;
+-init;
+-free;
 
-    int AddMusic(char *filename);
-    int AddChunk(char *filename);
+-(int)addMusic: (char *)filename;
+-(int)addChunk: (char *)filename;
 
-    void DeleteMusic(int id);
-    void DeleteChunk(int id);
+-deleteMusic: (int)id;
+-deleteChunk: (int)id;
 
-    void PlayMusic(int id);
-    void StopMusic();
-    void PlayChunk(int id);
-};
+-playMusic: (int)id;
+-stopMusic;
+-playChunk: (int)id;
 
-#endif
+
+@end
