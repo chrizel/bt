@@ -21,9 +21,16 @@
 #include "console.h"
 #include "sdl_events.h"
 #include "map.h"
+#include "game.h"
 
 #define FPS 30
 #define BPP 16
+
+const char GPL_TEXT[] =  
+"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
+"Bermuda Triangle comes with ABSOLUTELY NO WARRANTY. This is free software,\n" 
+"and you are welcome to redistribute it under certain conditions; see\n"
+"LICENSE file for details.\n\n";
 
 #if(BPP == 8)
 #define USE_8BIT
@@ -31,6 +38,7 @@
 #define USE_16BIT
 #endif
 
+extern Console *console;
 extern SDL_Surface *screen;
 extern SDL_Surface *minilogo;
 
@@ -44,6 +52,8 @@ extern int editor_pg_x;
 extern int frames;
 extern int ticks_begin, ticks_end;
 #endif
+
+extern Game *bt;
 
 void bt_exit();
 void bt_pen(void);

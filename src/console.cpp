@@ -24,9 +24,6 @@
 #include "filter.h"
 #include "error.h"
 
-char *con_last_param;
-ConsoleInformation *btConsole;
-
 typedef struct {
     char *command;
     void (*func)();
@@ -48,9 +45,10 @@ t_command commands[] = {
     {NULL, NULL},
 };
 
+static Console *curConsole = 0;
 static void CommandHandler(ConsoleInformation *console, char *command);
 
-void init_console()
+Console::Console()
 {
     SDL_Rect conRect;
 
@@ -61,64 +59,115 @@ void init_console()
     conRect.h = 195;
 
     /* init console */
-    btConsole = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);
+    this->console = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);
 
-    if (!btConsole)
+    if (!this->console)
         error("Can not init console!");
 
-    CON_SetExecuteFunction(btConsole, CommandHandler);
-    //CON_Alpha(btConsole, 150);
-    CON_SetPrompt(btConsole, "console> ");
-    CON_Topmost(btConsole);
-    //CON_Show(btConsole);
+    CON_SetExecuteFunction(this->console, CommandHandler);
+    //CON_Alpha(this->console, 150);
+    CON_SetPrompt(this->console, "console> ");
+    CON_Topmost(this->console);
+    //CON_Show(this->console);
+    
+    curConsole = this;
 }
 
-static char *CommandFile(char *file)
+Console::~Console()
+{
+    CON_Hide(this->console);
+    CON_Destroy(this->console);
+    curConsole = 0;
+}
+
+void Console::handleCommand(char *command)
+{
+    int i, found = 0;
+
+    if (command[0] == '<') {
+        readScript(command + 1);
+        return;
+    }
+
+    lastParam = command;
+
+    for (i = 0; commands[i].command; ++i) {
+        if (strncmp(commands[i].command, command, strlen(commands[i].command)) == 0) {
+            commands[i].func();
+            lastParam = 0;
+            found = 1;
+        }
+    }
+
+    lastParam = 0;
+
+    if (!found)
+        print("Command not found");
+}
+
+void Console::readScript(char *filename)
 {
     char buf[512];
     FILE *fp;
 
     /* "<filename"... we don't need < */
-    file = file + 1;
+    //file = file + 1;
 
-    fp = fopen(file, "r");
+    fp = fopen(filename, "r");
     if (fp) {
 
         while (!feof(fp)) {
             fgets(buf, 512, fp);
             printf("%s\n", buf);
-            CON_Out(btConsole, buf);
-            CommandHandler(btConsole, buf);
+            print(buf);
+            CommandHandler(this->console, buf);
         }
 
         fclose(fp);
     } else {
-        CON_Out(btConsole, "file not found");
-        return NULL;
+        print("file not found");
+        return;
     }
+}
+
+char *Console::getLastParam()
+{
+    return lastParam;
+}
+
+void Console::print(char *str)
+{
+    CON_Out(this->console, str);
+}
+
+bool Console::isVisible()
+{
+    return CON_isVisible(this->console);
+}
+
+void Console::onEvent(SDL_Event *event)
+{
+    CON_Events(event);
+}
+
+void Console::show()
+{
+    CON_Show(this->console);
+}
+
+void Console::hide()
+{
+    CON_Hide(this->console);
+}
+
+void Console::draw()
+{
+    CON_DrawConsole(this->console);
 }
 
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
-    int i, found = 0;
-
-    if (command[0] == '<') {
-        command = CommandFile(command);
-        return;
-    }
-
-    con_last_param = command;
-
-    for (i = 0; commands[i].command; ++i) {
-        if (strncmp(commands[i].command, command, strlen(commands[i].command)) == 0) {
-            commands[i].func();
-            con_last_param = NULL;
-            found = 1;
-        }
-    }
-
-    con_last_param = NULL;
-
-    if (!found)
-        CON_Out(console, "Command not found");
+    if (curConsole)
+        curConsole->handleCommand(command);
 }
+

@@ -18,6 +18,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "eventhandler.h"
+
 /* Map Format enums */
 enum {
     MF_ID = (1 << 17) - 1,
@@ -29,7 +31,7 @@ enum {
 #define XTILES 40 /* tiles per row on screen */
 #define YTILES 30 /* tiles per col on screen */
 
-class Map
+class Map : public EventHandler
 {
 private:
     /*
@@ -38,7 +40,7 @@ private:
     SDL_Surface *stocks;
     Uint32 xoffset;
     Uint32 yoffset;
-    Uint32 prev_ticker;
+    Uint32 prev_ticker; 
     Uint32 version;
 
     /* head data */
@@ -72,8 +74,10 @@ public:
     void fill(int id);
     void put(int id, int xt, int yt);
 
-    void draw(SDL_Surface *sfc);
-    void idle();
+    /* Event handling */
+    void onEvent(SDL_Event *event);
+    void onDraw(SDL_Surface *sfc);
+    void onIdle();
 };
 
 #endif

@@ -15,34 +15,17 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H 
 
 #include <SDL.h>
 
-#include "console/SDL_console.h"
-#include "eventhandler.h"
-
-class Console// : public EventHandler
+class EventHandler
 {
-private:
-    ConsoleInformation *console;
-    char *lastParam;
-
-public:
-    Console();
-    virtual ~Console();
-    char *getLastParam();
-    void handleCommand(char *command);
-    void readScript(char *filename);
-    void print(char *str);
-    bool isVisible();
-
-    void show();
-    void hide();
-    void draw();
-
-    void onEvent(SDL_Event *event);
+public: 
+    virtual void onEvent(SDL_Event *event) = 0;
+    virtual void onDraw(SDL_Surface *sfc) = 0;
+    virtual void onIdle() = 0;
 };
 
 #endif

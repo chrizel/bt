@@ -99,16 +99,19 @@ void sdl_event_loop(void)
 
         while (SDL_PollEvent(sdl_ev)) {
 
-            if (CON_isVisible(btConsole)) {
+	  if (bt->getConsole()->isVisible()) {
+                /*
                 if (!CON_Events(sdl_ev))
                     continue;
+                    */
+	    bt->getConsole()->onEvent(sdl_ev);
             } else {
                 /* call event hooks... */
                 switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
-                        if (!CON_isVisible(btConsole))
-                            CON_Show(btConsole);
+		      if (!bt->getConsole()->isVisible())
+			bt->getConsole()->show();
                         break;
                     }
 
@@ -145,11 +148,11 @@ void sdl_event_loop(void)
 	}
 	*/
 
-        tmp_map->idle();
+        tmp_map->onIdle();
         evl_call(evl_sdl, EV_SDL_IDLE);
 
         //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-        tmp_map->draw(screen);
+        tmp_map->onDraw(screen);
         evl_call(evl_sdl, EV_SDL_PAINT);
 
         /* Execute surface filter... */
@@ -166,9 +169,9 @@ void sdl_event_loop(void)
 
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
-        CON_DrawConsole(btConsole);
+        bt->getConsole()->draw();
         
-	if (whole_redraw || CON_isVisible(btConsole)) {
+	if (whole_redraw || bt->getConsole()->isVisible()) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
@@ -179,7 +182,5 @@ void sdl_event_loop(void)
 	    }
 	}
     }
-
-
 }
 

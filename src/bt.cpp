@@ -50,16 +50,10 @@ int frames;
 int ticks_begin, ticks_end;
 
 
-static Game *bt;
+Game *bt;
 
 static void keydown();
 static void quit();
-
-const char GPL_TEXT[] =  
-"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
-"Bermuda Triangle comes with ABSOLUTELY NO WARRANTY. This is free software,\n" 
-"and you are welcome to redistribute it under certain conditions; see\n"
-"LICENSE file for details.\n\n";
 
 int main(int argc, char *argv[])
 {
@@ -67,7 +61,6 @@ int main(int argc, char *argv[])
     editor_pen = 0;
     editor_pg = NULL;
     cur_filter = NULL;
-    con_last_param = NULL;
 
     puts(GPL_TEXT);
 
@@ -79,7 +72,6 @@ int main(int argc, char *argv[])
 
     init_sdl_events();
 
-    init_console();
     init_textshow();
     init_input();
 
@@ -103,8 +95,6 @@ int main(int argc, char *argv[])
     map = new Map("main.map");
 
     bt->run();
-
-    CON_Destroy(btConsole);
 
     return 0;
 }
@@ -138,13 +128,13 @@ void bt_editor(void)
     editor_mode = !editor_mode;
     sprintf(buf, "editor_mode = %d", editor_mode);
 
-    CON_Out(btConsole, buf);
+    bt->print(buf);
 }
 
 void bt_pen(void)
 {
     int buf[100], id;
-    sscanf(con_last_param, "%s %d", buf, &id);
+    sscanf(bt->getConsole()->getLastParam(), "%s %d", buf, &id);
 
     editor_pen = id;
 }
@@ -153,7 +143,7 @@ void bt_pg(void)
 {
     int i, j, len, pos;
     char buf1[512], buf2[512];
-    sscanf(con_last_param, "%s %d %d %[^a-z]", buf1, &editor_pg_x, &editor_pg_y, buf2);
+    sscanf(bt->getConsole()->getLastParam(), "%s %d %d %[^a-z]", buf1, &editor_pg_x, &editor_pg_y, buf2);
 
     if (editor_pg)
         FREE(editor_pg);
@@ -177,7 +167,7 @@ void bt_pg(void)
             j++;
     }
 
-    CON_Out(btConsole, "set pg");
+    bt->print("set pg");
 
     /*
     printf("\npg:\t%d\n", editor_pg_x * editor_pg_y);
@@ -189,7 +179,7 @@ void bt_pg(void)
 void bt_write(void)
 {
     char buf1[100], buf2[100];
-    sscanf(con_last_param, "%s %s", buf1, buf2);
+    sscanf(bt->getConsole()->getLastParam(), "%s %s", buf1, buf2);
 
     map->save(buf2);
 }
@@ -197,7 +187,7 @@ void bt_write(void)
 void bt_load(void)
 {
     char buf1[100], buf2[100];
-    sscanf(con_last_param, "%s %s", buf1, buf2);
+    sscanf(bt->getConsole()->getLastParam(), "%s %s", buf1, buf2);
 
     delete map;
     map = new Map(buf2);
@@ -207,7 +197,7 @@ void bt_fill(void)
 {
     char buf1[100];
     int id;
-    sscanf(con_last_param, "%s %d", buf1, &id);
+    sscanf(bt->getConsole()->getLastParam(), "%s %d", buf1, &id);
 
     map->fill(id);
 }
@@ -216,7 +206,7 @@ void bt_put(void)
 {
     char buf1[100];
     int id, x, y;
-    sscanf(con_last_param, "%s %d %d %d", buf1, &id, &x, &y);
+    sscanf(bt->getConsole()->getLastParam(), "%s %d %d %d", buf1, &id, &x, &y);
 
     map->put(id, x, y);
 }
@@ -226,7 +216,7 @@ void bt_new(void)
     char buf1[100];
     int width, height, anim_count, anim_ticks;
 
-    sscanf(con_last_param, "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
+    sscanf(bt->getConsole()->getLastParam(), "%s %d %d %d %d %d", buf1, &width, &height, &anim_count, &anim_ticks);
 
     delete map;
     map = new Map(width, height, anim_count, anim_ticks);

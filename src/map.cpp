@@ -28,6 +28,8 @@
 
 #include "error.h"
 
+#include "eventhandler.h"
+
 #define SET_STOCK_ID(map, xt, yt, id) \
     map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = id;
 
@@ -159,7 +161,7 @@ void Map::open(char *file)
 
     /* check if file is available... */
     if (!fp) {
-        CON_Out(btConsole, "file not found");
+        bt->print("file not found");
         return;
     }
 
@@ -218,7 +220,11 @@ void Map::put(int id, int xt, int yt)
     }
 }
 
-void Map::draw(SDL_Surface *sfc)
+void Map::onEvent(SDL_Event *event)
+{
+}
+
+void Map::onDraw(SDL_Surface *sfc)
 {
     int x, y, x2, y2, id;
     int anim_switched = 0;
@@ -264,11 +270,11 @@ void Map::draw(SDL_Surface *sfc)
     this->prev_ticker = this->anim_ticker;
 }
 
-void Map::idle()
+void Map::onIdle()
 {
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    if (CON_isVisible(btConsole))
+    if (bt->getConsole()->isVisible())
         return;
     /*
     if ( keystate[SDLK_UP]) {

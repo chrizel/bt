@@ -16,27 +16,30 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 #include <SDL.h>
-
 #include <stdlib.h>
+
+#include <iostream>
 
 #include "game.h"
 #include "bt.h"
 #include "sdl_events.h"
 #include "error.h"
+#include "console.h"
 
 Player player;
 
 Game::Game(char *title)
-{
+{ 
     this->title = title;
-    this->init();
+    this->initSDL();
 
     map = new Map("main.map");
+    console = new Console();
 
     tmp_map = map;
 }
 
-void Game::init()
+void Game::initSDL()
 {
     /* Initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -70,4 +73,23 @@ void Game::init()
 void Game::run()
 {
     sdl_event_loop();
+}
+
+void Game::eventLoop()
+{
+}
+
+void Game::printGPL()
+{
+  std::cout << GPL_TEXT;
+}
+
+void Game::print(char *text)
+{
+    console->print(text);
+}
+
+Console *Game::getConsole()
+{
+    return console;
 }

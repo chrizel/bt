@@ -65,17 +65,17 @@ static void day_filter()
 
 void con_switch_filter()
 {
-    if (!con_last_param)
+  if (!bt->getConsole()->getLastParam())
         return;
 
-    if (strcmp(con_last_param, "night") == 0) {
+  if (strcmp(bt->getConsole()->getLastParam(), "night") == 0) {
         cur_filter = night_filter;
-        CON_Out(btConsole, "cur_filter = night");
-    } else if (strcmp(con_last_param, "day") == 0) {
+        bt->print("cur_filter = night");
+  } else if (strcmp(bt->getConsole()->getLastParam(), "day") == 0) {
         cur_filter = day_filter;
-        CON_Out(btConsole, "cur_filter = day");
+        bt->print("cur_filter = day");
     } else {
         cur_filter = NULL;
-        CON_Out(btConsole, "cur_filter = NULL");
+        bt->print("cur_filter = NULL");
     }
 }

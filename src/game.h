@@ -21,6 +21,7 @@
 #include <SDL.h>
 
 class Map;
+class Console;
 
 struct Player {
     SDL_Surface *sfc;
@@ -35,14 +36,21 @@ class Game
 {
 private:
     char *title;
-    Map *map;
 
-    void init();
+    Map *map;
+    Console *console;
+
+    void initSDL();
+    void eventLoop();
+
+    void printGPL();
 
 public:
     Game(char *title);
 
     void run();
+    void print(char *text);
+    Console *getConsole();
 };
 
 #endif
