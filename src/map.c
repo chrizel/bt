@@ -13,7 +13,7 @@
 #define XTILES 40 /* tiles per row */
 #define YTILES 30 /* tiles per col */
 
-static SDL_Surface **stocks;
+static SDL_Surface *stocks;
 static SDL_Surface *wallpaper;
 static int xoffset = 0, yoffset = 0;
 static int anim_ticker = 0;
@@ -26,7 +26,6 @@ static union _utile {
 
 static void draw_map();
 static void on_idle();
-static void load_stocks(char *id, int xcount, int ycount);
 static SDL_Surface *get_tile(SDL_Surface *src, int x, int y);
 static Uint32 switch_anim_ticker(Uint32 interval, void *param);
 
@@ -37,22 +36,11 @@ static void set_stock_id(int xt, int yt, int id);
 
 void init_map()
 {
-    load_stocks("map.stock1", 40, 30); 
+    stocks = bmpl_get("map.stock1");
+
     evl_reg(evl_sdl, EV_SDL_PAINT, draw_map);
     evl_reg(evl_sdl, EV_SDL_IDLE, on_idle);
 
-    /* TODO: load map */
-    /*
-    cur_map.width      = TM_WIDTH;
-    cur_map.height     = TM_HEIGHT;
-    cur_map.anim_count = TM_ANIMS;
-    cur_map.anim_ticks = TM_TICKS;
-    cur_map.anims      = test_anims;
-    cur_map.data       = test_map;
-    */
-    //read_map("main.map");
-
-    //write_map("main.map");
     read_map("main.map");
 
     SDL_AddTimer(1000, switch_anim_ticker, NULL);
@@ -60,50 +48,20 @@ void init_map()
 
 static void write_int(FILE *fp, unsigned int num)
 {
-    /*
-    int i;
-
-    utile.as_int = num;
-
-    // write int as 4 chars 
-    for (i = 0; i < 4; i++) {
-        printf("%.2x ", utile.as_char[i]);
-        fputc(utile.as_char[i], fp);
-    }
-
-    printf(" = %u\n", utile.as_int);
-    */
-
     SDL_RWops *area;
     area = SDL_RWFromFP(fp, 0);
     SDL_WriteLE32(area, num);
     SDL_FreeRW(area);
-
-    //printf("write> %u\n", num);
 }
 
 static unsigned int read_int(FILE *fp)
 {
-    /*
-    int i;
-
-    // put tile data into union
-    for (i = 0; i < 4; i++)
-        utile.as_char[i] = (unsigned char) fgetc(fp);
-
-    swap(&utile.as_char[0], &utile.as_char[1]);
-    swap(&utile.as_char[0], &utile.as_char[3]);
-
-    printf("%.2x%.2x %.2x%.2x = %u\n", utile.as_char[0], utile.as_char[1], utile.as_char[2], utile.as_char[3], utile.as_int);
-    */
     int num;
 
     SDL_RWops *area;
     area = SDL_RWFromFP(fp, 0);
     num = SDL_ReadLE32(area);
     SDL_FreeRW(area);
-
-    //printf("read> %u\n", num);
 
     return num;
 }
@@ -233,19 +191,14 @@ static Uint32 switch_anim_ticker(Uint32 interval, void *param)
 static void draw_map()
 {
     int x, y, x2, y2, id;
-    SDL_Rect rect;
+    SDL_Rect srcrect, rect;
 
+    // TODO: We could do that already in init_map, if srcrect would be global!?
+    srcrect.w = TILE_SIZE;
+    srcrect.h = TILE_SIZE;
 
-    if (cur_map == NULL) {
-        /*
-        rect.x = 0;
-        rect.y = 0;
-        SDL_BlitSurface(wallpaper, NULL, screen, &rect);
-        */
+    if (cur_map == NULL)
         return;
-    }
-
-    //printf("draw map (%u,%u,%u,%u)...", cur_map->width, cur_map->height, cur_map->anim_count, cur_map->anim_ticks);
 
     /* consider offsets */
     if (xoffset < 0)
@@ -280,8 +233,11 @@ static void draw_map()
                 id = cur_map->anims[(id & MF_ID) + anim_ticker];
             } 
 
-            //printf("blit (%u)...", id);
-            SDL_BlitSurface(stocks[id], NULL, screen, &rect);
+            // calculate source rect
+            srcrect.x = (id % XTILES) * TILE_SIZE;
+            srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
+
+            SDL_BlitSurface(stocks, &srcrect, screen, &rect);
             //printf("ok\n");
         }
     }
@@ -358,43 +314,4 @@ static void set_stock_id(int xt, int yt, int id)
 
     //printf("%u/%u (%u, %u)\n", xt, yt, xoffset, yoffset);
     cur_map->data[yt * cur_map->width + xt] = id;
-}
-
-static void load_stocks(char *id, int xcount, int ycount)
-{
-    SDL_Surface *tmp;
-    /* first we create space for our stocks array */
-    stocks = (SDL_Surface**) malloc(sizeof (SDL_Surface*) * xcount * ycount);
-    
-    /* then we load the stock bitmap */
-    tmp = bmpl_get(id);
-
-    /* now we copy create one surface per tile ... copy it from tmp */
-    {
-        int x, y, i = 0;
-
-        for (y = 0; y < ycount; y++)
-            for (x = 0; x < xcount; x++)
-               stocks[i++] = get_tile(tmp, x, y);
-    }
-
-    SDL_FreeSurface(tmp);
-}
-
-static SDL_Surface *get_tile(SDL_Surface *src, int x, int y)
-{
-    SDL_Surface *tile;
-    SDL_Rect srcrect; 
-
-    tile = SDL_CreateRGBSurface(SDL_SWSURFACE, TILE_SIZE, TILE_SIZE, 8, 0, 0, 0, 0); 
-    SDL_SetColors(tile, colors, 0, n_colors);
-
-    srcrect.x = x * TILE_SIZE;
-    srcrect.y = y * TILE_SIZE;
-    srcrect.w = srcrect.x + TILE_SIZE;
-    srcrect.h = srcrect.y + TILE_SIZE;
-
-    SDL_BlitSurface (src, &srcrect, tile, NULL);
-
-    return tile;
 }
