@@ -7,8 +7,7 @@
 #define MUSIC_SIZE 10
 #define CHUNK_SIZE 100
 
-class Audio
-{
+class Audio {
 private:
     // An array of all saved musics and chunks
     Mix_Music *music_list;
