@@ -13,7 +13,7 @@ all: $(BIN)
 $(BIN): $(OBJ)
 	$(CC) -o $(BIN) $(LIBS) $(OBJ)
 
-$(OBJ): $(SRC) $(HDR) 
+%.o: %.m $(HDR) 
 	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
 
 clean:
