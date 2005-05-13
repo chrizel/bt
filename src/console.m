@@ -98,7 +98,6 @@ static void CommandHandler(ConsoleInformation *console, char *command);
 
 static void CommandHandler(ConsoleInformation *console, char *command)
 {
-    [[bt getPython] evalString:command];
 }
 
 @end

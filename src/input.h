@@ -20,7 +20,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "glSDL.h"
+#include <SDL.h>
 #include "alloc.h"
 #include "sdl_events.h"
 #include "joystick.h"

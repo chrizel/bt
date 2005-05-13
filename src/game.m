@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#include "glSDL.h"
+#include <SDL.h>
 #include <stdlib.h>
 
 #include "game.h"
@@ -26,7 +26,6 @@
 #include "editor.h"
 #include "player.h"
 #include "audio.h"
-#include "python.h"
 
 @implementation Game
 
@@ -58,7 +57,6 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     yOffset = 0;
 
     printf("make map...\n");
-    python = [Python new];
     map = [Map newWithFile:"main.map"];
     editor = [Editor new];
     console = [Console new];
@@ -91,7 +89,6 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     [console free];
     [map free];
     //[audio free];
-    [python free];
 
     [super free];
 }
@@ -114,7 +111,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     atexit(SDL_Quit);
 
     /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE | SDL_GLSDL);
+    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE );
 
     if (!screen)
         error("Couldn't set VideoMode: %s", SDL_GetError());
@@ -283,11 +280,6 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 - (id)getPlayer
 {
     return player;
-}
-
-- getPython
-{
-    return python;
 }
 
 @end

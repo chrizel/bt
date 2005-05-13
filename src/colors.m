@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "glSDL.h"
+#include <SDL.h>
 #include "colors.h"
 #include "error.h"
 

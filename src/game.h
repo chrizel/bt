@@ -18,7 +18,7 @@
 #ifndef GAME_H
 #define GAME_H 
 
-#include "glSDL.h"
+#include <SDL.h>
 #include <objc/Object.h>
 
 //#include "editor.h"
@@ -32,7 +32,6 @@
     id player;
     id editor;
     id audio;
-    id python;
 
     int music;
     int chunk;
@@ -59,7 +58,6 @@
 - (id)getConsole;
 - (id)getMap;
 - (id)getPlayer;
-- getPython;
 
 @end
 

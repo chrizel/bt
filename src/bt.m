@@ -20,14 +20,13 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "glSDL.h"
+#include <SDL.h>
 
 //#include <iostream>
 
 #include "bt.h"
 #include "error.h"
 #include "event.h"
-#include "rotozoom/SDL_rotozoom.h"
 #include "m_math.h"
 #include "colors.h"
 #include "textshow.h"

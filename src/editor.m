@@ -15,10 +15,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
-#include "glSDL.h"
+#include <SDL.h>
 #include <SDL_endian.h>
-
-#include "Python.h"
 
 #include "editor.h"
 #include "map.h"
@@ -104,8 +102,6 @@
 
 - updateGUI
 {
-    // Update the TK GUI
-    PyRun_SimpleString("updateGUI()");
 }
 
 @end
