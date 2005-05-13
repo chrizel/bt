@@ -36,6 +36,10 @@
 #include "bmpl.h"
 #include "game.h"
 
+id bt;
+int bt_argc;
+char **bt_argv;
+
 SDL_Surface *screen;
 SDL_Surface *minilogo;
 

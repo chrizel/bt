@@ -43,12 +43,12 @@ extern int frames;
 extern int ticks_begin, ticks_end;
 #endif
 
-id bt;
+extern id bt;
 
 void btQuit();
 
-int bt_argc;
-char **bt_argv;
+extern int bt_argc;
+extern char **bt_argv;
 
 #ifdef DO_FRAMETEST
 void fps_output();

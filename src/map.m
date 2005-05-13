@@ -151,7 +151,7 @@ static Uint32 readInt(FILE *fp)
     // check if file is available...
     if (!fp) {
 	[bt printLine:"file not found"];
-        return;
+        return nil;
     }
 
     // read header...
@@ -232,7 +232,7 @@ static Uint32 readInt(FILE *fp)
 
 - onDraw:(SDL_Surface *)sfc
 {
-    int x, y, x2, y2, id;
+    int x, y, x2, y2, idx;
     int anim_switched = 0;
     SDL_Rect rect;
 
@@ -251,22 +251,22 @@ static Uint32 readInt(FILE *fp)
             rect.x = TILE_SIZE * x;
 	    x2 = x + self->xoffset;
 
-            id = self->data[y2 * self->width + x2];
+            idx = self->data[y2 * self->width + x2];
 
-            if (id & MF_ANIM) {
+            if (idx & MF_ANIM) {
                 /* it's an animation, so we read the current animation tile */
-                id = self->anims[(id & MF_ID) + self->anim_ticker];
+                idx = self->anims[(idx & MF_ID) + self->anim_ticker];
 
 		// calculate source rect
-		srcrect.x = (id % XTILES) * TILE_SIZE;
-		srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
+		srcrect.x = (idx % XTILES) * TILE_SIZE;
+		srcrect.y = ((idx - (idx % XTILES)) / XTILES) * TILE_SIZE;
 
 		if (anim_switched)
 		    PUSH_UR(rect);
 	    } else {
 		// calculate source rect
-		srcrect.x = (id % XTILES) * TILE_SIZE;
-		srcrect.y = ((id - (id % XTILES)) / XTILES) * TILE_SIZE;
+		srcrect.x = (idx % XTILES) * TILE_SIZE;
+		srcrect.y = ((idx - (idx % XTILES)) / XTILES) * TILE_SIZE;
 	    }
 
 	    SDL_BlitSurface(self->stocks, &srcrect, screen, &rect);
@@ -282,7 +282,7 @@ static Uint32 readInt(FILE *fp)
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
     if ([[bt getConsole] isVisible])
-        return;
+        return nil;
 
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
         if (yoffset > 0) {
