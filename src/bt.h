@@ -27,7 +27,7 @@
 #define SCREEN_H 600
 
 #define FPS 30
-#define BPP 16
+#define BPP 32
 
 #if(BPP == 8)
 #define USE_8BIT
