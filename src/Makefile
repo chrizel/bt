@@ -1,12 +1,12 @@
 BIN=bt
-SRC=bt.m error.m event.m map.m textshow.m bmpl.m colors.m input.m joystick.m alloc.m sdl_events.m filter.m game.m audio.m player.m console.m console/DT_drawtext.m console/SDL_console.m console/internal.m editor.m sprite.m character.m
+SRC=bt.cc error.cc event.cc map.cc textshow.cc bmpl.cc colors.cc input.cc joystick.cc alloc.cc sdl_events.cc filter.cc game.cc audio.cc player.cc console.cc console/DT_drawtext.cc console/SDL_console.cc console/internal.cc editor.cc sprite.cc character.cc
 OBJ=bt.o error.o event.o map.o textshow.o bmpl.o colors.o input.o joystick.o alloc.o sdl_events.o filter.o game.o audio.o player.o console.o console/DT_drawtext.o console/SDL_console.o console/internal.o editor.o sprite.o character.o 
 HDR=error.h event.h bt.h map.h textshow.h bmpl.h bitmaps.h colors.h input.h joystick.h alloc.h sdl_events.h filter.h game.h eventhandler.h audio.h player.h console.h console/DT_drawtext.h console/SDL_console.h console/internal.h editor.h sprite.h character.h
-CFLAGS=-g `sdl-config --cflags` -DHAVE_OPENGL -DDO_FRAMETEST -x c++
+CFLAGS=-g `sdl-config --cflags` -DHAVE_OPENGL -DDO_FRAMETEST
 LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer
 CC=g++
 EOBJ=.o
-ESRC=.m
+ESRC=.cc
 
 all: $(BIN)
 
@@ -16,7 +16,7 @@ $(BIN): $(OBJ)
 gnustep: $(BIN)
 	./build-gnustep
 
-%.o: %.m $(HDR) 
+%.o: %.cc $(HDR) 
 	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
 
 clean:
