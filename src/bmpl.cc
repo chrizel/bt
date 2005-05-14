@@ -71,11 +71,11 @@ static SDL_Surface *load_bitmap(t_bmpl_item *item)
     }
 
     if (item->flags & BL_ALPHA_50) {
-	SDL_SetAlpha(temp, SDL_SRCALPHA, 128);
+	SDL_SetAlpha(temp, SDL_SRCALPHA, 255);
     }
 
     /* Convert */
-    surf = SDL_DisplayFormat(temp);
+    surf = SDL_DisplayFormatAlpha(temp);
     if (!surf)
         error("Can't convert %s", item->file);
 

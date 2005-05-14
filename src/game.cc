@@ -98,7 +98,7 @@ void Game::initSDL()
     atexit(SDL_Quit);
 
     /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF | SDL_HWPALETTE );
+    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF);
 
     if (!screen)
         error("Couldn't set VideoMode: %s", SDL_GetError());
