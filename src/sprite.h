@@ -21,19 +21,18 @@
 #include <SDL.h>
 #include <objc/Object.h>
 
-@interface Sprite: Object
+class Sprite
 {
+protected:
     SDL_Surface *sfc;
     SDL_Rect pos;
     SDL_Rect def_src_rect;
     SDL_Rect *src_rect;
-}
+public:
+    Sprite(char *sfc_name, SDL_Rect *prect);
+    virtual ~Sprite();
 
-+ newWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
-
-@end
+    virtual void draw(SDL_Surface *dst_sfc, int xo, int yo);
+};
 
 #endif

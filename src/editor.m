@@ -22,65 +22,62 @@
 #include "map.h"
 #include "bt.h"
 
-@implementation Editor
-
-- init
+Editor::Editor()
 {
     active = YES;
     pen = 0;
     pg = NULL;
 }
 
-- free
+Editor::~Editor()
 {
-    [super free];
 }
 
-- (BOOL)isActive
+BOOL Editor::isActive()
 {
     return active;
 }
 
-- setActive:(BOOL)value
+void Editor::setActive(BOOL value)
 {
     active = value;
 }
 
-- (int)getPen
+int Editor::getPen()
 {
     return pen;
 }
 
-- (int)setPen:(int)value
+int Editor::setPen(int value)
 {
     pen = value;
     return pen;
 }
 
-- setTID:(int)tid onX:(int)x andY:(int)y
+void Editor::setTID(int tid, int x, int y)
 {
-    [[bt getMap] setTID:tid onX:x andY:y];
+    [bt->getMap() setTID:tid onX:x andY:y];
 }
 
-- onEvent:(SDL_Event *)event
-{
-}
-
-- onDraw:(SDL_Surface *)sfc;
+void Editor::onEvent(SDL_Event *event)
 {
 }
 
-- saveMap:(char *)file
+void Editor::onDraw(SDL_Surface *sfc)
 {
-    [[bt getMap] save:file];
 }
 
-- openMap:(char *)file
+void Editor::saveMap(char *file)
 {
-    [[bt getMap] open:file];
+    [bt->getMap() save:file];
 }
 
-- onIdle
+void Editor::openMap(char *file)
+{
+    [bt->getMap() open:file];
+}
+
+void Editor::onIdle()
 {
     if (active) {
 	int x, y, xt, yt;
@@ -90,18 +87,16 @@
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
         if (mousestate & SDL_BUTTON(1)) {
-	    [self setTID:pen onX:xt andY:yt];
+	    setTID(pen, xt, yt);
 	    whole_redraw = 1;
         } else if (mousestate & SDL_BUTTON(3)) {
-	    [self setTID:0 onX:xt andY:yt];
+	    setTID(0, xt, yt);
 	    whole_redraw = 1;
 	}
 
     }
 }
 
-- updateGUI
+void Editor::updateGUI()
 {
 }
-
-@end

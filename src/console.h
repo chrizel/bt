@@ -24,24 +24,23 @@
 
 #include "console/SDL_console.h"
 
-@interface Console: Object
+class Console
 {
+private:
     ConsoleInformation *console;
-}
+public:
+    Console();
+    virtual ~Console();
 
-- init;
-- free;
+    void print(char *str);
+    BOOL isVisible();
+    BOOL isClosing();
 
-- print:(char *)str;
-- (BOOL)isVisible;
-- (BOOL)isClosing;
+    void show();
+    void hide();
+    void draw();
 
-- show;
-- hide;
-- draw;
-
-- onEvent:(SDL_Event *)event;
-
-@end
+    void onEvent(SDL_Event *event);
+};
 
 #endif

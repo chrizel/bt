@@ -19,8 +19,6 @@
 #include "bmpl.h"
 #include "bt.h"
 
-@implementation Sprite
-
 static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
     static SDL_Rect wrect;
@@ -35,12 +33,7 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
     return wrect;
 }
 
-+ newWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-{
-    return [[self new] initWithSfcName:sfc_name position:prect];
-}
-
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
+Sprite::Sprite(char *sfc_name, SDL_Rect *prect)
 {
     sfc = bmpl_get(sfc_name);
     pos = *prect;
@@ -50,19 +43,19 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
     def_src_rect.w = pos.w;
     def_src_rect.h = pos.h;
     src_rect = &def_src_rect;
-
-    return self;
 }
 
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo
+Sprite::~Sprite()
+{
+}
+
+void Sprite::draw(SDL_Surface *dst_sfc, int xo, int yo)
 {
     // Offset check
     if ((pos.x + pos.w > xo) && (pos.y + pos.h > yo) &&
-	(pos.x < xo + SCREEN_W) && (pos.y < yo + SCREEN_H)) {
-	SDL_BlitSurface(sfc, src_rect, dst_sfc, &pos);
-	PUSH_UR(wider_rect(&pos, 10));
+        (pos.x < xo + SCREEN_W) && (pos.y < yo + SCREEN_H)) {
+        SDL_BlitSurface(sfc, src_rect, dst_sfc, &pos);
+        PUSH_UR(wider_rect(&pos, 10));
     }
 }
 
-
-@end

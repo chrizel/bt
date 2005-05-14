@@ -21,16 +21,19 @@
 #include <SDL.h>
 #include <objc/Object.h>
 
-//#include "editor.h"
+class Player;
+class Console;
+class Editor;
 
-@interface Game: Object
+class Game
 {
+private:
     char *title;
 
     id map;
-    id console;
-    id player;
-    id editor;
+    Console *console;
+    Player *player;
+    Editor *editor;
     id audio;
 
     int music;
@@ -40,25 +43,23 @@
 
     Uint32 xOffset;
     Uint32 yOffset;
-}
 
-- initSDL;
-- eventLoop;
-- printGPL;
+public:
+    Game(char *aTitle);
+    virtual ~Game();
 
-+ (id)newWithTitle:(char *)t;
-- (id)initWithTitle:(char *)t;
-- free;
+    void initSDL();
+    void eventLoop();
+    void printGPL();
 
-- run;
+    void run();
 
-- print:(char *)t;
-- printLine:(char *)t;
+    void print(char *aText);
+    void printLine(char *aText);
 
-- (id)getConsole;
-- (id)getMap;
-- (id)getPlayer;
-
-@end
+    Console* getConsole();
+    id getMap();
+    Player* getPlayer();
+};
 
 #endif

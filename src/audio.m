@@ -2,16 +2,9 @@
 #include <stdio.h>
 #include "audio.h"
 #include "alloc.h"
-#import "bt.h"
+#include "bt.h"
 
-@implementation Audio
-
-/*+new
-{
-    return [[super new] init];
-}*/
-
--init
+Audio::Audio()
 {
 #ifndef DISABLE_AUDIO
     int i;
@@ -24,17 +17,16 @@
     music_list = MALLOC_ARRAY(Mix_Music *, MUSIC_SIZE);
     chunk_list = MALLOC_ARRAY(Mix_Chunk *, CHUNK_SIZE);
     for (i = 0; i < MUSIC_SIZE; i++) 
-	music_list[i] = NULL;
+        music_list[i] = NULL;
     for (i = 0; i < CHUNK_SIZE; i++)
-	chunk_list[i] = NULL;
+        chunk_list[i] = NULL;
     size_music = MUSIC_SIZE;
     size_chunk = CHUNK_SIZE;
-    [bt print: "Audio ready"];
+    bt->print("Audio ready");
 #endif
-    return self;
 }
 
--free
+Audio::~Audio()
 {
 #ifndef DISABLE_AUDIO
     int i;
@@ -46,11 +38,10 @@
     for (i = 0; i < size_chunk; i++)
 	if (chunk_list[i] != NULL)
 	    Mix_FreeChunk(chunk_list[i]);
-    [super free];
 #endif
 }
 
--(int)addMusic: (char *)filename
+int Audio::addMusic(char *filename)
 {
 #ifndef DISABLE_AUDIO
     Mix_Music *music;
@@ -84,7 +75,7 @@
 #endif
 }
 
--(int)addChunk: (char *)filename
+int Audio::addChunk(char *filename)
 {
 #ifndef DISABLE_AUDIO
     Mix_Chunk *chunk;
@@ -120,45 +111,43 @@
 #endif
 }
 
--deleteMusic: (int)id
+void Audio::deleteMusic(int i)
 {
 #ifndef DISABLE_AUDIO
-    Mix_FreeMusic(music_list[id]);
-    music_list[id] = NULL;
+    Mix_FreeMusic(music_list[i]);
+    music_list[i] = NULL;
 #endif
 }
 
--deleteChunk: (int)id
+void Audio::deleteChunk(int i)
 {
 #ifndef DISABLE_AUDIO
-    Mix_FreeChunk(chunk_list[id]);
-    chunk_list[id] = NULL;
+    Mix_FreeChunk(chunk_list[i]);
+    chunk_list[i] = NULL;
 #endif
 }
 
--playMusic: (int)id
+void Audio::playMusic(int i)
 {
 #ifndef DISABLE_AUDIO
     //Mix_Music *music;
     //    music = Mix_LoadMUS(music_list[id]);
     //    music = Mix_LoadMUS("data/the-brain.mp3");
     //printf("test\n");
-    Mix_PlayMusic(music_list[id], 1);
+    Mix_PlayMusic(music_list[i], 1);
 #endif
 }
 
--stopMusic
+void Audio::stopMusic()
 {
 #ifndef DISABLE_AUDIO
     // TODO
 #endif
 }
 
--playChunk: (int)id
+void Audio::playChunk(int i)
 {
 #ifndef DISABLE_AUDIO
-    Mix_PlayChannel(-1, chunk_list[id], 0);
+    Mix_PlayChannel(-1, chunk_list[i], 0);
 #endif
 }
-
-@end

@@ -25,28 +25,27 @@
 #define SOUTH 2
 #define WEST  3
 
-@interface Character: Sprite
+class Character : public Sprite
 {
+protected:
     BOOL going;
     int direction;
     int tick;
 
     Uint32 destTicks;
-}
+public:
+    Character(char *sfc_name, SDL_Rect *prect);
+    virtual ~Character();
 
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-- free;
+    virtual BOOL isGoing();
+    virtual int getDirection();
+    virtual void setDirection(int dir);
 
-- (BOOL)isGoing;
-- (int)getDirection;
-- setDirection:(int)dir;
+    virtual int getTick();
+    virtual void setTick(int t);
+    virtual void switchTick();
 
-- setTick:(int)t;
-- (int)getTick;
-- switchTick;
-
-- onIdle;
-
-@end
+    virtual void onIdle();
+};
 
 #endif

@@ -20,17 +20,15 @@
 
 #include "character.h"
 
-@interface Player: Character
+class Player : public Character
 {
-}
+public:
+    Player(char *sfc_name, SDL_Rect *prect);
+    virtual ~Player();
 
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
-- free;
-
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
-- switchTick;
-- onIdle;
-
-@end
+    virtual void draw(SDL_Surface *dst_sfc, int xo, int yo);
+    void switchTick();
+    void onIdle();
+};
 
 #endif

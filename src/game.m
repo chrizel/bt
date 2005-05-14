@@ -27,8 +27,6 @@
 #include "player.h"
 #include "audio.h"
 
-@implementation Game
-
 static Uint32 blink_anim_timer(Uint32 interval, void *param)
 {
     /*
@@ -39,16 +37,11 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     */
 }
 
-+ (id)newWithTitle:(char *)t
+Game::Game(char *aTitle)
 {
-    return [[self new] initWithTitle:t];
-}
+    title = aTitle;
+    initSDL();
 
-- (id)initWithTitle:(char *)t
-{
-    title = t;
-    [self initSDL];
-  
 #ifdef USE_8BIT
     init_colors();
 #endif
@@ -58,14 +51,14 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
     printf("make map...\n");
     map = [Map newWithFile:"main.map"];
-    editor = [Editor new];
-    console = [Console new];
+    editor = new Editor();
+    console = new Console();
 
     ppos.x = 400;
     ppos.y = 300;
     ppos.w = 48;
     ppos.h = 92;
-    player = [Player newWithSfcName:"player.player1" position:&ppos];
+    player = new Player("player.player1", &ppos);
 
     printf("make audio...\n");
     //audio = [Audio new];
@@ -78,22 +71,16 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
     //printf("play music...\n");
     //[audio playMusic:music];
-
-    return self;
 }
 
-
-- free
+Game::~Game()
 {
-    [player free];
-    [console free];
+    delete player;
+    delete console;
     [map free];
-    //[audio free];
-
-    [super free];
 }
 
-- initSDL
+void Game::initSDL()
 {
     /* Initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -124,7 +111,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     SDL_WM_SetCaption(title, NULL);
 }
 
-- run
+void Game::run()
 {
     printf("inside run\n");
 
@@ -164,15 +151,15 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
         while (SDL_PollEvent(sdl_ev)) {
 
-	    if ([console isVisible]) {
-		[console onEvent:sdl_ev];
+	    if (console->isVisible()) {
+		    console->onEvent(sdl_ev);
             } else {
                 /* call event hooks... */
 	        switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
-			if (![console isVisible])
-			    [console show];
+			if (!console->isVisible())
+			    console->show();
 			  
                         break;
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
@@ -200,19 +187,19 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
         //map->onIdle();
 	[map onIdle];
-	[player onIdle];
-	[editor onIdle];
+    player->onIdle();
+	editor->onIdle();
         
 	//printf("Map onDraw\n");
 	//[map draw:screen xOffset:xOffset yOffset:yOffset];
 	[map onDraw:screen];
-	[player draw:screen xOffset:xOffset yOffset:yOffset];
-	[editor onDraw:screen];
-	[console draw];
+    player->draw(screen, xOffset, yOffset);
+	editor->onDraw(screen);
+	console->draw();
 
 	// If editor is running, we'll update it's GUI stuff
-	if ([editor isActive])
-	    [editor updateGUI];
+	if (editor->isActive())
+	    editor->updateGUI();
 
         /* Execute surface filter... */
         // if (cur_filter)
@@ -224,7 +211,7 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
         //bt->getConsole()->draw();
         
 	//printf("whole_redraw\n");
-	if (whole_redraw || [console isVisible] || [console isClosing]) {
+	if (whole_redraw || console->isVisible() || console->isClosing()) {
 	    // printf("whole_redraw\n");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
@@ -237,11 +224,11 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
     }
 }
 
-- eventLoop
+void Game::eventLoop()
 {
 }
 
-- printGPL
+void Game::printGPL()
 {
     static char GPL_TEXT[] =  
 	"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
@@ -253,33 +240,31 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
 }
 
-- print:(char *)t
+void Game::print(char *aText)
 {
-    [self printLine:t];
+    printLine(aText);
 }
 
-- printLine:(char *)t
+void Game::printLine(char *aText)
 {
     // stdout...
-    puts(t);
+    puts(aText);
 
     // and console
-    [console printLine:t];
+    console->print(aText);
 }
 
-- (id)getConsole
+Console* Game::getConsole()
 {
     return console;
 }
 
-- (id)getMap
+id Game::getMap()
 {
     return map;
 }
 
-- (id)getPlayer
+Player* Game::getPlayer()
 {
     return player;
 }
-
-@end

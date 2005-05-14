@@ -17,56 +17,54 @@
 
 #include "character.h"
 
-@implementation Character
-
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect
+Character::Character(char *sfc_name, SDL_Rect *prect) : Sprite(sfc_name, prect)
 {
-    [super initWithSfcName:sfc_name position:prect];
-
     going = NO;
     tick = 0;
     destTicks = SDL_GetTicks();
-
-    return self;
 }
 
-- switchTick
+Character::~Character()
+{
+}
+
+void Character::switchTick()
 {
     tick = 0; //TODO: tick-count attribute, so i can calc this tick stuff
 }
 
-- (BOOL)isGoing
+BOOL Character::isGoing()
 {
     return going;
 }
 
-- (int)getDirection
+int Character::getDirection()
 {
     return direction;
 }
 
-- setDirection:(int)dir
+void Character::setDirection(int dir)
 {
     direction = dir;
 }
 
-- (int)getTick
+int Character::getTick()
 {
     return tick;
 }
 
-- setTick:(int)t
+void Character::setTick(int t)
 {
     tick = t;
 }
 
-- onIdle
+void Character::onIdle()
 {
     if (going) {
 	/*** Animation calculations ***/
 	if (SDL_GetTicks() >= destTicks) {
 	    /* Do animation */
-	    [self switchTick];
+	    switchTick();
 
 	    /* Calculate next tick time */
 	    destTicks = SDL_GetTicks() + 100; //TODO: speed attribute
@@ -75,5 +73,3 @@
 	tick = 1;
     }
 }
-
-@end

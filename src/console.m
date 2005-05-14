@@ -23,11 +23,9 @@
 #include "filter.h"
 #include "error.h"
 
-@implementation Console
-
 static void CommandHandler(ConsoleInformation *console, char *command);
 
-- init
+Console::Console()
 {
     SDL_Rect conRect;
 
@@ -50,48 +48,46 @@ static void CommandHandler(ConsoleInformation *console, char *command);
     CON_SetPrompt(console, ">>> ");
     CON_Topmost(console);
     //CON_Show(console);
-
-    return self;
 }
 
-- free
+Console::~Console()
 {
     printf("--- free console\n");
     CON_Hide(console);
     CON_Destroy(console);
 }
 
-- print:(char *)str
+void Console::print(char *str)
 {
     CON_Out(console, str);
 }
 
-- (BOOL)isVisible
+BOOL Console::isVisible()
 {
     return CON_isVisible(console);
 }
 
-- (BOOL)isClosing
+BOOL Console::isClosing()
 {
     return console->Visible == CON_CLOSING;
 }
 
-- onEvent:(SDL_Event *)event
+void Console::onEvent(SDL_Event *event)
 {
     CON_Events(event);
 }
 
-- show
+void Console::show()
 {
     CON_Show(console);
 }
 
-- hide
+void Console::hide()
 {
     CON_Hide(console);
 }
 
-- draw
+void Console::draw()
 {
     CON_DrawConsole(console);
 }

@@ -20,36 +20,35 @@
 
 #include <objc/Object.h>
 
-@interface Editor: Object
+class Editor
 {
+private:
     BOOL active;
 
     int pen;
     int *pg;
     int pg_y;
     int pg_x;
-}
+public:
+    Editor();
+    virtual ~Editor();
 
-- init;
-- free;
+    BOOL isActive();
+    void setActive(BOOL value);
 
-- (BOOL)isActive;
-- setActive:(BOOL)value;
+    int getPen();
+    int setPen(int value);
 
-- (int)getPen;
-- (int)setPen:(int)value;
+    void setTID(int tid, int x, int y);
 
-- setTID:(int)id onX:(int)x andY:(int)y;
+    void onEvent(SDL_Event *event);
+    void onDraw(SDL_Surface *sfc);
+    void onIdle();
 
-- onEvent:(SDL_Event *)event;
-- onDraw:(SDL_Surface *)sfc;
-- onIdle;
+    void saveMap(char *file);
+    void openMap(char *file);
 
-- saveMap:(char *)file;
-- openMap:(char *)file;
-
-- updateGUI;
-
-@end
+    void updateGUI();
+};
 
 #endif

@@ -23,8 +23,6 @@
 #include "sdl_events.h"
 #include "bmpl.h"
 
-@implementation Player
-
 #define PW 48
 #define PH 64
 #define MPW(x) x * PW
@@ -49,10 +47,8 @@ static SDL_Rect playerMap[] = {
     {MPW(2), MPH(3), PW, PH},
 };
 
-- initWithSfcName:(char *)sfc_name position:(SDL_Rect *)prect;
+Player::Player(char *sfc_name, SDL_Rect *prect) : Character(sfc_name, prect)
 {
-    [super initWithSfcName:sfc_name position:prect];
-
     going = NO;
     direction = SOUTH;
     tick = 1;
@@ -60,26 +56,25 @@ static SDL_Rect playerMap[] = {
     SET_PRECT(1, 2);
 }
 
-- free
+Player::~Player()
 {
-    [super free];
 }
 
-- draw:(SDL_Surface *)dst_sfc xOffset:(int)xo yOffset:(int)yo;
+void Player::draw(SDL_Surface *dst_sfc, int xo, int yo)
 {
     SET_PRECT(tick, direction);
-    [super draw:dst_sfc xOffset:xo yOffset:yo];
+    Character::draw(dst_sfc, xo, yo);
 }
 
-- switchTick
+void Player::switchTick()
 {
     if (tick)
-	tick = 0;
+        tick = 0;
     else
-	tick = 2;
+        tick = 2;
 }
 
-- onIdle
+void Player::onIdle()
 {
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -107,7 +102,7 @@ static SDL_Rect playerMap[] = {
 	/*** Animation calculations ***/
 	if (SDL_GetTicks() >= destTicks) {
 	    /* Do animation */
-	    [self switchTick];
+	    switchTick();
 
 	    /* Calculate next tick time */
 	    destTicks = SDL_GetTicks() + 100;
@@ -116,5 +111,3 @@ static SDL_Rect playerMap[] = {
 	tick = 1;
     }
 }
-
-@end

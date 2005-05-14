@@ -150,7 +150,7 @@ static Uint32 readInt(FILE *fp)
 
     // check if file is available...
     if (!fp) {
-	[bt printLine:"file not found"];
+	    bt->printLine("file not found");
         return nil;
     }
 
@@ -281,7 +281,7 @@ static Uint32 readInt(FILE *fp)
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    if ([[bt getConsole] isVisible])
+    if (bt->getConsole()->isVisible())
         return nil;
 
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {

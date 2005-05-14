@@ -36,7 +36,7 @@
 #include "bmpl.h"
 #include "game.h"
 
-id bt;
+Game *bt;
 int bt_argc;
 char **bt_argv;
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     cur_filter = NULL;
     printf("create bt...\n");
-    bt = [Game newWithTitle:"Bermuda Triangle"];
+    bt = new Game("Bermuda Triangle");
 
     // register quit function for cleanup
     atexit(btQuit);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     minilogo = bmpl_get("main.minilogo");
 
     printf("run...\n");
-    [bt run];
+    bt->run();
 
     return 0;
 }
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 void btQuit()
 {
     printf("Call bt free...\n");
-    [bt free];
+    delete bt;
 
     printf("Bye :)\n");
 }
