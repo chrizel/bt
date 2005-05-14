@@ -26,7 +26,7 @@ t_bmpl_item bmpl_list[] = {
     {"map.stock2", "data/tiles/stock2.png", NULL, 0},
     {"font.bg.test", "data/Speak/test3.png", NULL, BL_COLORKEY},
     {"main.minilogo", "data/tiles/minilogo.png", NULL, BL_COLORKEY | BL_ALPHA_50},
-    {"player.player1", "data/player/player3.png", NULL, BL_COLORKEY},
+    {"player.player1", "data/player/player4.png", NULL, 0},
 
     {NULL, NULL, NULL, 0}, /* the last entry must be NULL! */
 };
