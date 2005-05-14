@@ -62,12 +62,12 @@ void Console::print(char *str)
     CON_Out(console, str);
 }
 
-BOOL Console::isVisible()
+bool Console::isVisible()
 {
     return CON_isVisible(console);
 }
 
-BOOL Console::isClosing()
+bool Console::isClosing()
 {
     return console->Visible == CON_CLOSING;
 }
@@ -96,4 +96,3 @@ static void CommandHandler(ConsoleInformation *console, char *command)
 {
 }
 
-@end

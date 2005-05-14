@@ -24,7 +24,7 @@
 
 Editor::Editor()
 {
-    active = YES;
+    active = true;
     pen = 0;
     pg = NULL;
 }
@@ -33,12 +33,12 @@ Editor::~Editor()
 {
 }
 
-BOOL Editor::isActive()
+bool Editor::isActive()
 {
     return active;
 }
 
-void Editor::setActive(BOOL value)
+void Editor::setActive(bool value)
 {
     active = value;
 }
@@ -56,7 +56,7 @@ int Editor::setPen(int value)
 
 void Editor::setTID(int tid, int x, int y)
 {
-    [bt->getMap() setTID:tid onX:x andY:y];
+    bt->getMap()->setTID(tid, x, y);
 }
 
 void Editor::onEvent(SDL_Event *event)
@@ -69,12 +69,12 @@ void Editor::onDraw(SDL_Surface *sfc)
 
 void Editor::saveMap(char *file)
 {
-    [bt->getMap() save:file];
+    bt->getMap()->save(file);
 }
 
 void Editor::openMap(char *file)
 {
-    [bt->getMap() open:file];
+    bt->getMap()->open(file);
 }
 
 void Editor::onIdle()

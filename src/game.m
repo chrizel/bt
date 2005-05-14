@@ -50,7 +50,7 @@ Game::Game(char *aTitle)
     yOffset = 0;
 
     printf("make map...\n");
-    map = [Map newWithFile:"main.map"];
+    map = new Map("main.map");
     editor = new Editor();
     console = new Console();
 
@@ -77,7 +77,7 @@ Game::~Game()
 {
     delete player;
     delete console;
-    [map free];
+    delete map;
 }
 
 void Game::initSDL()
@@ -186,13 +186,13 @@ void Game::run()
 	}
 
         //map->onIdle();
-	[map onIdle];
+    map->onIdle();
     player->onIdle();
 	editor->onIdle();
         
 	//printf("Map onDraw\n");
 	//[map draw:screen xOffset:xOffset yOffset:yOffset];
-	[map onDraw:screen];
+    map->onDraw(screen);
     player->draw(screen, xOffset, yOffset);
 	editor->onDraw(screen);
 	console->draw();
@@ -259,7 +259,7 @@ Console* Game::getConsole()
     return console;
 }
 
-id Game::getMap()
+Map* Game::getMap()
 {
     return map;
 }

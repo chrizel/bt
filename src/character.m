@@ -19,7 +19,7 @@
 
 Character::Character(char *sfc_name, SDL_Rect *prect) : Sprite(sfc_name, prect)
 {
-    going = NO;
+    going = false;
     tick = 0;
     destTicks = SDL_GetTicks();
 }
@@ -33,7 +33,7 @@ void Character::switchTick()
     tick = 0; //TODO: tick-count attribute, so i can calc this tick stuff
 }
 
-BOOL Character::isGoing()
+bool Character::isGoing()
 {
     return going;
 }

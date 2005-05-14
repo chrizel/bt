@@ -19,7 +19,6 @@
 #define SPRITE_H
 
 #include <SDL.h>
-#include <objc/Object.h>
 
 class Sprite
 {

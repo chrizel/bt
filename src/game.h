@@ -19,22 +19,23 @@
 #define GAME_H 
 
 #include <SDL.h>
-#include <objc/Object.h>
 
 class Player;
 class Console;
 class Editor;
+class Map;
+class Audio;
 
 class Game
 {
 private:
     char *title;
 
-    id map;
+    Map *map;
     Console *console;
     Player *player;
     Editor *editor;
-    id audio;
+    Audio *audio;
 
     int music;
     int chunk;
@@ -58,7 +59,7 @@ public:
     void printLine(char *aText);
 
     Console* getConsole();
-    id getMap();
+    Map* getMap();
     Player* getPlayer();
 };
 

@@ -27,16 +27,9 @@
 #include "alloc.h"
 
 #include "error.h"
-//#include "editor.h"
-
-//#include "eventhandler.h"
 
 #define SET_STOCK_ID(map, xt, yt, tid) \
     map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = tid;
-
-/* global static variables */
-
-@implementation Map
 
 static void writeInt(FILE *fp, Uint32 num)
 {
@@ -58,60 +51,55 @@ static Uint32 readInt(FILE *fp)
     return num;
 }
 
-- incAnimTicker
+void Map::incAnimTicker()
 {
     anim_ticker++;
     if (anim_ticker == anim_ticks)
 	anim_ticker = 0;
 }
 
-- (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at
+Map::Map(Uint32 w, Uint32 h, Uint32 ac, Uint32 at)
 {
-    self->stocks = bmpl_get("map.stock_default");
+    init(w, h, ac, at);
+}
+
+Map::Map(char *file)
+{
+    open(file);
+}
+
+Map::~Map()
+{
+}
+
+void Map::init(Uint32 w, Uint32 h, Uint32 ac, Uint32 at)
+{
+    this->stocks = bmpl_get("map.stock_default");
     
     /* allocate anims and raw data arrays */
-    self->anims = MALLOC_ARRAY(Uint32, ac * at);
-    self->data  = MALLOC_ARRAY(Uint32, w * h);
+    this->anims = MALLOC_ARRAY(Uint32, ac * at);
+    this->data  = MALLOC_ARRAY(Uint32, w * h);
 
     /* set data attributes */
-    self->width      = w;
-    self->height     = h;
-    self->anim_count = ac;
-    self->anim_ticks = at;
+    this->width      = w;
+    this->height     = h;
+    this->anim_count = ac;
+    this->anim_ticks = at;
 
     /* set other attributes */
-    self->xoffset        = 0;
-    self->yoffset        = 0;
-    self->anim_ticker    = 0;
-    self->prev_ticker    = 1;
-    self->version        = 1;
-    self->switch_palette = 0;
+    this->xoffset        = 0;
+    this->yoffset        = 0;
+    this->anim_ticker    = 0;
+    this->prev_ticker    = 1;
+    this->version        = 1;
+    this->switch_palette = 0;
 
     destTicks = SDL_GetTicks();
 
     srcrect.w = srcrect.h = TILE_SIZE;
-
-    return self;
 }
 
-+ (id)newWithFile:(char *)file
-{
-    printf("+ newWithFile\n");
-    id me = [super new];
-    [me open:file];
-    return me;
-}
-
-+ (id)newWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at
-{
-    id me = [super new];
-    me = [me initWithWidth:w height:h animCount:ac animTicks:at];
-    [me fill:0];
-    
-    return me;
-}
-
-- save:(char *)file
+void Map::save(char *file)
 {
     int anim, tick, x, y, i;
     FILE *fp;
@@ -120,26 +108,26 @@ static Uint32 readInt(FILE *fp)
 
     // write header...
     fprintf(fp, "MAP:%u,%u,%u,%u,%u\n", 
-	    self->version, self->width, self->height, 
-	    self->anim_count, self->anim_ticks);
+	    this->version, this->width, this->height, 
+	    this->anim_count, this->anim_ticks);
 
     // write anim data
-    for (anim = 0; anim < self->anim_count; anim++)
-        for (tick = 0; tick < self->anim_ticks; tick++)
-            fprintf(fp, "%u.", self->anims[anim * self->anim_count + tick]);
+    for (anim = 0; anim < this->anim_count; anim++)
+        for (tick = 0; tick < this->anim_ticks; tick++)
+            fprintf(fp, "%u.", this->anims[anim * this->anim_count + tick]);
 
     fputc('\n', fp);
 
     // write map data
-    for (y = 0; y < self->height; y++)
-        for (x = 0; x < self->width; x++)
-	    writeInt(fp, self->data[self->width * y + x]);
+    for (y = 0; y < this->height; y++)
+        for (x = 0; x < this->width; x++)
+	    writeInt(fp, this->data[this->width * y + x]);
 
     fclose(fp);
     printf("ok\n");
 }
 
-- open:(char *)file
+void Map::open(char *file)
 {
     int anim, tick, x, y, i, v;
     int w, h, ac, at;
@@ -151,7 +139,7 @@ static Uint32 readInt(FILE *fp)
     // check if file is available...
     if (!fp) {
 	    bt->printLine("file not found");
-        return nil;
+        return;
     }
 
     // read header...
@@ -166,13 +154,13 @@ static Uint32 readInt(FILE *fp)
     */
 
     // create map in space
-    [self initWithWidth:w height:h animCount:ac animTicks:at];
+    init(w, h, ac, at);
     
     // read anim data
-    for (anim = 0; anim < self->anim_count; anim++)
-        for (tick = 0; tick < self->anim_ticks; tick++)
+    for (anim = 0; anim < this->anim_count; anim++)
+        for (tick = 0; tick < this->anim_ticks; tick++)
             fscanf(fp, "%u.", 
-		   &self->anims[anim * self->anim_count + tick]);
+		   &this->anims[anim * this->anim_count + tick]);
 
     //if (anim) {
     printf("skip anim\n");
@@ -181,36 +169,36 @@ static Uint32 readInt(FILE *fp)
 
     // read map data
     printf("width: %u height: %u\n", width, height);
-    for (y = 0; y < self->height; y++)
-        for (x = 0; x < self->width; x++)
-            self->data[self->width * y + x] = readInt(fp);
+    for (y = 0; y < this->height; y++)
+        for (x = 0; x < this->width; x++)
+            this->data[this->width * y + x] = readInt(fp);
 
     fclose(fp);
-    printf("ok (cur_map->data[0] = %u)\n", self->data[0]);
+    printf("ok (cur_map->data[0] = %u)\n", this->data[0]);
     srcrect.w = srcrect.h = TILE_SIZE;
 
     whole_redraw = 1;
 }
 
-- fill:(int)id
+void Map::fill(int id)
 {
-    [self fillWithID:id];
+    fillWithID(id);
 }
 
-- fillWithID:(int)id
+void Map::fillWithID(int id)
 {
     int x, y;
 
-    for (y = 0; y < self->height; y++)
-        for (x = 0; x < self->width; x++)
-            self->data[y * self->width + x] = id;
+    for (y = 0; y < this->height; y++)
+        for (x = 0; x < this->width; x++)
+            this->data[y * this->width + x] = id;
 }
 
-- setTID:(int)tid onX:(int)x andY:(int)y;
+void Map::setTID(int id, int x, int y)
 {
     //int x, y;
 
-    SET_STOCK_ID(self, x, y, tid);
+    SET_STOCK_ID(this, x, y, id);
     
     /* TODO 
     if (id) {
@@ -226,11 +214,11 @@ static Uint32 readInt(FILE *fp)
     */
 }
 
-- onEvent:(SDL_Event *)event
+void Map::onEvent(SDL_Event *event)
 {
 }
 
-- onDraw:(SDL_Surface *)sfc
+void Map::onDraw(SDL_Surface *sfc)
 {
     int x, y, x2, y2, idx;
     int anim_switched = 0;
@@ -240,22 +228,22 @@ static Uint32 readInt(FILE *fp)
     //srcrect.w = srcrect.h = rect.w = rect.h = TILE_SIZE;
     rect.w = rect.h = TILE_SIZE;
 
-    anim_switched = self->prev_ticker != self->anim_ticker;
+    anim_switched = this->prev_ticker != this->anim_ticker;
 
     /* draw testmap */
     for (y = 0; y < YTILES; y++) {
         rect.y = TILE_SIZE * y;
-	y2 = y + self->yoffset;
+	y2 = y + this->yoffset;
 
         for (x = 0; x < XTILES; x++) {
             rect.x = TILE_SIZE * x;
-	    x2 = x + self->xoffset;
+	    x2 = x + this->xoffset;
 
-            idx = self->data[y2 * self->width + x2];
+            idx = this->data[y2 * this->width + x2];
 
             if (idx & MF_ANIM) {
                 /* it's an animation, so we read the current animation tile */
-                idx = self->anims[(idx & MF_ID) + self->anim_ticker];
+                idx = this->anims[(idx & MF_ID) + this->anim_ticker];
 
 		// calculate source rect
 		srcrect.x = (idx % XTILES) * TILE_SIZE;
@@ -269,20 +257,20 @@ static Uint32 readInt(FILE *fp)
 		srcrect.y = ((idx - (idx % XTILES)) / XTILES) * TILE_SIZE;
 	    }
 
-	    SDL_BlitSurface(self->stocks, &srcrect, screen, &rect);
+	    SDL_BlitSurface(this->stocks, &srcrect, screen, &rect);
         }
     }
 
-    self->prev_ticker = self->anim_ticker;
+    this->prev_ticker = this->anim_ticker;
 }
 
-- onIdle
+void Map::onIdle()
 {
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
     if (bt->getConsole()->isVisible())
-        return nil;
+        return;
 
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
         if (yoffset > 0) {
@@ -312,11 +300,9 @@ static Uint32 readInt(FILE *fp)
     /*** Animation calculations ***/
     if (SDL_GetTicks() >= destTicks) {
 	/* Do animation */
-	[self incAnimTicker];
+    incAnimTicker();
 
 	/* Calculate next tick time */
 	destTicks = SDL_GetTicks() + 100;
     }
 }
-
-@end

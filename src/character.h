@@ -28,7 +28,7 @@
 class Character : public Sprite
 {
 protected:
-    BOOL going;
+    bool going;
     int direction;
     int tick;
 
@@ -37,7 +37,7 @@ public:
     Character(char *sfc_name, SDL_Rect *prect);
     virtual ~Character();
 
-    virtual BOOL isGoing();
+    virtual bool isGoing();
     virtual int getDirection();
     virtual void setDirection(int dir);
 

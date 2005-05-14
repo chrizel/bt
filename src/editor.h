@@ -18,12 +18,10 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <objc/Object.h>
-
 class Editor
 {
 private:
-    BOOL active;
+    bool active;
 
     int pen;
     int *pg;
@@ -33,8 +31,8 @@ public:
     Editor();
     virtual ~Editor();
 
-    BOOL isActive();
-    void setActive(BOOL value);
+    bool isActive();
+    void setActive(bool value);
 
     int getPen();
     int setPen(int value);

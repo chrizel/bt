@@ -18,8 +18,6 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <objc/Object.h>
-
 #include <SDL.h>
 
 #include "console/SDL_console.h"
@@ -33,8 +31,8 @@ public:
     virtual ~Console();
 
     void print(char *str);
-    BOOL isVisible();
-    BOOL isClosing();
+    bool isVisible();
+    bool isClosing();
 
     void show();
     void hide();

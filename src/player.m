@@ -49,7 +49,7 @@ static SDL_Rect playerMap[] = {
 
 Player::Player(char *sfc_name, SDL_Rect *prect) : Character(sfc_name, prect)
 {
-    going = NO;
+    going = false;
     direction = SOUTH;
     tick = 1;
 

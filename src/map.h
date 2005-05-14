@@ -18,9 +18,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "objc/Object.h"
-//#include "eventhandler.h"
-
 /* Map Format enums */
 enum {
     MF_ID = (1 << 17) - 1,
@@ -32,8 +29,9 @@ enum {
 #define XTILES 40 /* tiles per row on screen */
 #define YTILES 30 /* tiles per col on screen */
 
-@interface Map: Object
+class Map
 {
+private:
     SDL_Surface *stocks;
     Uint32 xoffset;
     Uint32 yoffset;
@@ -58,30 +56,25 @@ enum {
     Uint32 switch_palette;
 
     Uint32 destTicks;
-}
-
-- (id)initWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at;
-
-+ (id)newWithFile:(char *)file;
-+ (id)newWithWidth:(Uint32)w height:(Uint32)h animCount:(Uint32)ac animTicks:(Uint32)at;
-
-/*
+public:
+    Map(Uint32 w, Uint32 h, Uint32 ac, Uint32 at);;
+    Map(char *file);
     virtual ~Map();
-*/
 
-- save:(char *)file;
-- open:(char *)file;
+    void init(Uint32 w, Uint32 h, Uint32 ac, Uint32 at);
 
-- fill:(int)id;
-- fillWithID:(int)id;
-- setTID:(int)id onX:(int)x andY:(int)yt;
+    void save(char *file);
+    void open(char *file);
 
-- onEvent:(SDL_Event *)event;
-- onDraw:(SDL_Surface *)sfc;
-- onIdle;
+    void fill(int id);
+    void fillWithID(int id);
+    void setTID(int id, int x, int y);
 
-- incAnimTicker;
+    void onEvent(SDL_Event *event);
+    void onDraw(SDL_Surface *sfc);
+    void onIdle();
 
-@end
+    void incAnimTicker();
+};
 
 #endif

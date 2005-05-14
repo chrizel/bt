@@ -330,7 +330,7 @@ void CON_UpdateOffset(ConsoleInformation* console) {
 		if(console->RaiseOffset <= 0) {
 			console->RaiseOffset = 0;
 			console->Visible = CON_CLOSED;
-			whole_redraw = YES;
+			whole_redraw = true;
 		}
 		break;
 	case CON_OPENING:
