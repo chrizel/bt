@@ -19,7 +19,6 @@
 
 #include "player.h"
 
-#include "bt.h"
 #include "sdl_events.h"
 #include "bmpl.h"
 

@@ -18,9 +18,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "bt.h"
+#include "game.h"
 #include "console.h"
-#include "filter.h"
 #include "error.h"
 
 static void CommandHandler(ConsoleInformation *console, char *command);

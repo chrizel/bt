@@ -17,7 +17,8 @@
 
 #include "sprite.h"
 #include "bmpl.h"
-#include "bt.h"
+#include "sdl_events.h"
+#include "game.h"
 
 static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
@@ -53,7 +54,7 @@ void Sprite::draw(SDL_Surface *dst_sfc, int xo, int yo)
 {
     // Offset check
     if ((pos.x + pos.w > xo) && (pos.y + pos.h > yo) &&
-        (pos.x < xo + bt->getWidth()) && (pos.y < yo + bt->getHeight())) {
+        (pos.x < xo + game->getWidth()) && (pos.y < yo + game->getHeight())) {
         SDL_BlitSurface(sfc, src_rect, dst_sfc, &pos);
         PUSH_UR(wider_rect(&pos, 10));
     }

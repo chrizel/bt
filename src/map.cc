@@ -20,10 +20,10 @@
 #include <SDL.h>
 #include <SDL_endian.h>
 
-#include "bt.h"
+#include "game.h"
+#include "console.h"
 #include "bmpl.h"
 #include "sdl_events.h"
-#include "colors.h"
 #include "alloc.h"
 
 #include "error.h"
@@ -138,7 +138,7 @@ void Map::open(char *file)
 
     // check if file is available...
     if (!fp) {
-	    bt->printLine("file not found");
+	    game->printLine("file not found");
         return;
     }
 
@@ -233,7 +233,7 @@ void Map::onDraw(SDL_Surface *sfc)
     xtiles = getXTiles();
     ytiles = getYTiles();
 
-    /* draw testmap */
+    /* draw map */
     for (y = 0; y < ytiles; y++) {
         rect.y = TILE_SIZE * y;
 	y2 = y + this->yoffset;
@@ -272,7 +272,7 @@ void Map::onIdle()
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    if (bt->getConsole()->isVisible())
+    if (game->getConsole()->isVisible())
         return;
 
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
@@ -312,10 +312,10 @@ void Map::onIdle()
 
 int Map::getXTiles()
 {
-    return bt->getWidth() / TILE_SIZE + 1;
+    return game->getWidth() / TILE_SIZE + 1;
 }
 
 int Map::getYTiles()
 {
-    return bt->getHeight() / TILE_SIZE + 1;
+    return game->getHeight() / TILE_SIZE + 1;
 }

@@ -20,22 +20,35 @@
 #include <stdlib.h>
 
 #include "game.h"
-#include "bt.h"
 #include "sdl_events.h"
 #include "error.h"
 #include "console.h"
 #include "editor.h"
 #include "player.h"
-#include "audio.h"
+#include "bmpl.h"
 
-static Uint32 blink_anim_timer(Uint32 interval, void *param)
+Game *game;
+
+SDL_Surface *screen;
+SDL_Surface *minilogo;
+
+int frames;
+int ticks_begin, ticks_end;
+
+void btQuit()
 {
-    /*
-    if ([(id)param switchBlink])
-	return 200;
-    else
-	return 5000;
-    */
+    printf("Call bt free...\n");
+    delete game;
+
+    printf("Bye :)\n");
+}
+
+void fps_output()
+{
+    ticks_end = SDL_GetTicks();
+    printf("FPS: %i\n", (1000 * frames) / (ticks_end - ticks_begin));
+    ticks_begin = SDL_GetTicks();
+    frames = 0;
 }
 
 Game::Game(char *aTitle)
@@ -44,10 +57,6 @@ Game::Game(char *aTitle)
     height = SCREEN_H;
     title = aTitle;
     initSDL();
-
-#ifdef USE_8BIT
-    init_colors();
-#endif
 
     xOffset = 0;
     yOffset = 0;
@@ -63,17 +72,7 @@ Game::Game(char *aTitle)
     ppos.h = 92;
     player = new Player("player.player1", &ppos);
 
-    printf("make audio...\n");
-    //audio = [Audio new];
-
-    printf("addMusic...\n");
-    //music = [audio addMusic:"data/penguinplanet.ogg"];
-
-    printf("addChunk...\n");
-    //chunk = [audio addChunk:"data/sound.wav"];
-
-    //printf("play music...\n");
-    //[audio playMusic:music];
+    minilogo = bmpl_get("main.minilogo");
 }
 
 Game::~Game()
@@ -112,6 +111,9 @@ void Game::initSDL()
         printf("> Using software surface\n");
 
     SDL_WM_SetCaption(title, NULL);
+
+    // register quit function for cleanup
+    atexit(btQuit);
 }
 
 void Game::run()
@@ -131,22 +133,17 @@ void Game::run()
     
     whole_redraw = 1;
 
-    SDL_AddTimer(2500, blink_anim_timer, (void *)player);
-
-#ifdef DO_FRAMETEST
     ticks_begin = SDL_GetTicks();
     ticks_end = ticks_begin;
-#endif
 
     printf("before while...\n");
     while (!done) {
 	ur_count = 0;
-#ifdef DO_FRAMETEST
+
 	frames++;
 	ticks_end = SDL_GetTicks();
 	if ( (ticks_end - ticks_begin) >= 4000) 
 	    fps_output();
-#endif
 	
         while(SDL_GetTicks() <= ticks)
             ;
@@ -168,9 +165,8 @@ void Game::run()
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
 			//std::cout << "Bye :)" << std::endl;
 			exit(0);
-		    } else if (sdl_ev->key.keysym.sym == SDLK_s) {
-			//[audio playChunk:chunk];
 		    }
+                    
                     break;
                 case SDL_KEYUP:
                     // evl_call(evl_sdl, EV_SDL_KEYUP);

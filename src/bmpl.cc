@@ -18,10 +18,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "bt.h"
 #include "bmpl.h"
 #include "bitmaps.h"
-#include "colors.h"
 #include "error.h"
 
 static SDL_Surface *load_bitmap(t_bmpl_item *item);
@@ -60,10 +58,6 @@ static SDL_Surface *load_bitmap(t_bmpl_item *item)
     if (!temp)
         error("Can't load bitmap: %s", item->file);
 
-    #ifdef USE_8BIT
-    SDL_SetColors(temp, colors, 0, n_colors);
-    #endif
-
     /* ColorKey... */
     if (item->flags & BL_COLORKEY) {
 	if (SDL_SetColorKey (temp, SDL_SRCCOLORKEY, SDL_MapRGB(temp->format, 0xff, 0, 0xff)))
@@ -71,7 +65,7 @@ static SDL_Surface *load_bitmap(t_bmpl_item *item)
     }
 
     if (item->flags & BL_ALPHA_50) {
-	SDL_SetAlpha(temp, SDL_SRCALPHA, 255);
+        SDL_SetAlpha(temp, SDL_SRCALPHA, 128);
     }
 
     /* Convert */

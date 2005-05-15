@@ -24,7 +24,6 @@ class Player;
 class Console;
 class Editor;
 class Map;
-class Audio;
 
 class Game
 {
@@ -35,7 +34,6 @@ private:
     Console *console;
     Player *player;
     Editor *editor;
-    Audio *audio;
 
     int music;
     int chunk;
@@ -68,5 +66,23 @@ public:
     Map* getMap();
     Player* getPlayer();
 };
+
+#define SCREEN_W 800
+#define SCREEN_H 600
+
+#define FPS 30
+#define BPP 32
+
+extern SDL_Surface *screen;
+extern SDL_Surface *minilogo;
+
+extern int frames;
+extern int ticks_begin, ticks_end;
+
+extern Game *game;
+
+void btQuit();
+
+void fps_output();
 
 #endif

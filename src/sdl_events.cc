@@ -20,11 +20,9 @@
 
 //#include <iostream>
 
-#include "bt.h"
 #include "alloc.h"
 #include "event.h"
 #include "sdl_events.h"
-#include "filter.h"
 #include "map.h"
 #include "game.h"
 #include "player.h"

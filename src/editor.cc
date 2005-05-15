@@ -18,9 +18,10 @@
 #include <SDL.h>
 #include <SDL_endian.h>
 
+#include "game.h"
+#include "sdl_events.h"
 #include "editor.h"
 #include "map.h"
-#include "bt.h"
 
 Editor::Editor()
 {
@@ -56,7 +57,7 @@ int Editor::setPen(int value)
 
 void Editor::setTID(int tid, int x, int y)
 {
-    bt->getMap()->setTID(tid, x, y);
+    game->getMap()->setTID(tid, x, y);
 }
 
 void Editor::onEvent(SDL_Event *event)
@@ -69,12 +70,12 @@ void Editor::onDraw(SDL_Surface *sfc)
 
 void Editor::saveMap(char *file)
 {
-    bt->getMap()->save(file);
+    game->getMap()->save(file);
 }
 
 void Editor::openMap(char *file)
 {
-    bt->getMap()->open(file);
+    game->getMap()->open(file);
 }
 
 void Editor::onIdle()

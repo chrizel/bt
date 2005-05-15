@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include "audio.h"
 #include "alloc.h"
-#include "bt.h"
+#include "game.h"
 
 Audio::Audio()
 {
-#ifndef DISABLE_AUDIO
     int i;
 
     // Initialize audio
@@ -21,13 +20,11 @@ Audio::Audio()
         chunk_list[i] = NULL;
     size_music = MUSIC_SIZE;
     size_chunk = CHUNK_SIZE;
-    bt->print("Audio ready");
-#endif
+    game->print("Audio ready");
 }
 
 Audio::~Audio()
 {
-#ifndef DISABLE_AUDIO
     int i;
 
     for (i = 0; i < size_music; i++)
@@ -37,12 +34,10 @@ Audio::~Audio()
     for (i = 0; i < size_chunk; i++)
 	if (chunk_list[i] != NULL)
 	    Mix_FreeChunk(chunk_list[i]);
-#endif
 }
 
 int Audio::addMusic(char *filename)
 {
-#ifndef DISABLE_AUDIO
     Mix_Music *music;
     int index = -1;
     int i;
@@ -69,14 +64,10 @@ int Audio::addMusic(char *filename)
 
     // Return music id
     return index;
-#else
-    return 0;
-#endif
 }
 
 int Audio::addChunk(char *filename)
 {
-#ifndef DISABLE_AUDIO
     Mix_Chunk *chunk;
     int index = -1;
     int i;
@@ -105,48 +96,35 @@ int Audio::addChunk(char *filename)
 
     // Return chunk id
     return index;
-#else
-    return 0;
-#endif
 }
 
 void Audio::deleteMusic(int i)
 {
-#ifndef DISABLE_AUDIO
     Mix_FreeMusic(music_list[i]);
     music_list[i] = NULL;
-#endif
 }
 
 void Audio::deleteChunk(int i)
 {
-#ifndef DISABLE_AUDIO
     Mix_FreeChunk(chunk_list[i]);
     chunk_list[i] = NULL;
-#endif
 }
 
 void Audio::playMusic(int i)
 {
-#ifndef DISABLE_AUDIO
     //Mix_Music *music;
     //    music = Mix_LoadMUS(music_list[id]);
     //    music = Mix_LoadMUS("data/the-brain.mp3");
     //printf("test\n");
     Mix_PlayMusic(music_list[i], 1);
-#endif
 }
 
 void Audio::stopMusic()
 {
-#ifndef DISABLE_AUDIO
     // TODO
-#endif
 }
 
 void Audio::playChunk(int i)
 {
-#ifndef DISABLE_AUDIO
     Mix_PlayChannel(-1, chunk_list[i], 0);
-#endif
 }
