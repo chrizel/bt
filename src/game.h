@@ -45,6 +45,9 @@ private:
     Uint32 xOffset;
     Uint32 yOffset;
 
+    int width;
+    int height;
+
 public:
     Game(char *aTitle);
     virtual ~Game();
@@ -57,6 +60,9 @@ public:
 
     void print(char *aText);
     void printLine(char *aText);
+
+    int getWidth();
+    int getHeight();
 
     Console* getConsole();
     Map* getMap();

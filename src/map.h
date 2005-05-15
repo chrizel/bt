@@ -26,8 +26,6 @@ enum {
 
 /* static map information */
 #define TILE_SIZE 20
-#define XTILES 40 /* tiles per row on screen */
-#define YTILES 30 /* tiles per col on screen */
 
 class Map
 {
@@ -75,6 +73,9 @@ public:
     void onIdle();
 
     void incAnimTicker();
+
+    int getXTiles();
+    int getYTiles();
 };
 
 #endif

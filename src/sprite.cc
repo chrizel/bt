@@ -53,7 +53,7 @@ void Sprite::draw(SDL_Surface *dst_sfc, int xo, int yo)
 {
     // Offset check
     if ((pos.x + pos.w > xo) && (pos.y + pos.h > yo) &&
-        (pos.x < xo + SCREEN_W) && (pos.y < yo + SCREEN_H)) {
+        (pos.x < xo + bt->getWidth()) && (pos.y < yo + bt->getHeight())) {
         SDL_BlitSurface(sfc, src_rect, dst_sfc, &pos);
         PUSH_UR(wider_rect(&pos, 10));
     }

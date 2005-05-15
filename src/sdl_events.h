@@ -21,6 +21,7 @@
 #include <SDL.h>
 #include "event.h"
 #include "map.h"
+#include "bt.h"
 
 extern t_evl *evl_sdl;
 extern SDL_Event *sdl_ev;
@@ -51,16 +52,16 @@ extern Map *tmp_map;
 #define INTERCEPT_CHECK(rect) do {		\
 	if (rect.x < 0)				\
 	    rect.x = 0;				\
-	else if (rect.x >= SCREEN_W)		\
-	    rect.x = SCREEN_W;			\
+	else if (rect.x >= bt->getWidth())		\
+	    rect.x = bt->getWidth();			\
 	if (rect.y < 0)				\
 	    rect.y = 0;				\
-	else if (rect.y >= SCREEN_H)		\
-	    rect.y = SCREEN_H;			\
-	if ((rect.x + rect.w) >= SCREEN_W)	\
-	    rect.w = SCREEN_W - rect.x;		\
-	if ((rect.y + rect.h) >= SCREEN_H)	\
-	    rect.h = SCREEN_H - rect.y;		\
+	else if (rect.y >= bt->getHeight())		\
+	    rect.y = bt->getHeight();			\
+	if ((rect.x + rect.w) >= bt->getWidth())	\
+	    rect.w = bt->getWidth() - rect.x;		\
+	if ((rect.y + rect.h) >= bt->getHeight())	\
+	    rect.h = bt->getHeight() - rect.y;		\
     } while(0);
 
 

@@ -16,6 +16,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <stdlib.h>
 
 #include "game.h"
@@ -39,6 +40,8 @@ static Uint32 blink_anim_timer(Uint32 interval, void *param)
 
 Game::Game(char *aTitle)
 {
+    width = SCREEN_W;
+    height = SCREEN_H;
     title = aTitle;
     initSDL();
 
@@ -98,7 +101,7 @@ void Game::initSDL()
     atexit(SDL_Quit);
 
     /* VideoMode... */
-    screen = SDL_SetVideoMode(800, 600, BPP, SDL_DOUBLEBUF);
+    screen = SDL_SetVideoMode(width, height, BPP, SDL_DOUBLEBUF | SDL_RESIZABLE);
 
     if (!screen)
         error("Couldn't set VideoMode: %s", SDL_GetError());
@@ -180,6 +183,14 @@ void Game::run()
                     break;
                 case SDL_JOYAXISMOTION:
                     // evl_call(evl_sdl, EV_SDL_JOYAXIS);
+                    break;
+                case SDL_VIDEORESIZE:
+                    width = sdl_ev->resize.w;
+                    height = sdl_ev->resize.h;
+                    printf("Resize: %d, %d\n", width, height);
+
+                    screen = SDL_SetVideoMode(width, height, BPP, SDL_DOUBLEBUF | SDL_RESIZABLE);
+                    whole_redraw = 1;
                     break;
                 }
 	    }
@@ -267,4 +278,14 @@ Map* Game::getMap()
 Player* Game::getPlayer()
 {
     return player;
+}
+
+int Game::getWidth()
+{
+    return width;
+}
+
+int Game::getHeight()
+{
+    return height;
 }

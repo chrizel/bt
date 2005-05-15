@@ -222,6 +222,7 @@ void Map::onDraw(SDL_Surface *sfc)
 {
     int x, y, x2, y2, idx;
     int anim_switched = 0;
+    int xtiles, ytiles;
     SDL_Rect rect;
 
     // TODO: We could do that already in init_map, if srcrect would be global!?
@@ -229,13 +230,15 @@ void Map::onDraw(SDL_Surface *sfc)
     rect.w = rect.h = TILE_SIZE;
 
     anim_switched = this->prev_ticker != this->anim_ticker;
+    xtiles = getXTiles();
+    ytiles = getYTiles();
 
     /* draw testmap */
-    for (y = 0; y < YTILES; y++) {
+    for (y = 0; y < ytiles; y++) {
         rect.y = TILE_SIZE * y;
 	y2 = y + this->yoffset;
 
-        for (x = 0; x < XTILES; x++) {
+        for (x = 0; x < xtiles; x++) {
             rect.x = TILE_SIZE * x;
 	    x2 = x + this->xoffset;
 
@@ -246,15 +249,15 @@ void Map::onDraw(SDL_Surface *sfc)
                 idx = this->anims[(idx & MF_ID) + this->anim_ticker];
 
 		// calculate source rect
-		srcrect.x = (idx % XTILES) * TILE_SIZE;
-		srcrect.y = ((idx - (idx % XTILES)) / XTILES) * TILE_SIZE;
+		srcrect.x = (idx % 40) * TILE_SIZE;
+		srcrect.y = ((idx - (idx % 40)) / 40) * TILE_SIZE;
 
 		if (anim_switched)
 		    PUSH_UR(rect);
 	    } else {
 		// calculate source rect
-		srcrect.x = (idx % XTILES) * TILE_SIZE;
-		srcrect.y = ((idx - (idx % XTILES)) / XTILES) * TILE_SIZE;
+		srcrect.x = (idx % 40) * TILE_SIZE;
+		srcrect.y = ((idx - (idx % 40)) / 40) * TILE_SIZE;
 	    }
 
 	    SDL_BlitSurface(this->stocks, &srcrect, screen, &rect);
@@ -279,7 +282,7 @@ void Map::onIdle()
 	}
     }
     if (keystate[SDLK_KP1] || keystate[SDLK_KP2] || keystate[SDLK_KP3]) {
-        if ((yoffset + YTILES) < (height - 1)) {
+        if ((yoffset + getYTiles()) < (height - 1)) {
             yoffset++; // this down...
 	    whole_redraw = 1;
 	}
@@ -291,7 +294,7 @@ void Map::onIdle()
 	}
     } 
     if (keystate[SDLK_KP3] || keystate[SDLK_KP6] || keystate[SDLK_KP9]) {
-    	if ((xoffset + XTILES) < (width - 1)) {
+    	if ((xoffset + getXTiles()) < (width - 1)) {
             xoffset++;	// this right...
 	    whole_redraw = 1;
 	}
@@ -305,4 +308,14 @@ void Map::onIdle()
 	/* Calculate next tick time */
 	destTicks = SDL_GetTicks() + 100;
     }
+}
+
+int Map::getXTiles()
+{
+    return bt->getWidth() / TILE_SIZE + 1;
+}
+
+int Map::getYTiles()
+{
+    return bt->getHeight() / TILE_SIZE + 1;
 }
