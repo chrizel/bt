@@ -1,25 +1,29 @@
-BIN=bt
-SRC=main.cc error.cc map.cc bmpl.cc alloc.cc sdl_events.cc game.cc audio.cc player.cc console.cc console/DT_drawtext.cc console/SDL_console.cc console/internal.cc editor.cc sprite.cc character.cc
-OBJ=main.o error.o map.o bmpl.o alloc.o sdl_events.o game.o audio.o player.o console.o console/DT_drawtext.o console/SDL_console.o console/internal.o editor.o sprite.o character.o 
-HDR=error.h map.h bmpl.h bitmaps.h alloc.h sdl_events.h game.h audio.h player.h console.h console/DT_drawtext.h console/SDL_console.h console/internal.h editor.h sprite.h character.h
-CFLAGS=-g `sdl-config --cflags`
-LIBS=`sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer
+SOURCES = main.cc error.cc map.cc bmpl.cc alloc.cc sdl_events.cc game.cc audio.cc player.cc editor.cc sprite.cc character.cc
+HEADERS = error.h map.h bmpl.h bitmaps.h alloc.h sdl_events.h game.h audio.h player.h editor.h sprite.h character.h
+OBJECTS = $(SOURCES:.cc=.o)
+
+BINARY=bt
 CC=g++
-EOBJ=.o
-ESRC=.cc
+CFLAGS=-g `sdl-config --cflags`
+LDFLAGS = `sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_mixer
+MKDEP = g++ -MM ${CFLAGS}
 
-all: $(BIN)
+all: $(BINARY)
 
-$(BIN): $(OBJ)
-	$(CC) -o $(BIN) $(LIBS) $(OBJ)
+${BINARY}: ${OBJECTS}
+	${CC} ${LDFLAGS} -o $@ ${OBJECTS}
 
-%.o: %.cc $(HDR) 
-	$(CC) $(CFLAGS) -c $(subst $(EOBJ),$(ESRC),$@) -o $@
+.cc.o:
+	${CC} -c ${CFLAGS} $<
+
+.PHONY: clean dep all
 
 clean:
-	rm -rf $(BIN) $(OBJ) 2> /dev/null
+	rm -rf ${OBJECTS} ${BINARY}
 
-.PHONY: all clean
+dep:
+	${MKDEP} ${SOURCES} > make.dep
 
+include make.dep
 
 # vim: sw=4 noet ts=4:

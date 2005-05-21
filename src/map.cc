@@ -272,9 +272,6 @@ void Map::onIdle()
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    if (game->getConsole()->isVisible())
-        return;
-
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
         if (yoffset > 0) {
             yoffset--; // this up...

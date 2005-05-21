@@ -23,7 +23,6 @@
 #include "game.h"
 #include "sdl_events.h"
 #include "error.h"
-#include "console.h"
 #include "editor.h"
 #include "player.h"
 #include "bmpl.h"
@@ -55,7 +54,6 @@ Game::Game(char *aTitle)
 
     map = new Map("main.map");
     editor = new Editor();
-    console = new Console();
 
     ppos.x = 400;
     ppos.y = 300;
@@ -69,7 +67,6 @@ Game::Game(char *aTitle)
 Game::~Game()
 {
     delete player;
-    delete console;
     delete map;
 }
 
@@ -141,15 +138,9 @@ void Game::run()
 
         while (SDL_PollEvent(sdl_ev)) {
 
-	    if (console->isVisible()) {
-		    console->onEvent(sdl_ev);
-            } else {
 	        switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
-			if (!console->isVisible())
-			    console->show();
-			  
                         break;
                     } else if (sdl_ev->key.keysym.sym == SDLK_q) {
 			//std::cout << "Bye :)" << std::endl;
@@ -166,7 +157,6 @@ void Game::run()
                     whole_redraw = 1;
                     break;
                 }
-	    }
 	}
 
         //map->onIdle();
@@ -179,7 +169,6 @@ void Game::run()
     map->onDraw(screen);
     player->draw(screen, xOffset, yOffset);
 	editor->onDraw(screen);
-	console->draw();
 
 	// If editor is running, we'll update it's GUI stuff
 	if (editor->isActive())
@@ -192,10 +181,8 @@ void Game::run()
 	//print("BlitSurface");
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
-        //bt->getConsole()->draw();
-        
 	//print("whole_redraw");
-	if (whole_redraw || console->isVisible() || console->isClosing()) {
+	if (whole_redraw) {
 	    // print("whole_redraw");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
@@ -237,11 +224,6 @@ void Game::print(char *text, ...)
     fprintf(stdout, "\n");
 
     va_end(args);
-}
-
-Console* Game::getConsole()
-{
-    return console;
 }
 
 Map* Game::getMap()

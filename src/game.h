@@ -26,7 +26,6 @@
 #define BPP 32
 
 class Player;
-class Console;
 class Editor;
 class Map;
 
@@ -38,7 +37,6 @@ private:
     SDL_Surface *minilogo;
 
     Map *map;
-    Console *console;
     Player *player;
     Editor *editor;
 
@@ -69,7 +67,6 @@ public:
     int getWidth();
     int getHeight();
 
-    Console* getConsole();
     Map* getMap();
     Player* getPlayer();
 };
