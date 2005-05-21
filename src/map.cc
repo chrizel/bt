@@ -124,7 +124,7 @@ void Map::save(char *file)
 	    writeInt(fp, this->data[this->width * y + x]);
 
     fclose(fp);
-    printf("ok\n");
+    game->print("ok\n");
 }
 
 void Map::open(char *file)
@@ -133,18 +133,18 @@ void Map::open(char *file)
     int w, h, ac, at;
     FILE *fp;
 
-    printf("read map...");
+    game->print("read map...");
     fp = fopen(file, "r");
 
     // check if file is available...
     if (!fp) {
-	    game->printLine("file not found");
+	    game->print("file not found");
         return;
     }
 
     // read header...
     fscanf(fp, "MAP:%u,%u,%u,%u,%u\n", &v, &w, &h, &ac, &at);
-    printf("::%u, %u, %u, %u, %u\n", v, w, h, ac, at);
+    //game->print("::%u, %u, %u, %u, %u", v, w, h, ac, at);
 
     // check v
     // TODO
@@ -163,18 +163,18 @@ void Map::open(char *file)
 		   &this->anims[anim * this->anim_count + tick]);
 
     //if (anim) {
-    printf("skip anim\n");
+    //game->print("skip anim");
     fseek(fp, 1, SEEK_CUR); // jump over \n
     //}
 
     // read map data
-    printf("width: %u height: %u\n", width, height);
+    //game->print("width: %u height: %u", width, height);
     for (y = 0; y < this->height; y++)
         for (x = 0; x < this->width; x++)
             this->data[this->width * y + x] = readInt(fp);
 
     fclose(fp);
-    printf("ok (cur_map->data[0] = %u)\n", this->data[0]);
+    //game->print("ok (cur_map->data[0] = %u)", this->data[0]);
     srcrect.w = srcrect.h = TILE_SIZE;
 
     whole_redraw = 1;
@@ -318,4 +318,17 @@ int Map::getXTiles()
 int Map::getYTiles()
 {
     return game->getHeight() / TILE_SIZE + 1;
+}
+
+void Map::updateOffset(int xo, int yo)
+{
+    if (xo != 0) { 
+        xoffset += xo;         
+        whole_redraw = 1;
+    }
+
+    if (yo != 0) {
+        xoffset += yo;
+        whole_redraw = 1;
+    }
 }

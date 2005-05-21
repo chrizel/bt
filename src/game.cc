@@ -18,6 +18,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "game.h"
 #include "sdl_events.h"
@@ -30,38 +31,28 @@
 Game *game;
 
 SDL_Surface *screen;
-SDL_Surface *minilogo;
 
 int frames;
 int ticks_begin, ticks_end;
 
-void btQuit()
+static void btQuit()
 {
-    printf("Call bt free...\n");
+    game->print("Bye...");
     delete game;
-
-    printf("Bye :)\n");
-}
-
-void fps_output()
-{
-    ticks_end = SDL_GetTicks();
-    printf("FPS: %i\n", (1000 * frames) / (ticks_end - ticks_begin));
-    ticks_begin = SDL_GetTicks();
-    frames = 0;
 }
 
 Game::Game(char *aTitle)
 {
-    width = SCREEN_W;
-    height = SCREEN_H;
-    title = aTitle;
-    initSDL();
-
+    width = DEFAULT_SCREEN_W;
+    height = DEFAULT_SCREEN_H;
     xOffset = 0;
     yOffset = 0;
+    title = aTitle;
 
-    printf("make map...\n");
+    initSDL();
+
+    print("init game...");
+
     map = new Map("main.map");
     editor = new Editor();
     console = new Console();
@@ -84,6 +75,8 @@ Game::~Game()
 
 void Game::initSDL()
 {
+    print("init sdl...");
+
     /* Initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         error("Couldn't initialize SDL: %s", SDL_GetError());
@@ -106,9 +99,9 @@ void Game::initSDL()
         error("Couldn't set VideoMode: %s", SDL_GetError());
 
     if ((screen->flags & SDL_HWSURFACE))
-        printf("> Using hardware surface\n");
+        print("Using hardware surface");
     else
-        printf("> Using software surface\n");
+        print("Using software surface");
 
     SDL_WM_SetCaption(title, NULL);
 
@@ -118,8 +111,6 @@ void Game::initSDL()
 
 void Game::run()
 {
-    printf("inside run\n");
-
     // Handle fps
     int done = 0;
     Uint32 ticks = SDL_GetTicks();
@@ -136,25 +127,23 @@ void Game::run()
     ticks_begin = SDL_GetTicks();
     ticks_end = ticks_begin;
 
-    printf("before while...\n");
     while (!done) {
 	ur_count = 0;
 
 	frames++;
 	ticks_end = SDL_GetTicks();
 	if ( (ticks_end - ticks_begin) >= 4000) 
-	    fps_output();
+	    fpsOutput();
 	
         while(SDL_GetTicks() <= ticks)
             ;
-        ticks = SDL_GetTicks() + (1000 / FPS);
+        ticks = SDL_GetTicks() + (1000 / MAX_FPS);
 
         while (SDL_PollEvent(sdl_ev)) {
 
 	    if (console->isVisible()) {
 		    console->onEvent(sdl_ev);
             } else {
-                /* call event hooks... */
 	        switch(sdl_ev->type) {
                 case SDL_KEYDOWN: 
                     if (sdl_ev->key.keysym.sym == SDLK_c) {
@@ -168,22 +157,10 @@ void Game::run()
 		    }
                     
                     break;
-                case SDL_KEYUP:
-                    // evl_call(evl_sdl, EV_SDL_KEYUP);
-                    break;
-		case SDL_JOYBUTTONDOWN:
-                    // evl_call(evl_sdl, EV_SDL_JOYBUTTONDOWN);
-                    break;
-                case SDL_JOYBUTTONUP:
-                    // evl_call(evl_sdl, EV_SDL_JOYBUTTONUP);
-                    break;
-                case SDL_JOYAXISMOTION:
-                    // evl_call(evl_sdl, EV_SDL_JOYAXIS);
-                    break;
                 case SDL_VIDEORESIZE:
                     width = sdl_ev->resize.w;
                     height = sdl_ev->resize.h;
-                    printf("Resize: %d, %d\n", width, height);
+                    print("Resize: %d, %d", width, height);
 
                     screen = SDL_SetVideoMode(width, height, BPP, SDL_DOUBLEBUF | SDL_RESIZABLE);
                     whole_redraw = 1;
@@ -197,7 +174,7 @@ void Game::run()
     player->onIdle();
 	editor->onIdle();
         
-	//printf("Map onDraw\n");
+	//print("Map onDraw");
 	//[map draw:screen xOffset:xOffset yOffset:yOffset];
     map->onDraw(screen);
     player->draw(screen, xOffset, yOffset);
@@ -212,27 +189,31 @@ void Game::run()
         // if (cur_filter)
 	// cur_filter();
 
-	//printf("BlitSurface\n");
+	//print("BlitSurface");
 	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
 
         //bt->getConsole()->draw();
         
-	//printf("whole_redraw\n");
+	//print("whole_redraw");
 	if (whole_redraw || console->isVisible() || console->isClosing()) {
-	    // printf("whole_redraw\n");
+	    // print("whole_redraw");
 	    SDL_Flip(screen);
 	    whole_redraw = 0;
 	} else {
 	    if (ur_count) {
-		// printf("update_rects: %d\n", ur_count);
+		// print("update_rects: %d\n", ur_count);
 		SDL_UpdateRects(screen, ur_count, update_rects);
 	    }
 	}
     }
 }
 
-void Game::eventLoop()
+void Game::fpsOutput()
 {
+    ticks_end = SDL_GetTicks();
+    print("FPS: %i", (1000 * frames) / (ticks_end - ticks_begin));
+    ticks_begin = SDL_GetTicks();
+    frames = 0;
 }
 
 void Game::printGPL()
@@ -247,18 +228,15 @@ void Game::printGPL()
 
 }
 
-void Game::print(char *aText)
+void Game::print(char *text, ...)
 {
-    printLine(aText);
-}
+    va_list args;
 
-void Game::printLine(char *aText)
-{
-    // stdout...
-    puts(aText);
+    va_start(args, text);
+    vfprintf(stdout, text, args);
+    fprintf(stdout, "\n");
 
-    // and console
-    console->print(aText);
+    va_end(args);
 }
 
 Console* Game::getConsole()

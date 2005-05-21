@@ -17,6 +17,8 @@
 
 #include <SDL.h>
 
+#include "game.h"
+
 #include "player.h"
 
 #include "sdl_events.h"
@@ -73,6 +75,27 @@ void Player::switchTick()
         tick = 2;
 }
 
+void Player::playerGo(int xo, int yo)
+{
+    if (xo != 0) {
+        if ( (pos.x < 100) || (pos.x > 700) ) {
+            game->getMap()->updateOffset(xo / 20, 0);
+            pos.x -= xo;
+        } else {
+            pos.x += xo;
+        }
+    }
+
+    if (yo != 0) {
+        if ( (pos.y < 100) || (pos.y > 500) ) {
+            game->getMap()->updateOffset(0, yo / 20);
+            pos.y -= yo;
+        } else {
+            pos.y += yo;
+        }
+    }
+}
+
 void Player::onIdle()
 {
     /*** Input ***/
@@ -82,31 +105,31 @@ void Player::onIdle()
 	keystate[SDLK_LEFT] || keystate[SDLK_RIGHT];
 
     if (keystate[SDLK_UP]) {
-	pos.y -= 10;
-	direction = NORTH;
+        pos.y -= 10;
+        direction = NORTH;
     } else if (keystate[SDLK_DOWN]) {
-	pos.y += 10;
-	direction = SOUTH;
+        pos.y += 10;
+        direction = SOUTH;
     }
 
     if (keystate[SDLK_LEFT]) {
-	pos.x -= 10;
-	direction = WEST;
+        pos.x -= 10;
+        direction = WEST;
     } else if (keystate[SDLK_RIGHT]) {
-	pos.x += 10;
-	direction = EAST;
+        pos.x += 10;
+        direction = EAST;
     }
 
     if (going) {
-	/*** Animation calculations ***/
-	if (SDL_GetTicks() >= destTicks) {
-	    /* Do animation */
-	    switchTick();
+        /*** Animation calculations ***/
+        if (SDL_GetTicks() >= destTicks) {
+            /* Do animation */
+            switchTick();
 
-	    /* Calculate next tick time */
-	    destTicks = SDL_GetTicks() + 100;
-	}
+            /* Calculate next tick time */
+            destTicks = SDL_GetTicks() + 100;
+        }
     } else {
-	tick = 1;
+        tick = 1;
     }
 }

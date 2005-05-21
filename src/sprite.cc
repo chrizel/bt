@@ -24,8 +24,6 @@ static SDL_Rect wider_rect(SDL_Rect *rect, int border)
 {
     static SDL_Rect wrect;
     
-    //printf("%d,%d,%d,%d\n", rect->x, rect->y, rect->w, rect->h);
-
     wrect.x = rect->x - border;
     wrect.y = rect->y - border;
     wrect.w = rect->w + border * 2;

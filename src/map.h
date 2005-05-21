@@ -76,6 +76,8 @@ public:
 
     int getXTiles();
     int getYTiles();
+
+    void updateOffset(int xo, int yo);
 };
 
 #endif

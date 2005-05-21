@@ -29,6 +29,8 @@ public:
     virtual void draw(SDL_Surface *dst_sfc, int xo, int yo);
     void switchTick();
     void onIdle();
+
+    void playerGo(int xo, int yo);
 };
 
 #endif

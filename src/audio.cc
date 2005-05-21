@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "audio.h"
 #include "alloc.h"
 #include "game.h"
@@ -115,7 +114,6 @@ void Audio::playMusic(int i)
     //Mix_Music *music;
     //    music = Mix_LoadMUS(music_list[id]);
     //    music = Mix_LoadMUS("data/the-brain.mp3");
-    //printf("test\n");
     Mix_PlayMusic(music_list[i], 1);
 }
 

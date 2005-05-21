@@ -28,8 +28,6 @@ Console::Console()
 {
     SDL_Rect conRect;
 
-    printf("+++ init console\n");
-
     /* setup rect */
     conRect.x = 10;
     conRect.y = 0;
@@ -51,7 +49,6 @@ Console::Console()
 
 Console::~Console()
 {
-    printf("--- free console\n");
     CON_Hide(console);
     CON_Destroy(console);
 }

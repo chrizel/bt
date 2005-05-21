@@ -21,13 +21,11 @@
 //#include <iostream>
 
 #include "alloc.h"
-#include "event.h"
 #include "sdl_events.h"
 #include "map.h"
 #include "game.h"
 #include "player.h"
 
-//t_evl *evl_sdl;
 SDL_Event *sdl_ev;
 
 SDL_Rect update_rects[MAX_RECTS];
