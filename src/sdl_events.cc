@@ -18,13 +18,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-//#include <iostream>
-
-#include "alloc.h"
 #include "sdl_events.h"
-#include "map.h"
-#include "game.h"
-#include "player.h"
 
 SDL_Event *sdl_ev;
 

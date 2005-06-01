@@ -26,7 +26,6 @@
 #define BPP 32
 
 class Player;
-class Editor;
 class Map;
 
 class Game
@@ -38,7 +37,6 @@ private:
 
     Map *map;
     Player *player;
-    Editor *editor;
 
     int music;
     int chunk;

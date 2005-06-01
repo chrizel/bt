@@ -15,6 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
@@ -28,8 +29,10 @@
 
 #include "error.h"
 
+/*
 #define SET_STOCK_ID(map, xt, yt, tid) \
     map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = tid;
+*/
 
 static void writeInt(FILE *fp, Uint32 num)
 {
@@ -87,8 +90,8 @@ void Map::init(Uint32 w, Uint32 h, Uint32 ac, Uint32 at)
     this->anim_ticks = at;
 
     /* set other attributes */
-    this->xoffset        = 0;
-    this->yoffset        = 0;
+    this->xpos           = 0;
+    this->ypos           = 0;
     this->anim_ticker    = 0;
     this->prev_ticker    = 1;
     this->version        = 1;
@@ -196,22 +199,7 @@ void Map::fillWithID(int id)
 
 void Map::setTID(int id, int x, int y)
 {
-    //int x, y;
-
-    SET_STOCK_ID(this, x, y, id);
-    
-    /* TODO 
-    if (id) {
-        SET_STOCK_ID(this, xt, yt, editor_pen);
-    } else {
-	
-        if (editor_pg)
-            for (y = 0; y < editor_pg_y; y++)
-                for (x = 0; x < editor_pg_x; x++)
-                    SET_STOCK_ID(this, xt + x, yt + y, 
-				 editor_pg[editor_pg_x * y + x]);
-    }
-    */
+    //SET_STOCK_ID(this, x, y, id);
 }
 
 void Map::onEvent(SDL_Event *event)
@@ -220,48 +208,45 @@ void Map::onEvent(SDL_Event *event)
 
 void Map::onDraw(SDL_Surface *sfc)
 {
-    int x, y, x2, y2, idx;
-    int anim_switched = 0;
-    int xtiles, ytiles;
-    SDL_Rect rect;
+    // dstrect is the destination rect of the tile on the screen in pixels
+    SDL_Rect dstrect;
+    dstrect.w = dstrect.h = TILE_SIZE;
 
-    // TODO: We could do that already in init_map, if srcrect would be global!?
-    //srcrect.w = srcrect.h = rect.w = rect.h = TILE_SIZE;
-    rect.w = rect.h = TILE_SIZE;
+    // xpos and ypos are the x/y positions on the map in pixels!
+    // now we have to calculate from which tile we have to begin painting
+    Uint32 startXTile = (xpos - xpos % TILE_SIZE) / TILE_SIZE;
+    Uint32 startYTile = (ypos - ypos % TILE_SIZE) / TILE_SIZE;
+    Uint32 endXTile   = startXTile + getXTiles();
+    Uint32 endYTile   = startYTile + getYTiles();
+    dstrect.y         = 0 - ypos % TILE_SIZE;
+    dstrect.x         = 0 - xpos % TILE_SIZE;
 
-    anim_switched = this->prev_ticker != this->anim_ticker;
-    xtiles = getXTiles();
-    ytiles = getYTiles();
+    // draw the map...
+    for (Uint32 yTile = startYTile; yTile < endYTile; yTile++) {
+        Sint32 oldX = dstrect.x;
+        for (Uint32 xTile = startXTile; xTile < endXTile; xTile++) {
+            int tileData = this->data[yTile * this->width + xTile];
 
-    /* draw map */
-    for (y = 0; y < ytiles; y++) {
-        rect.y = TILE_SIZE * y;
-	y2 = y + this->yoffset;
+            if (tileData & MF_ANIM) {
+                // it's an animation, so we read the current animation tileData
+                tileData = this->anims[(tileData & MF_ID) + this->anim_ticker];
 
-        for (x = 0; x < xtiles; x++) {
-            rect.x = TILE_SIZE * x;
-	    x2 = x + this->xoffset;
+                if (this->prev_ticker != this->anim_ticker)
+                    PUSH_UR(dstrect);
+            }
 
-            idx = this->data[y2 * this->width + x2];
+            // calculate srcrect
+            const int stockRowTiles = 40;
+            srcrect.x = (tileData % stockRowTiles) * TILE_SIZE;
+            srcrect.y = ((tileData - (tileData % stockRowTiles)) / stockRowTiles) * TILE_SIZE;
 
-            if (idx & MF_ANIM) {
-                /* it's an animation, so we read the current animation tile */
-                idx = this->anims[(idx & MF_ID) + this->anim_ticker];
+            SDL_Rect real_dstrect = dstrect;
+            SDL_BlitSurface(this->stocks, &srcrect, screen, &real_dstrect);
 
-		// calculate source rect
-		srcrect.x = (idx % 40) * TILE_SIZE;
-		srcrect.y = ((idx - (idx % 40)) / 40) * TILE_SIZE;
-
-		if (anim_switched)
-		    PUSH_UR(rect);
-	    } else {
-		// calculate source rect
-		srcrect.x = (idx % 40) * TILE_SIZE;
-		srcrect.y = ((idx - (idx % 40)) / 40) * TILE_SIZE;
-	    }
-
-	    SDL_BlitSurface(this->stocks, &srcrect, screen, &rect);
+            dstrect.x = dstrect.x + TILE_SIZE;
         }
+        dstrect.x = oldX;
+        dstrect.y = dstrect.y + TILE_SIZE;
     }
 
     this->prev_ticker = this->anim_ticker;
@@ -269,30 +254,32 @@ void Map::onDraw(SDL_Surface *sfc)
 
 void Map::onIdle()
 {
+    const int inc = 1;
+
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
     if ( keystate[SDLK_KP7] || keystate[SDLK_KP8] || keystate[SDLK_KP9]) {
-        if (yoffset > 0) {
-            yoffset--; // this up...
+        if (ypos > 0) {
+            ypos -= inc; // this up...
 	    whole_redraw = 1;
 	}
     }
     if (keystate[SDLK_KP1] || keystate[SDLK_KP2] || keystate[SDLK_KP3]) {
-        if ((yoffset + getYTiles()) < (height - 1)) {
-            yoffset++; // this down...
+        if ((ypos + getYTiles() * TILE_SIZE) < ((height - 1) * TILE_SIZE)) {
+            ypos += inc; // this down...
 	    whole_redraw = 1;
 	}
     }
     if (keystate[SDLK_KP1] || keystate[SDLK_KP4] || keystate[SDLK_KP7]) {
-	if (xoffset > 0) {
-	    xoffset--;	// this left...
+	if (xpos > 0) {
+	    xpos -= inc;	// this left...
 	    whole_redraw = 1;
 	}
     } 
     if (keystate[SDLK_KP3] || keystate[SDLK_KP6] || keystate[SDLK_KP9]) {
-    	if ((xoffset + getXTiles()) < (width - 1)) {
-            xoffset++;	// this right...
+    	if ((xpos + getXTiles() * TILE_SIZE) < ((width - 1) * TILE_SIZE)) {
+            xpos += inc;	// this right...
 	    whole_redraw = 1;
 	}
     }
@@ -319,6 +306,7 @@ int Map::getYTiles()
 
 void Map::updateOffset(int xo, int yo)
 {
+    /*
     if (xo != 0) { 
         xoffset += xo;         
         whole_redraw = 1;
@@ -328,4 +316,5 @@ void Map::updateOffset(int xo, int yo)
         xoffset += yo;
         whole_redraw = 1;
     }
+    */
 }

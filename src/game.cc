@@ -23,7 +23,6 @@
 #include "game.h"
 #include "sdl_events.h"
 #include "error.h"
-#include "editor.h"
 #include "player.h"
 #include "bmpl.h"
 
@@ -53,7 +52,6 @@ Game::Game(char *aTitle)
     print("init game...");
 
     map = new Map("main.map");
-    editor = new Editor();
 
     ppos.x = 400;
     ppos.y = 300;
@@ -83,8 +81,8 @@ void Game::initSDL()
         error("Couldn't initialize SDL: %s", SDL_GetError());
 
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
-      error("Couldn't initialize support of joystick in SDL: %s", 
-	    SDL_GetError());
+        error("Couldn't initialize support of joystick in SDL: %s", 
+              SDL_GetError());
 
     /* Clean up on exit */
     atexit(SDL_Quit);
@@ -138,41 +136,35 @@ void Game::run()
 
         while (SDL_PollEvent(sdl_ev)) {
 
-	        switch(sdl_ev->type) {
-                case SDL_KEYDOWN: 
-                    if (sdl_ev->key.keysym.sym == SDLK_c) {
-                        break;
-                    } else if (sdl_ev->key.keysym.sym == SDLK_q) {
-			//std::cout << "Bye :)" << std::endl;
-			exit(0);
-		    }
-                    
+            switch(sdl_ev->type) {
+            case SDL_KEYDOWN: 
+                if (sdl_ev->key.keysym.sym == SDLK_c) {
                     break;
-                case SDL_VIDEORESIZE:
-                    width = sdl_ev->resize.w;
-                    height = sdl_ev->resize.h;
-                    print("Resize: %d, %d", width, height);
-
-                    screen = SDL_SetVideoMode(width, height, BPP, SDL_DOUBLEBUF | SDL_RESIZABLE);
-                    whole_redraw = 1;
-                    break;
+                } else if (sdl_ev->key.keysym.sym == SDLK_q) {
+                    //std::cout << "Bye :)" << std::endl;
+                    exit(0);
                 }
+                    
+                break;
+            case SDL_VIDEORESIZE:
+                width = sdl_ev->resize.w;
+                height = sdl_ev->resize.h;
+                print("Resize: %d, %d", width, height);
+
+                screen = SDL_SetVideoMode(width, height, BPP, SDL_DOUBLEBUF | SDL_RESIZABLE);
+                whole_redraw = 1;
+                break;
+            }
 	}
 
         //map->onIdle();
-    map->onIdle();
-    player->onIdle();
-	editor->onIdle();
+        map->onIdle();
+        player->onIdle();
         
 	//print("Map onDraw");
 	//[map draw:screen xOffset:xOffset yOffset:yOffset];
-    map->onDraw(screen);
-    player->draw(screen, xOffset, yOffset);
-	editor->onDraw(screen);
-
-	// If editor is running, we'll update it's GUI stuff
-	if (editor->isActive())
-	    editor->updateGUI();
+        map->onDraw(screen);
+        player->draw(screen, xOffset, yOffset);
 
         /* Execute surface filter... */
         // if (cur_filter)

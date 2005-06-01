@@ -31,8 +31,8 @@ class Map
 {
 private:
     SDL_Surface *stocks;
-    Uint32 xoffset;
-    Uint32 yoffset;
+    Uint32 xpos;
+    Uint32 ypos;
     Uint32 prev_ticker; 
     Uint32 version;
 
