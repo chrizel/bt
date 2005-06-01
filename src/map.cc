@@ -254,7 +254,7 @@ void Map::onDraw(SDL_Surface *sfc)
 
 void Map::onIdle()
 {
-    const int inc = 1;
+    const int inc = 10;
 
     /*** Input ***/
     Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -306,15 +306,15 @@ int Map::getYTiles()
 
 void Map::updateOffset(int xo, int yo)
 {
-    /*
     if (xo != 0) { 
-        xoffset += xo;         
+        xpos += xo;
+        xpos = xpos < 0 ? 0 : xpos;
         whole_redraw = 1;
     }
 
     if (yo != 0) {
-        xoffset += yo;
+        ypos += yo;
+        ypos = ypos < 0 ? 0 : ypos;
         whole_redraw = 1;
     }
-    */
 }

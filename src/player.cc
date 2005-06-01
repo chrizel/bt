@@ -77,19 +77,50 @@ void Player::switchTick()
 
 void Player::playerGo(int xo, int yo)
 {
+    SDL_Rect scroll_rect;
+    scroll_rect.x = scroll_rect.y = 100;
+    scroll_rect.w = game->getWidth() - scroll_rect.x - 100;
+    scroll_rect.h = game->getHeight() - scroll_rect.y - 100;
+
     if (xo != 0) {
-        if ( (pos.x < 100) || (pos.x > 700) ) {
-            game->getMap()->updateOffset(xo / 20, 0);
-            pos.x -= xo;
+        if ( pos.x < scroll_rect.x ) {
+            if ( xo < 0 ) {
+                if ( game->getMap()->getXPos() > 0 ) {
+                    game->getMap()->updateOffset(xo, 0);
+                } else {
+                    pos.x += xo;
+                }
+            } else {
+                pos.x += xo;
+            }
+        } else if ( pos.x > scroll_rect.w ) {
+            if ( xo > 0 ) {
+                game->getMap()->updateOffset(xo, 0);
+            } else {
+                pos.x += xo;
+            }
         } else {
             pos.x += xo;
         }
     }
 
     if (yo != 0) {
-        if ( (pos.y < 100) || (pos.y > 500) ) {
-            game->getMap()->updateOffset(0, yo / 20);
-            pos.y -= yo;
+        if ( pos.y < scroll_rect.y ) {
+            if ( yo < 0 ) {
+                if ( game->getMap()->getYPos() > 0) {
+                    game->getMap()->updateOffset(0, yo);
+                } else {
+                    pos.y += yo;
+                }
+            } else {
+                pos.y += yo;
+            }
+        } else if ( pos.y > scroll_rect.h ) {
+            if ( yo > 0 ) {
+                game->getMap()->updateOffset(0, yo);
+            } else { 
+                pos.y += yo;
+            }
         } else {
             pos.y += yo;
         }
@@ -105,18 +136,18 @@ void Player::onIdle()
 	keystate[SDLK_LEFT] || keystate[SDLK_RIGHT];
 
     if (keystate[SDLK_UP]) {
-        pos.y -= 10;
+        playerGo(0, -10);
         direction = NORTH;
     } else if (keystate[SDLK_DOWN]) {
-        pos.y += 10;
+        playerGo(0, 10);
         direction = SOUTH;
     }
 
     if (keystate[SDLK_LEFT]) {
-        pos.x -= 10;
+        playerGo(-10, 0);
         direction = WEST;
     } else if (keystate[SDLK_RIGHT]) {
-        pos.x += 10;
+        playerGo(10, 0);
         direction = EAST;
     }
 
