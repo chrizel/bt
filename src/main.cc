@@ -15,10 +15,14 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
+#include <unistd.h>
 #include "game.h"
 
 int main(int argc, char *argv[])
 {
+	char buffer[255];
+	getcwd(buffer, 255);
+	printf("%s\n", buffer);
     game = new Game("Bermuda Triangle");
     game->run();
     return 0;

@@ -16,6 +16,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 #include "m_math.h"
+#include <math.h>
 
 // sin_table:
 //    0,  15,  30,  45,  60,  75,

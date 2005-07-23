@@ -35,7 +35,7 @@ Console::Console()
     conRect.h = 195;
 
     /* init console */
-    console = CON_Init("data/ConsoleFont.bmp", screen, 200, conRect);
+    console = CON_Init(RESOURCE_DIR("data/ConsoleFont.bmp"), screen, 200, conRect);
 
     if (!console)
         error("Can not init console!");

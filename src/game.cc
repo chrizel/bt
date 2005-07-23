@@ -57,17 +57,17 @@ Game::Game(char *aTitle)
 
     print("init game...");
 
-    map = new Map("main.map");
+    map = new Map(RESOURCE_DIR("main.map"));
     editor = new Editor();
     window = new Window();
 
     SDL_Color color = {255, 255, 255};
-    bigtext = new Text("data/font/Vera.ttf", 30, color);
-    text = new Text("data/font/Vera.ttf", 20, color);
-    systext = new Text("data/font/Vera.ttf", 12, color);
+    bigtext = new Text(RESOURCE_DIR("data/font/Vera.ttf"), 30, color);
+    text = new Text(RESOURCE_DIR("data/font/Vera.ttf"), 20, color);
+    systext = new Text(RESOURCE_DIR("data/font/Vera.ttf"), 12, color);
 
     SDL_Color blue = {0, 0, 255};
-    bluetext = new Text("data/font/Vera.ttf", 20, blue);
+    bluetext = new Text(RESOURCE_DIR("data/font/Vera.ttf"), 20, blue);
 
     ppos.x = 400;
     ppos.y = 300;

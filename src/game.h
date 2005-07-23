@@ -19,12 +19,17 @@
 #define GAME_H 
 
 #include <SDL.h>
-#include <SDL_ttf.h>
 
 #define DEFAULT_SCREEN_W 800
 #define DEFAULT_SCREEN_H 600
-#define MAX_FPS 30
+#define MAX_FPS 300
 #define BPP 32
+
+#ifdef __APPLE__
+#define RESOURCE_DIR(name) "../../"name
+#else
+#define RESOURCE_DIR(name) name
+#endif
 
 class Player;
 class Map;

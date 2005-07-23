@@ -113,7 +113,7 @@ void Audio::playMusic(int i)
 {
     //Mix_Music *music;
     //    music = Mix_LoadMUS(music_list[id]);
-    //    music = Mix_LoadMUS("data/the-brain.mp3");
+    //    music = Mix_LoadMUS(RESOURCE_DIR("data/the-brain.mp3"));
     Mix_PlayMusic(music_list[i], 1);
 }
 

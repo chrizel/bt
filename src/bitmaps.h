@@ -19,17 +19,18 @@
 #define BITMAPS_H
 
 #include "bmpl.h"
+#include "game.h"
 
 t_bmpl_item bmpl_list[] = {
-    {"map.stock_default", "data/tiles/stock2.png", NULL, 0},
-    {"map.stock1", "data/tiles/empty_stock.png", NULL, 0},
-    {"map.stock2", "data/tiles/stock2.png", NULL, 0},
-    {"font.bg.test", "data/Speak/test3.png", NULL, BL_COLORKEY},
-    {"main.minilogo", "data/tiles/minilogo.png", NULL, BL_COLORKEY | BL_ALPHA_50},
-    {"player.player1", "data/player/player4.png", NULL, BL_ALPHA_50},
-    {"btme.control", "data/btmecontrol.png", NULL, 0},
-    {"window", "data/window.png", NULL, 0},
-    {"bubble", "data/bubble.png", NULL, 0},
+    {"map.stock_default", RESOURCE_DIR("data/tiles/stock2.png"), NULL, 0},
+    {"map.stock1", RESOURCE_DIR("data/tiles/empty_stock.png"), NULL, 0},
+    {"map.stock2", RESOURCE_DIR("data/tiles/stock2.png"), NULL, 0},
+    {"font.bg.test", RESOURCE_DIR("data/Speak/test3.png"), NULL, BL_COLORKEY},
+    {"main.minilogo", RESOURCE_DIR("data/tiles/minilogo.png"), NULL, BL_COLORKEY | BL_ALPHA_50},
+    {"player.player1", RESOURCE_DIR("data/player/player4.png"), NULL, BL_ALPHA_50},
+    {"btme.control", RESOURCE_DIR("data/btmecontrol.png"), NULL, 0},
+    {"window", RESOURCE_DIR("data/window.png"), NULL, 0},
+    {"bubble", RESOURCE_DIR("data/bubble.png"), NULL, 0},
 
     {NULL, NULL, NULL, 0}, /* the last entry must be NULL! */
 };
