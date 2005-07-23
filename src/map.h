@@ -81,6 +81,7 @@ public:
     int getYPos() { return ypos; };
 
     void updateOffset(int xo, int yo);
+    SDL_Surface* getStocks() { return stocks; };
 };
 
 #endif

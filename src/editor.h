@@ -47,6 +47,9 @@ public:
     void openMap(char *file);
 
     void updateGUI();
+
+    void incPen(int x);
+    void decPen(int x);
 };
 
 #endif

@@ -19,6 +19,7 @@
 #define GAME_H 
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #define DEFAULT_SCREEN_W 800
 #define DEFAULT_SCREEN_H 600
@@ -27,16 +28,27 @@
 
 class Player;
 class Map;
+class Editor;
+class Window;
+class Text;
 
 class Game
 {
 private:
     char *title;
+    char *fpsstr;
 
-    SDL_Surface *minilogo;
+    Text *bigtext;
+    Text *text;
+    Text *bluetext;
+    Text *systext;
+
+    SDL_Surface *bubble;
 
     Map *map;
+    Editor *editor;
     Player *player;
+    Window *window;
 
     int music;
     int chunk;

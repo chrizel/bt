@@ -1,5 +1,5 @@
-SOURCES = main.cc error.cc map.cc bmpl.cc alloc.cc sdl_events.cc game.cc audio.cc player.cc editor.cc sprite.cc character.cc
-HEADERS = error.h map.h bmpl.h bitmaps.h alloc.h sdl_events.h game.h audio.h player.h editor.h sprite.h character.h
+SOURCES = main.cc error.cc map.cc bmpl.cc alloc.cc sdl_events.cc game.cc audio.cc player.cc editor.cc sprite.cc character.cc window.cc text.cc
+HEADERS = error.h map.h bmpl.h bitmaps.h alloc.h sdl_events.h game.h audio.h player.h editor.h sprite.h character.h window.h text.h
 OBJECTS = $(SOURCES:.cc=.o)
 
 BINARY=bt

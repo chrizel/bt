@@ -17,7 +17,9 @@
 
 #include <SDL.h>
 #include <SDL_endian.h>
+#include <iostream>
 
+#include "bmpl.h"
 #include "game.h"
 #include "sdl_events.h"
 #include "editor.h"
@@ -66,6 +68,16 @@ void Editor::onEvent(SDL_Event *event)
 
 void Editor::onDraw(SDL_Surface *sfc)
 {
+    SDL_Surface *stocks = game->getMap()->getStocks();
+    SDL_Rect srcrect = { 0, 0, TILE_SIZE, TILE_SIZE };
+    SDL_Rect dstrect = { 10, 10, TILE_SIZE, TILE_SIZE };
+
+    const int stockRowTiles = 40;
+    srcrect.x = (pen % stockRowTiles) * TILE_SIZE;
+    srcrect.y = ((pen - (pen % stockRowTiles)) / stockRowTiles) * TILE_SIZE;
+
+    SDL_BlitSurface( stocks, &srcrect, screen, &dstrect );
+    PUSH_UR(dstrect);
 }
 
 void Editor::saveMap(char *file)
@@ -78,12 +90,27 @@ void Editor::openMap(char *file)
     game->getMap()->open(file);
 }
 
+void Editor::incPen(int x)
+{
+    pen += x;
+    std::cout << pen << std::endl;
+}
+
+void Editor::decPen(int x)
+{
+    if ((pen - x) >= 0)
+        pen -= x;
+    std::cout << pen << std::endl;
+}
+
 void Editor::onIdle()
 {
     if (active) {
 	int x, y, xt, yt;
         Uint8 mousestate = SDL_GetMouseState(&x, &y);
 
+        x += game->getMap()->getXPos();
+        y += game->getMap()->getYPos();
         xt = (x - (x % TILE_SIZE)) / TILE_SIZE;
         yt = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
@@ -94,7 +121,6 @@ void Editor::onIdle()
 	    setTID(0, xt, yt);
 	    whole_redraw = 1;
 	}
-
     }
 }
 

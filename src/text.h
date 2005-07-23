@@ -14,24 +14,31 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
+   
+#ifndef TEXT_H
+#define TEXT_H
 
-#ifndef BITMAPS_H
-#define BITMAPS_H
+#include <SDL.h>
+#include <SDL_ttf.h>
 
-#include "bmpl.h"
+class Text
+{
+private:
+    SDL_Surface **shadows;
+    SDL_Surface **charmap;
 
-t_bmpl_item bmpl_list[] = {
-    {"map.stock_default", "data/tiles/stock2.png", NULL, 0},
-    {"map.stock1", "data/tiles/empty_stock.png", NULL, 0},
-    {"map.stock2", "data/tiles/stock2.png", NULL, 0},
-    {"font.bg.test", "data/Speak/test3.png", NULL, BL_COLORKEY},
-    {"main.minilogo", "data/tiles/minilogo.png", NULL, BL_COLORKEY | BL_ALPHA_50},
-    {"player.player1", "data/player/player4.png", NULL, BL_ALPHA_50},
-    {"btme.control", "data/btmecontrol.png", NULL, 0},
-    {"window", "data/window.png", NULL, 0},
-    {"bubble", "data/bubble.png", NULL, 0},
+    char *fontfile;
+    int size;
+    SDL_Color color;
+    
+    void bakeCharmap();
 
-    {NULL, NULL, NULL, 0}, /* the last entry must be NULL! */
+public:
+    Text(char *aFontFile, int aSize, SDL_Color aColor);
+    virtual ~Text();
+
+    int drawChar(char aChar, int x, int y);
+    int drawString(char *aString, int x, int y);
 };
 
 #endif

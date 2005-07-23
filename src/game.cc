@@ -17,6 +17,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
@@ -25,6 +26,9 @@
 #include "error.h"
 #include "player.h"
 #include "bmpl.h"
+#include "editor.h"
+#include "window.h"
+#include "text.h"
 
 Game *game;
 
@@ -46,12 +50,24 @@ Game::Game(char *aTitle)
     xOffset = 0;
     yOffset = 0;
     title = aTitle;
+    fpsstr = new char[20];
+    fpsstr[0] = '\0';
 
     initSDL();
 
     print("init game...");
 
     map = new Map("main.map");
+    editor = new Editor();
+    window = new Window();
+
+    SDL_Color color = {255, 255, 255};
+    bigtext = new Text("data/font/Vera.ttf", 30, color);
+    text = new Text("data/font/Vera.ttf", 20, color);
+    systext = new Text("data/font/Vera.ttf", 12, color);
+
+    SDL_Color blue = {0, 0, 255};
+    bluetext = new Text("data/font/Vera.ttf", 20, blue);
 
     ppos.x = 400;
     ppos.y = 300;
@@ -59,13 +75,22 @@ Game::Game(char *aTitle)
     ppos.h = 92;
     player = new Player("player.player1", &ppos);
 
-    minilogo = bmpl_get("main.minilogo");
+    bubble = bmpl_get("bubble");
 }
 
 Game::~Game()
 {
+    map->save("main.map");
+
     delete player;
+    delete editor;
+    delete window;
     delete map;
+    delete text;
+    delete bigtext;
+    delete bluetext;
+    delete systext;
+    delete fpsstr;
 }
 
 void Game::initSDL()
@@ -83,6 +108,9 @@ void Game::initSDL()
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
         error("Couldn't initialize support of joystick in SDL: %s", 
               SDL_GetError());
+
+    if (TTF_Init() == -1)
+        error("TTF_Init: %s", TTF_GetError());
 
     /* Clean up on exit */
     atexit(SDL_Quit);
@@ -127,7 +155,7 @@ void Game::run()
 
 	frames++;
 	ticks_end = SDL_GetTicks();
-	if ( (ticks_end - ticks_begin) >= 4000) 
+	if ( (ticks_end - ticks_begin) >= 1000) 
 	    fpsOutput();
 	
         while(SDL_GetTicks() <= ticks)
@@ -143,6 +171,14 @@ void Game::run()
                 } else if (sdl_ev->key.keysym.sym == SDLK_q) {
                     //std::cout << "Bye :)" << std::endl;
                     exit(0);
+                } else if (sdl_ev->key.keysym.sym == SDLK_KP_PLUS) {
+                    editor->incPen(1);
+                } else if (sdl_ev->key.keysym.sym == SDLK_KP_MINUS) {
+                    editor->decPen(1);
+                } else if (sdl_ev->key.keysym.sym == SDLK_KP_MULTIPLY) {
+                    editor->incPen(40);
+                } else if (sdl_ev->key.keysym.sym == SDLK_KP_DIVIDE) {
+                    editor->decPen(40);
                 }
                     
                 break;
@@ -160,24 +196,40 @@ void Game::run()
         //map->onIdle();
         map->onIdle();
         player->onIdle();
+        editor->onIdle();
         
 	//print("Map onDraw");
 	//[map draw:screen xOffset:xOffset yOffset:yOffset];
         map->onDraw(screen);
+        editor->onDraw(screen);
         player->draw(screen, xOffset, yOffset);
+        window->draw();
 
         /* Execute surface filter... */
         // if (cur_filter)
 	// cur_filter();
 
 	//print("BlitSurface");
-	SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
+	//SDL_BlitSurface(minilogo, NULL, screen, &ml_rect);
+        SDL_Rect dstrect = {175, 180, 0, 0};
+        //SDL_BlitSurface(bubble, NULL, screen, &dstrect);
+
+        //text->drawChar('B', 100, 100);
+        bigtext->drawString("Bermuda Triangle", 10, 10);
+        text->drawString("The Future Depends On You", 10, 45);
+        //text->drawString("I wish you what!", 10, 40);
+
+        bluetext->drawString("^^ Blau oh blaudiblau blau blau -.-", 200, 200);
+
+        text->drawString("Das ist ein Test: !@#$!(*()_@(%?><}|{)_)(l;,..", 10, 550);
+
+        systext->drawString(fpsstr, 10, 80);
 
 	//print("whole_redraw");
 	if (whole_redraw) {
-	    // print("whole_redraw");
-	    SDL_Flip(screen);
-	    whole_redraw = 0;
+	  // print("whole_redraw");
+	  SDL_Flip(screen);
+	  whole_redraw = 0;
 	} else {
 	    if (ur_count) {
 		// print("update_rects: %d\n", ur_count);
@@ -191,6 +243,7 @@ void Game::fpsOutput()
 {
     ticks_end = SDL_GetTicks();
     print("FPS: %i", (1000 * frames) / (ticks_end - ticks_begin));
+    sprintf(fpsstr, "FPS: %i", (1000 * frames) / (ticks_end - ticks_begin));
     ticks_begin = SDL_GetTicks();
     frames = 0;
 }
@@ -198,7 +251,7 @@ void Game::fpsOutput()
 void Game::printGPL()
 {
     static char GPL_TEXT[] =  
-	"Bermuda Triangle, Copyright (C) 2004 Christian Zeller and Simon Goller\n"
+	"Bermuda Triangle, Copyright (C) 2005 Christian Zeller and Simon Goller\n"
 	"Bermuda Triangle comes with ABSOLUTELY NO WARRANTY. This is free software,\n" 
 	"and you are welcome to redistribute it under certain conditions; see\n"
 	"LICENSE file for details.\n\n";

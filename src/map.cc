@@ -29,11 +29,6 @@
 
 #include "error.h"
 
-/*
-#define SET_STOCK_ID(map, xt, yt, tid) \
-    map->data[(yt + map->yoffset) * map->width + (xt + map->xoffset)] = tid;
-*/
-
 static void writeInt(FILE *fp, Uint32 num)
 {
     SDL_RWops *area;
@@ -199,7 +194,7 @@ void Map::fillWithID(int id)
 
 void Map::setTID(int id, int x, int y)
 {
-    //SET_STOCK_ID(this, x, y, id);
+    this->data[y * width + x] = id;
 }
 
 void Map::onEvent(SDL_Event *event)
